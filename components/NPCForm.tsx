@@ -71,7 +71,7 @@ export default function NPCForm({ initial, id }: Props) {
     background: "#0A0A0A",
     border: "1px solid #2A2A2A",
     color: "var(--dnd-text)",
-    fontFamily: "'Crimson Text', serif",
+    fontFamily: "'Roboto', sans-serif",
   };
   const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 

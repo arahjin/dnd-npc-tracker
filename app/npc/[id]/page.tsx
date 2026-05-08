@@ -35,7 +35,7 @@ function Field({ label, value }: { label: string; value: string | null }) {
       <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-red)" }}>
         {label}
       </span>
-      <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Crimson Text', serif" }}>
+      <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
         {value}
       </span>
     </div>
@@ -146,7 +146,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                   </h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)", fontFamily: "'Crimson Text', serif", fontSize: "1.1rem" }}>
+                  <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "1.1rem" }}>
                     {npc.notizen}
                   </p>
                 </div>
