@@ -1,7 +1,9 @@
 import Link from "next/link";
 import NPCForm from "@/components/NPCForm";
+import { prisma } from "@/lib/prisma";
 
-export default function NewNPC() {
+export default async function NewNPC() {
+  const orgs = await prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
@@ -24,7 +26,7 @@ export default function NewNPC() {
             <span style={{ color: "var(--dnd-red)" }}>✦</span>
           </div>
         </div>
-        <NPCForm />
+        <NPCForm availableOrgs={orgs} />
       </div>
     </main>
   );

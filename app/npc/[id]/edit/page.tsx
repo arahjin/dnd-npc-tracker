@@ -5,7 +5,10 @@ import NPCForm from "@/components/NPCForm";
 
 export default async function EditNPC({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const npc = await prisma.nPC.findUnique({ where: { id } });
+  const [npc, orgs] = await Promise.all([
+    prisma.nPC.findUnique({ where: { id }, include: { organisationen: true } }),
+    prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+  ]);
   if (!npc) notFound();
 
   return (
@@ -30,13 +33,17 @@ export default async function EditNPC({ params }: { params: Promise<{ id: string
             <span style={{ color: "var(--dnd-red)" }}>✦</span>
           </div>
         </div>
-        <NPCForm id={id} initial={{
-          name: npc.name, image: npc.image ?? "", status: npc.status,
-          beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
-          alter: npc.alter ?? "",
-          rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
-          aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
-        }} />
+        <NPCForm
+          id={id}
+          availableOrgs={orgs}
+          initialOrgs={npc.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
+          initial={{
+            name: npc.name, image: npc.image ?? "", status: npc.status,
+            beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
+            alter: npc.alter ?? "", rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
+            aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
+          }}
+        />
       </div>
     </main>
   );

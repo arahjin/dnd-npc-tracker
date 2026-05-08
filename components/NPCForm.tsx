@@ -19,9 +19,13 @@ type NPCData = {
   notizen: string;
 };
 
+type OrgMembership = { organisationId: string; rolle: string };
+
 type Props = {
   initial?: Partial<NPCData>;
   id?: string;
+  availableOrgs?: { id: string; name: string }[];
+  initialOrgs?: OrgMembership[];
 };
 
 const EMPTY: NPCData = {
@@ -30,9 +34,10 @@ const EMPTY: NPCData = {
   alter: "", rasse: "", herkunft: "", aktuellePosition: "", notizen: "",
 };
 
-export default function NPCForm({ initial, id }: Props) {
+export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [] }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<NPCData>({ ...EMPTY, ...initial });
+  const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -81,7 +86,7 @@ export default function NPCForm({ initial, id }: Props) {
     setSaving(true);
     setError("");
 
-    const payload = {
+    const payload: Record<string, unknown> = {
       name: form.name.trim(),
       image: form.image.trim() || null,
       status: form.status,
@@ -93,6 +98,7 @@ export default function NPCForm({ initial, id }: Props) {
       herkunft: form.herkunft.trim() || null,
       aktuellePosition: form.aktuellePosition.trim() || null,
       notizen: form.notizen.trim() || null,
+      organisationen: selectedOrgs.filter((o) => o.organisationId),
     };
 
     const res = id
@@ -282,6 +288,56 @@ export default function NPCForm({ initial, id }: Props) {
         <input type="text" value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
           placeholder="Wo hält sich der NPC auf?" className={inputClass} style={inputStyle} />
       </div>
+
+      {/* Organisationen */}
+      {availableOrgs.length > 0 && (
+        <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
+          <div className="px-4 py-2" style={{ borderBottom: "1px solid #2A2A2A", background: "var(--dnd-red-dark)" }}>
+            <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-heading)" }}>
+              Organisationen
+            </span>
+          </div>
+          <div className="p-4 space-y-2">
+            {availableOrgs.map((org) => {
+              const member = selectedOrgs.find((o) => o.organisationId === org.id);
+              const checked = !!member;
+              return (
+                <div key={org.id}>
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedOrgs((prev) => [...prev, { organisationId: org.id, rolle: "" }]);
+                        } else {
+                          setSelectedOrgs((prev) => prev.filter((o) => o.organisationId !== org.id));
+                        }
+                      }}
+                      className="accent-red-700 w-4 h-4"
+                    />
+                    <span className="font-cinzel text-sm" style={{ color: checked ? "var(--dnd-heading)" : "var(--dnd-text-muted)" }}>
+                      {org.name}
+                    </span>
+                  </label>
+                  {checked && (
+                    <input
+                      type="text"
+                      placeholder="Rolle (optional)"
+                      value={member?.rolle ?? ""}
+                      onChange={(e) => setSelectedOrgs((prev) =>
+                        prev.map((o) => o.organisationId === org.id ? { ...o, rolle: e.target.value } : o)
+                      )}
+                      className="mt-1 ml-7 px-3 py-1.5 text-sm outline-none w-64"
+                      style={{ background: "#0A0A0A", border: "1px solid #3A2A2A", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Notizen */}
       <div>

@@ -8,6 +8,19 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const npc = await prisma.nPC.create({ data: body });
+  const { organisationen, ...data } = body;
+  const npc = await prisma.nPC.create({
+    data: {
+      ...data,
+      ...(organisationen?.length > 0 && {
+        organisationen: {
+          create: organisationen.map((o: { organisationId: string; rolle: string }) => ({
+            organisationId: o.organisationId,
+            rolle: o.rolle || null,
+          })),
+        },
+      }),
+    },
+  });
   return NextResponse.json(npc, { status: 201 });
 }

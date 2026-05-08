@@ -10,8 +10,22 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const body = await req.json();
-  const npc = await prisma.nPC.update({ where: { id }, data: body });
+  const { organisationen, ...data } = await req.json();
+
+  const npc = await prisma.$transaction(async (tx) => {
+    await tx.nPCOrganisation.deleteMany({ where: { npcId: id } });
+    if (organisationen?.length > 0) {
+      await tx.nPCOrganisation.createMany({
+        data: organisationen.map((o: { organisationId: string; rolle: string }) => ({
+          npcId: id,
+          organisationId: o.organisationId,
+          rolle: o.rolle || null,
+        })),
+      });
+    }
+    return tx.nPC.update({ where: { id }, data });
+  });
+
   return NextResponse.json(npc);
 }
 
