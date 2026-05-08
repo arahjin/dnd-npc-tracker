@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import DeleteButton from "@/components/DeleteButton";
+import NPCEditButton from "@/components/NPCEditButton";
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   Lebendig:  { bg: "#0D2010", text: "#4ADE80", border: "#166534" },
@@ -44,10 +45,13 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function NPCDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const npc = await prisma.nPC.findUnique({
-    where: { id },
-    include: { organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } } },
-  });
+  const [npc, orgs] = await Promise.all([
+    prisma.nPC.findUnique({
+      where: { id },
+      include: { organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } } },
+    }),
+    prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+  ]);
   if (!npc) notFound();
 
   return (
@@ -61,11 +65,18 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
             ← Zurück
           </Link>
           <div className="flex gap-2">
-            <Link href={`/npc/${id}/edit`}
-              className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
-              style={{ border: "1px solid var(--dnd-gold)", color: "var(--dnd-heading)" }}>
-              BEARBEITEN
-            </Link>
+            <NPCEditButton
+              id={id}
+              name={npc.name}
+              availableOrgs={orgs}
+              initialOrgs={npc.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
+              initial={{
+                name: npc.name, image: npc.image ?? "", status: npc.status,
+                beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
+                alter: npc.alter ?? "", rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
+                aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
+              }}
+            />
             <DeleteButton id={id} />
           </div>
         </div>

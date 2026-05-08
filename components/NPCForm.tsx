@@ -26,6 +26,7 @@ type Props = {
   id?: string;
   availableOrgs?: { id: string; name: string }[];
   initialOrgs?: OrgMembership[];
+  onSuccess?: () => void;
 };
 
 const EMPTY: NPCData = {
@@ -34,7 +35,7 @@ const EMPTY: NPCData = {
   alter: "", rasse: "", herkunft: "", aktuellePosition: "", notizen: "",
 };
 
-export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [] }: Props) {
+export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], onSuccess }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<NPCData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
@@ -107,8 +108,13 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
 
     if (!res.ok) { setError("Fehler beim Speichern."); setSaving(false); return; }
     const npc = await res.json();
-    router.push(`/npc/${npc.id}`);
-    router.refresh();
+    if (id && onSuccess) {
+      router.refresh();
+      onSuccess();
+    } else {
+      router.push(`/npc/${npc.id}`);
+      router.refresh();
+    }
   }
 
   const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";

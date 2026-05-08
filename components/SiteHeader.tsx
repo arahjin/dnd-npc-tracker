@@ -1,7 +1,8 @@
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function SiteHeader({ active }: { active: "npcs" | "organisationen" }) {
+export default function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen"; actionSlot?: React.ReactNode }) {
   return (
     <header style={{ borderBottom: "1px solid #2A1A1A", position: "relative", overflow: "hidden" }}>
       <Image src="/wildgipfel_header.png" alt="Wildgipfel" fill className="object-cover object-top" style={{ zIndex: 0 }} priority />
@@ -12,12 +13,14 @@ export default function SiteHeader({ active }: { active: "npcs" | "organisatione
         <div className="flex items-center justify-between">
           <Image src="/wildgipfel_logo.png" alt="Wildgipfel" width={200} height={90} className="object-contain"
             style={{ filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.9))" }} />
-          <Link
-            href={active === "npcs" ? "/npc/new" : "/organisationen/new"}
-            className="font-cinzel text-sm font-semibold px-5 py-2.5 transition-all tracking-wider"
-            style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)", clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)" }}>
-            {active === "npcs" ? "+ NPC hinzufügen" : "+ Organisation hinzufügen"}
-          </Link>
+          {actionSlot ?? (
+            <Link
+              href={active === "organisationen" ? "/organisationen/new" : "/npc/new"}
+              className="font-cinzel text-sm font-semibold px-5 py-2.5 transition-all tracking-wider"
+              style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)", clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)" }}>
+              {active === "organisationen" ? "+ Organisation hinzufügen" : "+ NPC hinzufügen"}
+            </Link>
+          )}
         </div>
 
         {/* Navigation Tabs */}
