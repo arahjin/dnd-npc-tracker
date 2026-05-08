@@ -13,6 +13,7 @@ type NPC = {
   beziehung: string;
   rasse: string | null;
   aktuellePosition: string | null;
+  organisationen: { organisation: { id: string; name: string } }[];
 };
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -41,16 +42,18 @@ function Badge({ label, colors }: { label: string; colors: { bg: string; text: s
   );
 }
 
-export default function NPCGrid({ npcs }: { npcs: NPC[] }) {
+export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; availableOrgs?: { id: string; name: string }[] }) {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterBeziehung, setFilterBeziehung] = useState("");
+  const [filterOrg, setFilterOrg] = useState("");
 
   const filtered = npcs.filter((n) => {
     const matchSearch = n.name.toLowerCase().includes(search.toLowerCase());
     const matchStatus = filterStatus ? n.status === filterStatus : true;
     const matchBeziehung = filterBeziehung ? n.beziehung === filterBeziehung : true;
-    return matchSearch && matchStatus && matchBeziehung;
+    const matchOrg = filterOrg ? n.organisationen.some((m) => m.organisation.id === filterOrg) : true;
+    return matchSearch && matchStatus && matchBeziehung && matchOrg;
   });
 
   const selectClass = "font-cinzel text-sm px-3 py-2 outline-none tracking-wide transition-colors";
@@ -92,6 +95,17 @@ export default function NPCGrid({ npcs }: { npcs: NPC[] }) {
           <option value="">Alle Beziehungen</option>
           {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
         </select>
+        {availableOrgs.length > 0 && (
+          <select
+            value={filterOrg}
+            onChange={(e) => setFilterOrg(e.target.value)}
+            className={selectClass}
+            style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
+          >
+            <option value="">Alle Organisationen</option>
+            {availableOrgs.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+          </select>
+        )}
       </div>
 
       {/* Count */}

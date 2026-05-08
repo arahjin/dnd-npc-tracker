@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import NavSearch from "./NavSearch";
 
 export default function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen"; actionSlot?: React.ReactNode }) {
   return (
@@ -34,8 +35,9 @@ export default function SiteHeader({ active, actionSlot }: { active: "npcs" | "o
             </Link>
           </nav>
 
-          {/* Right: CTA */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {/* Right: Search + CTA */}
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <NavSearch />
             {actionSlot ?? (
               <Link
                 href={active === "organisationen" ? "/organisationen/new" : "/npc/new"}
