@@ -23,16 +23,8 @@ type Props = {
 };
 
 const EMPTY: NPCData = {
-  name: "",
-  image: "",
-  status: "Unbekannt",
-  beziehung: "Unbekannt",
-  organisationen: "",
-  alter: "",
-  rasse: "",
-  herkunft: "",
-  aktuellePosition: "",
-  notizen: "",
+  name: "", image: "", status: "Unbekannt", beziehung: "Unbekannt",
+  organisationen: "", alter: "", rasse: "", herkunft: "", aktuellePosition: "", notizen: "",
 };
 
 export default function NPCForm({ initial, id }: Props) {
@@ -74,52 +66,51 @@ export default function NPCForm({ initial, id }: Props) {
     router.refresh();
   }
 
-  const inputClass = "w-full rounded-lg border border-amber-900/50 bg-[#120d06] px-4 py-2.5 text-amber-100 placeholder-amber-900 outline-none focus:border-amber-600 transition-colors";
-  const labelClass = "block text-sm font-medium text-amber-600 mb-1.5";
+  const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";
+  const inputStyle = {
+    background: "#0A0A0A",
+    border: "1px solid #2A2A2A",
+    color: "var(--dnd-text)",
+    fontFamily: "'Crimson Text', serif",
+  };
+  const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="rounded-lg bg-red-900/30 border border-red-800 px-4 py-3 text-sm text-red-300">
+        <div className="font-cinzel text-sm px-4 py-3 tracking-wide"
+          style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
           {error}
         </div>
       )}
 
       {/* Name */}
       <div>
-        <label className={labelClass}>Name *</label>
-        <input
-          type="text"
-          value={form.name}
-          onChange={(e) => set("name", e.target.value)}
-          placeholder="z.B. Thandrel Nachtschatten"
-          className={inputClass}
-        />
+        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Name *</label>
+        <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)}
+          placeholder="z.B. Thandrel Nachtschatten" className={inputClass} style={inputStyle} />
       </div>
 
       {/* Bild */}
       <div>
-        <label className={labelClass}>Bild (URL)</label>
-        <input
-          type="url"
-          value={form.image}
-          onChange={(e) => set("image", e.target.value)}
-          placeholder="https://..."
-          className={inputClass}
-        />
+        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Bild (URL)</label>
+        <input type="url" value={form.image} onChange={(e) => set("image", e.target.value)}
+          placeholder="https://..." className={inputClass} style={inputStyle} />
       </div>
 
       {/* Status + Beziehung */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>Status</label>
-          <select value={form.status} onChange={(e) => set("status", e.target.value)} className={inputClass}>
+          <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Status</label>
+          <select value={form.status} onChange={(e) => set("status", e.target.value)}
+            className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelClass}>Beziehung</label>
-          <select value={form.beziehung} onChange={(e) => set("beziehung", e.target.value)} className={inputClass}>
+          <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Beziehung</label>
+          <select value={form.beziehung} onChange={(e) => set("beziehung", e.target.value)}
+            className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
           </select>
         </div>
@@ -128,60 +119,63 @@ export default function NPCForm({ initial, id }: Props) {
       {/* Rasse + Alter */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelClass}>Rasse</label>
-          <input type="text" value={form.rasse} onChange={(e) => set("rasse", e.target.value)} placeholder="z.B. Elf, Mensch, Zwerg..." className={inputClass} />
+          <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Rasse</label>
+          <input type="text" value={form.rasse} onChange={(e) => set("rasse", e.target.value)}
+            placeholder="z.B. Elf, Mensch, Zwerg..." className={inputClass} style={inputStyle} />
         </div>
         <div>
-          <label className={labelClass}>Alter</label>
-          <input type="text" value={form.alter} onChange={(e) => set("alter", e.target.value)} placeholder="z.B. 47 oder unbekannt" className={inputClass} />
+          <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Alter</label>
+          <input type="text" value={form.alter} onChange={(e) => set("alter", e.target.value)}
+            placeholder="z.B. 47" className={inputClass} style={inputStyle} />
         </div>
       </div>
 
       {/* Herkunft */}
       <div>
-        <label className={labelClass}>Herkunft</label>
-        <input type="text" value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)} placeholder="Geburtsort oder Heimat" className={inputClass} />
+        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Herkunft</label>
+        <input type="text" value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)}
+          placeholder="Geburtsort oder Heimat" className={inputClass} style={inputStyle} />
       </div>
 
       {/* Aktuelle Position */}
       <div>
-        <label className={labelClass}>Aktuelle Position</label>
-        <input type="text" value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)} placeholder="Wo hält sich der NPC auf?" className={inputClass} />
+        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Aktuelle Position</label>
+        <input type="text" value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
+          placeholder="Wo hält sich der NPC auf?" className={inputClass} style={inputStyle} />
       </div>
 
       {/* Organisationen */}
       <div>
-        <label className={labelClass}>Organisationen</label>
-        <input type="text" value={form.organisationen} onChange={(e) => set("organisationen", e.target.value)} placeholder="Gilden, Fraktionen, Orden..." className={inputClass} />
+        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Organisationen</label>
+        <input type="text" value={form.organisationen} onChange={(e) => set("organisationen", e.target.value)}
+          placeholder="Gilden, Fraktionen, Orden..." className={inputClass} style={inputStyle} />
       </div>
 
       {/* Notizen */}
       <div>
-        <label className={labelClass}>Notizen</label>
-        <textarea
-          value={form.notizen}
-          onChange={(e) => set("notizen", e.target.value)}
+        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Notizen</label>
+        <textarea value={form.notizen} onChange={(e) => set("notizen", e.target.value)}
           placeholder="Hintergrundgeschichte, Quests, wichtige Infos..."
-          rows={5}
-          className={inputClass + " resize-none"}
-        />
+          rows={6} className={inputClass + " resize-none"} style={inputStyle} />
+      </div>
+
+      {/* Divider */}
+      <div className="flex items-center gap-3">
+        <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red-dark), transparent)" }} />
+        <span style={{ color: "var(--dnd-red)" }}>✦</span>
       </div>
 
       {/* Buttons */}
-      <div className="flex gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={saving}
-          className="rounded-lg bg-amber-700 px-6 py-2.5 text-sm font-semibold text-amber-100 hover:bg-amber-600 transition-colors disabled:opacity-50"
-        >
-          {saving ? "Speichern..." : id ? "Änderungen speichern" : "NPC erstellen"}
+      <div className="flex gap-3">
+        <button type="submit" disabled={saving}
+          className="font-cinzel text-sm tracking-widest px-8 py-3 transition-all disabled:opacity-50"
+          style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
+          {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "NPC ERSTELLEN"}
         </button>
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="rounded-lg border border-amber-900/50 px-6 py-2.5 text-sm font-semibold text-amber-700 hover:bg-amber-900/20 transition-colors"
-        >
-          Abbrechen
+        <button type="button" onClick={() => router.back()}
+          className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
+          style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
+          ABBRECHEN
         </button>
       </div>
     </form>

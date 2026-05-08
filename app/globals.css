@@ -1,26 +1,52 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --dnd-red: #C53131;
+  --dnd-red-dark: #8B1A1A;
+  --dnd-gold: #C9A84C;
+  --dnd-gold-light: #E8C97A;
+  --dnd-bg: #0E0E0E;
+  --dnd-bg-card: #1A1A1A;
+  --dnd-bg-card2: #141414;
+  --dnd-border: #2A2A2A;
+  --dnd-text: #E8E0D0;
+  --dnd-text-muted: #8A7A6A;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--dnd-bg);
+  color: var(--dnd-text);
+  font-family: 'Crimson Text', Georgia, serif;
 }
+
+.font-cinzel {
+  font-family: 'Cinzel', serif;
+}
+
+.font-cinzel-decorative {
+  font-family: 'Cinzel Decorative', serif;
+}
+
+/* Ornamental divider */
+.ornament::before,
+.ornament::after {
+  content: '⸻';
+  color: var(--dnd-gold);
+  opacity: 0.5;
+}
+
+/* Red glow on hover */
+.card-hover:hover {
+  box-shadow: 0 0 20px rgba(197, 49, 49, 0.15), 0 0 40px rgba(197, 49, 49, 0.05);
+}
+
+/* Gold glow */
+.gold-glow {
+  box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dnd-bg); }
+::-webkit-scrollbar-thumb { background: var(--dnd-red-dark); border-radius: 3px; }

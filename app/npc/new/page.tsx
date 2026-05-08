@@ -3,17 +3,27 @@ import NPCForm from "@/components/NPCForm";
 
 export default function NewNPC() {
   return (
-    <main className="min-h-screen bg-[#1a1209] text-amber-100">
-      <header className="border-b border-amber-900/50 bg-[#120d06] px-6 py-4">
-        <div className="mx-auto max-w-2xl">
-          <Link href="/" className="text-sm text-amber-700 hover:text-amber-400 transition-colors">
-            ← Zurück zur Übersicht
+    <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
+      <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
+        <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
+        <div className="mx-auto max-w-2xl px-6 py-4">
+          <Link href="/" className="font-cinzel text-xs tracking-widest uppercase transition-colors"
+            style={{ color: "var(--dnd-text-muted)" }}>
+            ← Zurück
           </Link>
         </div>
       </header>
 
-      <div className="mx-auto max-w-2xl px-6 py-8">
-        <h1 className="mb-8 text-2xl font-bold text-amber-400">Neuen NPC erstellen</h1>
+      <div className="mx-auto max-w-2xl px-6 py-10">
+        <div className="mb-8">
+          <h1 className="font-cinzel text-3xl font-bold" style={{ color: "var(--dnd-gold)" }}>
+            Neuen NPC erstellen
+          </h1>
+          <div className="mt-3 flex items-center gap-3">
+            <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
+            <span style={{ color: "var(--dnd-red)" }}>✦</span>
+          </div>
+        </div>
         <NPCForm />
       </div>
     </main>

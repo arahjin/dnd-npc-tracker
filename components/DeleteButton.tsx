@@ -13,11 +13,10 @@ export default function DeleteButton({ id }: { id: string }) {
   }
 
   return (
-    <button
-      onClick={handleDelete}
-      className="rounded-lg bg-red-900/40 px-4 py-2 text-sm font-semibold text-red-400 hover:bg-red-900/70 transition-colors"
-    >
-      Löschen
+    <button onClick={handleDelete}
+      className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
+      style={{ border: "1px solid #991B1B", color: "#F87171", background: "#200D0D" }}>
+      LÖSCHEN
     </button>
   );
 }

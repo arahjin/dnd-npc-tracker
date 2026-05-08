@@ -4,100 +4,152 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import DeleteButton from "@/components/DeleteButton";
 
-const STATUS_COLORS: Record<string, string> = {
-  Lebendig: "bg-green-900 text-green-300",
-  Tot: "bg-red-900 text-red-300",
-  Vermisst: "bg-yellow-900 text-yellow-300",
-  Unbekannt: "bg-gray-800 text-gray-400",
+const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  Lebendig:  { bg: "#0D2010", text: "#4ADE80", border: "#166534" },
+  Tot:       { bg: "#200D0D", text: "#F87171", border: "#991B1B" },
+  Vermisst:  { bg: "#201A0A", text: "#FCD34D", border: "#92400E" },
+  Unbekannt: { bg: "#141414", text: "#9CA3AF", border: "#374151" },
 };
 
-const BEZIEHUNG_COLORS: Record<string, string> = {
-  "Verbündet": "bg-blue-900 text-blue-300",
-  Freundlich: "bg-emerald-900 text-emerald-300",
-  Neutral: "bg-gray-800 text-gray-400",
-  Feindlich: "bg-red-900 text-red-300",
-  Unbekannt: "bg-gray-800 text-gray-400",
+const BEZIEHUNG_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  "Verbündet": { bg: "#0A1020", text: "#60A5FA", border: "#1E3A8A" },
+  Freundlich:  { bg: "#0A1A12", text: "#34D399", border: "#065F46" },
+  Neutral:     { bg: "#141414", text: "#9CA3AF", border: "#374151" },
+  Feindlich:   { bg: "#200D0D", text: "#F87171", border: "#991B1B" },
+  Unbekannt:   { bg: "#141414", text: "#9CA3AF", border: "#374151" },
 };
+
+function Badge({ label, colors }: { label: string; colors: { bg: string; text: string; border: string } }) {
+  return (
+    <span className="font-cinzel text-xs px-3 py-1 tracking-wide"
+      style={{ background: colors.bg, color: colors.text, border: `1px solid ${colors.border}` }}>
+      {label}
+    </span>
+  );
+}
+
+function Field({ label, value }: { label: string; value: string | null }) {
+  if (!value) return null;
+  return (
+    <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #1E1E1E" }}>
+      <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-red)" }}>
+        {label}
+      </span>
+      <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Crimson Text', serif" }}>
+        {value}
+      </span>
+    </div>
+  );
+}
 
 export default async function NPCDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const npc = await prisma.nPC.findUnique({ where: { id } });
   if (!npc) notFound();
 
-  const fields = [
-    { label: "Rasse", value: npc.rasse },
-    { label: "Alter", value: npc.alter },
-    { label: "Herkunft", value: npc.herkunft },
-    { label: "Aktuelle Position", value: npc.aktuellePosition },
-    { label: "Organisationen", value: npc.organisationen },
-  ];
-
   return (
-    <main className="min-h-screen bg-[#1a1209] text-amber-100">
-      <header className="border-b border-amber-900/50 bg-[#120d06] px-6 py-4">
-        <div className="mx-auto flex max-w-4xl items-center justify-between">
-          <Link href="/" className="text-sm text-amber-700 hover:text-amber-400 transition-colors">
-            ← Zurück zur Übersicht
+    <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
+      {/* Header */}
+      <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
+        <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
+        <div className="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
+          <Link href="/" className="font-cinzel text-xs tracking-widest uppercase flex items-center gap-2 transition-colors"
+            style={{ color: "var(--dnd-text-muted)" }}>
+            ← Zurück
           </Link>
           <div className="flex gap-2">
-            <Link
-              href={`/npc/${id}/edit`}
-              className="rounded-lg border border-amber-700 px-4 py-2 text-sm font-semibold text-amber-400 hover:bg-amber-900/30 transition-colors"
-            >
-              Bearbeiten
+            <Link href={`/npc/${id}/edit`}
+              className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
+              style={{ border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>
+              BEARBEITEN
             </Link>
             <DeleteButton id={id} />
           </div>
         </div>
       </header>
 
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-          {/* Left: Image + Badges */}
+
+          {/* Left Column */}
           <div className="md:col-span-1">
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-[#120d06] border border-amber-900/40">
+            {/* Portrait */}
+            <div className="relative overflow-hidden" style={{
+              aspectRatio: "2/3",
+              border: "1px solid var(--dnd-border)",
+              background: "#0A0A0A",
+            }}>
+              {/* Corner decorations */}
+              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
+              <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
+              <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
+
               {npc.image ? (
                 <Image src={npc.image} alt={npc.name} fill className="object-cover" />
               ) : (
-                <div className="flex h-full items-center justify-center text-7xl text-amber-900">
-                  👤
+                <div className="flex h-full items-center justify-center">
+                  <span className="text-7xl opacity-20">⚔️</span>
                 </div>
               )}
+
+              {/* Gradient */}
+              <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)" }} />
             </div>
+
+            {/* Badges */}
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className={`rounded-full px-3 py-1 text-sm font-medium ${STATUS_COLORS[npc.status] ?? "bg-gray-800 text-gray-400"}`}>
-                {npc.status}
-              </span>
-              <span className={`rounded-full px-3 py-1 text-sm font-medium ${BEZIEHUNG_COLORS[npc.beziehung] ?? "bg-gray-800 text-gray-400"}`}>
-                {npc.beziehung}
-              </span>
+              <Badge label={npc.status} colors={STATUS_COLORS[npc.status] ?? STATUS_COLORS["Unbekannt"]} />
+              <Badge label={npc.beziehung} colors={BEZIEHUNG_COLORS[npc.beziehung] ?? BEZIEHUNG_COLORS["Unbekannt"]} />
             </div>
           </div>
 
-          {/* Right: Details */}
-          <div className="md:col-span-2 space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold text-amber-400">{npc.name}</h1>
+          {/* Right Column */}
+          <div className="md:col-span-2">
+            {/* Name */}
+            <div className="mb-6">
+              <h1 className="font-cinzel text-4xl font-bold leading-tight" style={{ color: "var(--dnd-gold)" }}>
+                {npc.name}
+              </h1>
+              {/* Decorative line */}
+              <div className="mt-3 flex items-center gap-3">
+                <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
+                <span style={{ color: "var(--dnd-red)" }}>✦</span>
+              </div>
             </div>
 
-            <div className="rounded-xl border border-amber-900/40 bg-[#1f1508] p-5 space-y-3">
-              {fields.map(({ label, value }) =>
-                value ? (
-                  <div key={label} className="flex gap-3">
-                    <span className="w-36 shrink-0 text-sm text-amber-700">{label}</span>
-                    <span className="text-sm text-amber-200">{value}</span>
-                  </div>
-                ) : null
-              )}
-              {fields.every((f) => !f.value) && (
-                <p className="text-sm text-amber-800">Keine Details eingetragen.</p>
-              )}
+            {/* Stats Block */}
+            <div className="mb-6" style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+              <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+                <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-gold-light)" }}>
+                  Charakterdaten
+                </h2>
+              </div>
+              <div className="px-4">
+                <Field label="Rasse" value={npc.rasse} />
+                <Field label="Alter" value={npc.alter} />
+                <Field label="Herkunft" value={npc.herkunft} />
+                <Field label="Position" value={npc.aktuellePosition} />
+                <Field label="Organisationen" value={npc.organisationen} />
+                {!npc.rasse && !npc.alter && !npc.herkunft && !npc.aktuellePosition && !npc.organisationen && (
+                  <p className="py-4 text-sm" style={{ color: "var(--dnd-text-muted)" }}>Keine Details eingetragen.</p>
+                )}
+              </div>
             </div>
 
+            {/* Notes */}
             {npc.notizen && (
-              <div className="rounded-xl border border-amber-900/40 bg-[#1f1508] p-5">
-                <h2 className="mb-3 text-sm font-semibold text-amber-600 uppercase tracking-wider">Notizen</h2>
-                <p className="text-sm text-amber-200 whitespace-pre-wrap leading-relaxed">{npc.notizen}</p>
+              <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+                <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+                  <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-gold-light)" }}>
+                    Notizen
+                  </h2>
+                </div>
+                <div className="px-4 py-4">
+                  <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)", fontFamily: "'Crimson Text', serif", fontSize: "1.1rem" }}>
+                    {npc.notizen}
+                  </p>
+                </div>
               </div>
             )}
           </div>
