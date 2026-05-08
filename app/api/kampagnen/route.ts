@@ -36,11 +36,6 @@ export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const role = (session.user as { role: string }).role;
-  if (!["DUNGEON_MASTER", "ADMIN"].includes(role)) {
-    return NextResponse.json({ error: "Nur DMs und Admins können Kampagnen erstellen." }, { status: 403 });
-  }
-
   const userId = session.user.id as string;
   const { name, beschreibung } = await req.json();
   if (!name?.trim()) return NextResponse.json({ error: "Name erforderlich." }, { status: 400 });

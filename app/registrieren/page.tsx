@@ -17,13 +17,13 @@ function RegisterForm() {
   const [password2, setPassword2] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [tokenValid, setTokenValid] = useState<boolean | null>(null);
+  const [inviteInfo, setInviteInfo] = useState<{ valid: boolean; checked: boolean }>({ valid: false, checked: false });
 
   useEffect(() => {
-    if (!token) { setTokenValid(false); return; }
+    if (!token) { setInviteInfo({ valid: false, checked: true }); return; }
     fetch(`/api/invite/check?token=${token}`)
       .then((r) => r.json())
-      .then((d) => setTokenValid(d.valid));
+      .then((d) => setInviteInfo({ valid: d.valid, checked: true }));
   }, [token]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -32,15 +32,26 @@ function RegisterForm() {
     if (password.length < 8) { setError("Passwort muss mindestens 8 Zeichen haben."); return; }
     setLoading(true);
     setError("");
+
     const res = await fetch("/api/registrieren", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token, name, email, password }),
+      body: JSON.stringify({ token: token || undefined, name, email, password }),
     });
     const data = await res.json();
     if (!res.ok) { setError(data.error ?? "Fehler bei der Registrierung."); setLoading(false); return; }
+
+    // Sign in
     await signIn("credentials", { email, password, redirect: false });
-    router.push("/");
+
+    // If the invite linked us to a campaign, activate it immediately
+    if (data.kampagneId) {
+      await fetch(`/api/kampagnen/${data.kampagneId}/aktiv`, { method: "POST" });
+      router.push("/");
+    } else {
+      // No campaign yet — go to campaign selection/creation
+      router.push("/kampagnen");
+    }
     router.refresh();
   }
 
@@ -49,18 +60,8 @@ function RegisterForm() {
     color: "#D8D0C8", fontFamily: "'Roboto', sans-serif",
   };
 
-  if (tokenValid === null) {
-    return <p className="font-cinzel text-sm text-center" style={{ color: "var(--dnd-text-muted)" }}>Prüfe Einladungslink...</p>;
-  }
-
-  if (tokenValid === false) {
-    return (
-      <div className="text-center">
-        <p className="text-4xl mb-4">⚠️</p>
-        <p className="font-cinzel text-lg" style={{ color: "#F87171" }}>Ungültiger oder bereits verwendeter Einladungslink.</p>
-      </div>
-    );
-  }
+  // If token is provided but invalid, show error but still allow registration without it
+  const tokenInvalid = token && inviteInfo.checked && !inviteInfo.valid;
 
   return (
     <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
@@ -70,16 +71,36 @@ function RegisterForm() {
           Konto erstellen
         </h1>
       </div>
+
+      {token && inviteInfo.checked && inviteInfo.valid && (
+        <div className="px-6 pt-5 pb-0">
+          <div className="font-cinzel text-xs px-4 py-3 tracking-wide"
+            style={{ background: "#0A1A0A", border: "1px solid #1E3A1E", color: "#4ADE80" }}>
+            ✓ Einladungslink gültig — du wirst nach der Registrierung automatisch der Kampagne hinzugefügt.
+          </div>
+        </div>
+      )}
+
+      {tokenInvalid && (
+        <div className="px-6 pt-5 pb-0">
+          <div className="font-cinzel text-xs px-4 py-3 tracking-wide"
+            style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
+            ⚠ Dieser Einladungslink ist ungültig oder bereits verwendet. Du kannst trotzdem ein Konto erstellen und später einer Kampagne beitreten.
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="p-6 space-y-5">
         {error && (
-          <div className="font-cinzel text-xs px-4 py-3" style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
+          <div className="font-cinzel text-xs px-4 py-3"
+            style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
             {error}
           </div>
         )}
         <div>
           <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Name</label>
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} required
-            placeholder="Dein Name" className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
+            placeholder="Dein Name" autoFocus className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
         </div>
         <div>
           <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>E-Mail</label>
@@ -99,6 +120,10 @@ function RegisterForm() {
         <button type="submit" disabled={loading} className="ddb-cta w-full justify-center py-3">
           {loading ? "KONTO ERSTELLEN..." : "KONTO ERSTELLEN"}
         </button>
+        <p className="text-center font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
+          Bereits ein Konto?{" "}
+          <a href="/login" style={{ color: "var(--dnd-red-light)" }}>Anmelden</a>
+        </p>
       </form>
     </div>
   );

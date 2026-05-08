@@ -80,7 +80,8 @@ export default function LoginPage() {
           </form>
         </div>
         <p className="mt-4 text-center font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
-          Noch kein Konto? Du benötigst einen Einladungslink.
+          Noch kein Konto?{" "}
+          <a href="/registrieren" style={{ color: "var(--dnd-red-light)" }}>Jetzt registrieren</a>
         </p>
       </div>
     </main>
