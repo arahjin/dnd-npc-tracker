@@ -22,7 +22,7 @@ export default function NPCCreateButton({ availableOrgs }: Props) {
           clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)",
         }}
       >
-        + NPC hinzufügen
+        + Person hinzufügen
       </button>
 
       <NPCModal

@@ -25,21 +25,21 @@ export default function SiteHeader({ active, actionSlot }: { active: "npcs" | "o
 
         {/* Navigation Tabs */}
         <div className="mt-5 flex items-center gap-1">
-          <Link href="/" className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
+          <Link href="/" className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all nav-tab"
             style={{
               color: active === "npcs" ? "#F5EDD6" : "var(--dnd-text-muted)",
               background: active === "npcs" ? "var(--dnd-red-dark)" : "transparent",
               border: "1px solid",
-              borderColor: active === "npcs" ? "var(--dnd-red)" : "transparent",
+              borderColor: active === "npcs" ? "var(--dnd-red)" : "var(--dnd-border)",
             }}>
             PERSONEN
           </Link>
-          <Link href="/organisationen" className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
+          <Link href="/organisationen" className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all nav-tab"
             style={{
               color: active === "organisationen" ? "#F5EDD6" : "var(--dnd-text-muted)",
               background: active === "organisationen" ? "var(--dnd-red-dark)" : "transparent",
               border: "1px solid",
-              borderColor: active === "organisationen" ? "var(--dnd-red)" : "transparent",
+              borderColor: active === "organisationen" ? "var(--dnd-red)" : "var(--dnd-border)",
             }}>
             ORGANISATIONEN
           </Link>

@@ -45,6 +45,13 @@ body {
   box-shadow: 0 0 20px rgba(197, 49, 49, 0.15), 0 0 40px rgba(197, 49, 49, 0.05);
 }
 
+/* Nav tab hover */
+.nav-tab:hover {
+  color: #F5EDD6 !important;
+  border-color: var(--dnd-red) !important;
+  background: rgba(107, 17, 17, 0.4) !important;
+}
+
 /* Gold glow */
 .gold-glow {
   box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
