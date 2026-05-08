@@ -33,7 +33,7 @@ export default async function EditNPC({ params }: { params: Promise<{ id: string
         <NPCForm id={id} initial={{
           name: npc.name, image: npc.image ?? "", status: npc.status,
           beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
-          organisationen: npc.organisationen ?? "", alter: npc.alter ?? "",
+          alter: npc.alter ?? "",
           rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
           aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
         }} />
