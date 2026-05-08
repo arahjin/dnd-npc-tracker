@@ -88,7 +88,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                   <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#0A0A0A" }}>
                     {npc.image
                       ? <Image src={npc.image} alt={npc.name} fill className="object-cover" />
-                      : <div className="flex h-full items-center justify-center text-lg opacity-30">⚔️</div>
+                      : <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}><Image src="/wildgipfel_logo.png" alt="Kein Bild" width={32} height={14} className="object-contain opacity-20" /></div>
                     }
                   </div>
                   <div className="flex-1 min-w-0">

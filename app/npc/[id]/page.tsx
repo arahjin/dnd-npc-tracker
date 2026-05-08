@@ -101,8 +101,8 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
               {npc.image ? (
                 <Image src={npc.image} alt={npc.name} fill className="object-cover" />
               ) : (
-                <div className="flex h-full items-center justify-center">
-                  <span className="text-7xl opacity-20">⚔️</span>
+                <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
+                  <Image src="/wildgipfel_logo.png" alt="Kein Bild" width={120} height={54} className="object-contain opacity-20" />
                 </div>
               )}
 

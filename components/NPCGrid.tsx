@@ -63,13 +63,12 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
       {/* Filter Bar */}
       <div className="mb-8 flex flex-wrap gap-3 items-center">
         <div className="flex-1 min-w-48 relative">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: "var(--dnd-text-muted)" }}>🔍</span>
           <input
             type="text"
-            placeholder="NPC suchen..."
+            placeholder="Person suchen..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 font-cinzel text-sm tracking-wide outline-none transition-colors"
+            className="w-full px-4 py-2 font-cinzel text-sm tracking-wide outline-none transition-colors"
             style={{
               background: "var(--dnd-bg-card)",
               border: "1px solid var(--dnd-border)",
@@ -139,8 +138,8 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
                 {npc.image ? (
                   <Image src={npc.image} alt={npc.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
-                  <div className="flex h-full items-center justify-center flex-col gap-2">
-                    <span className="text-5xl opacity-30">⚔️</span>
+                  <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
+                    <Image src="/wildgipfel_logo.png" alt="Kein Bild" width={80} height={36} className="object-contain opacity-20" />
                   </div>
                 )}
                 {/* Gradient overlay */}

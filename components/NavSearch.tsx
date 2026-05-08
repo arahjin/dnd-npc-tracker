@@ -17,9 +17,6 @@ export default function NavSearch() {
   return (
     <form onSubmit={handleSubmit} style={{ display: "flex", alignItems: "center" }}>
       <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-        <span style={{
-          position: "absolute", left: "10px", color: "#6A5A4A", fontSize: "14px", pointerEvents: "none",
-        }}>🔍</span>
         <input
           type="text"
           value={query}
@@ -33,7 +30,7 @@ export default function NavSearch() {
             color: "#D8D0C8",
             fontSize: "0.7rem",
             letterSpacing: "0.06em",
-            padding: "6px 12px 6px 30px",
+            padding: "6px 12px",
             width: "180px",
             outline: "none",
             transition: "border-color 0.15s, width 0.2s",
