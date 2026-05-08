@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 
-type Props = { name: string; role: string };
+type Props = { name: string; role: string; isDM?: boolean };
 
 const ROLE_LABEL: Record<string, string> = {
   ADMIN: "Admin",
@@ -17,9 +17,10 @@ const ROLE_ICON: Record<string, string> = {
   SPIELER: "🎲",
 };
 
-export default function UserMenu({ name, role }: Props) {
+export default function UserMenu({ name, role, isDM = false }: Props) {
   const [open, setOpen] = useState(false);
-  const isPrivileged = role === "ADMIN" || role === "DUNGEON_MASTER";
+  const isAdmin = role === "ADMIN";
+  const canManageInvites = isDM || isAdmin;
 
   return (
     <div style={{ position: "relative" }}>
@@ -43,12 +44,20 @@ export default function UserMenu({ name, role }: Props) {
                 {ROLE_LABEL[role] ?? role}
               </p>
             </div>
-            {isPrivileged && (
+            {canManageInvites && (
               <a href="/dm/einladungen" className="block px-4 py-2 font-cinzel text-xs transition-colors"
                 style={{ color: "#C8B8A8", borderBottom: "1px solid #1A1A1A" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#F5EDD6")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "#C8B8A8")}>
                 Einladungslinks
+              </a>
+            )}
+            {isAdmin && (
+              <a href="/dm/admin" className="block px-4 py-2 font-cinzel text-xs transition-colors"
+                style={{ color: "#C8B8A8", borderBottom: "1px solid #1A1A1A" }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = "#F5EDD6")}
+                onMouseLeave={(e) => (e.currentTarget.style.color = "#C8B8A8")}>
+                Admin-Bereich
               </a>
             )}
             <button onClick={() => signOut({ callbackUrl: "/login" })}

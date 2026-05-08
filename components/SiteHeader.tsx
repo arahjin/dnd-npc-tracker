@@ -12,14 +12,15 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
   const session = await auth();
   const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
 
-  // Load active campaign for selector
+  // Load active campaign for selector + determine DM status
   let kampagneSelector: React.ReactNode = null;
+  let isDMofActive = false;
   if (user?.id) {
     const cookieStore = await cookies();
     const aktiveId = cookieStore.get("aktiveKampagne")?.value ?? null;
     if (aktiveId) {
       const isAdmin = user.role === "ADMIN";
-      const [aktive, kampagnen] = await Promise.all([
+      const [aktive, kampagnen, mitglied] = await Promise.all([
         prisma.kampagne.findUnique({ where: { id: aktiveId }, select: { id: true, name: true } }),
         isAdmin
           ? prisma.kampagne.findMany({ orderBy: { createdAt: "asc" }, select: { id: true, name: true } })
@@ -28,7 +29,14 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
               include: { kampagne: { select: { id: true, name: true } } },
               orderBy: { createdAt: "asc" },
             }).then((ms) => ms.map((m) => m.kampagne)),
+        isAdmin
+          ? Promise.resolve(null)
+          : prisma.kampagneMitglied.findUnique({
+              where: { kampagneId_userId: { kampagneId: aktiveId, userId: user.id } },
+              select: { isDM: true },
+            }),
       ]);
+      isDMofActive = isAdmin || mitglied?.isDM === true;
       if (aktive) {
         kampagneSelector = (
           <KampagneSelector
@@ -73,7 +81,7 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
                 {active === "organisationen" ? "+ Organisation" : "+ NPC"}
               </Link>
             )}
-            {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} />}
+            {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} isDM={isDMofActive} />}
           </div>
 
         </div>
