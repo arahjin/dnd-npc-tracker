@@ -12,7 +12,6 @@ type NPCData = {
   beziehung: string;
   geschlecht: string;
   region: string;
-  organisationen: string;
   alter: string;
   rasse: string;
   herkunft: string;
@@ -28,7 +27,7 @@ type Props = {
 const EMPTY: NPCData = {
   name: "", image: "", status: "Unbekannt", beziehung: "Unbekannt",
   geschlecht: "", region: "",
-  organisationen: "", alter: "", rasse: "", herkunft: "", aktuellePosition: "", notizen: "",
+  alter: "", rasse: "", herkunft: "", aktuellePosition: "", notizen: "",
 };
 
 export default function NPCForm({ initial, id }: Props) {
@@ -89,7 +88,6 @@ export default function NPCForm({ initial, id }: Props) {
       beziehung: form.beziehung,
       geschlecht: form.geschlecht || null,
       region: form.region || null,
-      organisationen: form.organisationen.trim() || null,
       alter: form.alter.trim() || null,
       rasse: form.rasse.trim() || null,
       herkunft: form.herkunft.trim() || null,
@@ -283,13 +281,6 @@ export default function NPCForm({ initial, id }: Props) {
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Aktuelle Position</label>
         <input type="text" value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
           placeholder="Wo hält sich der NPC auf?" className={inputClass} style={inputStyle} />
-      </div>
-
-      {/* Organisationen */}
-      <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Organisationen</label>
-        <input type="text" value={form.organisationen} onChange={(e) => set("organisationen", e.target.value)}
-          placeholder="Gilden, Fraktionen, Orden..." className={inputClass} style={inputStyle} />
       </div>
 
       {/* Notizen */}
