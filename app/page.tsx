@@ -11,11 +11,22 @@ export default async function Home() {
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       {/* Header */}
-      <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
+      <header style={{ borderBottom: "1px solid #2A1A1A", position: "relative", overflow: "hidden" }}>
+        {/* Background map image */}
+        <Image
+          src="/Wildgipfel_header.png"
+          alt="Wildgipfel Karte"
+          fill
+          className="object-cover object-top"
+          style={{ zIndex: 0 }}
+          priority
+        />
+        {/* Dark overlay for readability */}
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1 }} />
         {/* Top accent line */}
-        <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
+        <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)", position: "relative", zIndex: 2 }} />
 
-        <div className="mx-auto max-w-7xl px-6 py-6">
+        <div className="mx-auto max-w-7xl px-6 py-6" style={{ position: "relative", zIndex: 2 }}>
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-4">
