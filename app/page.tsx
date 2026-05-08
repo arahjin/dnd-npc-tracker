@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import NPCGrid from "@/components/NPCGrid";
 
@@ -16,17 +17,19 @@ export default async function Home() {
 
         <div className="mx-auto max-w-7xl px-6 py-6">
           <div className="flex items-center justify-between">
-            {/* Logo + Title */}
+            {/* Logo */}
             <div className="flex items-center gap-4">
-              <div className="text-4xl">⚔️</div>
-              <div>
-                <h1 className="font-cinzel-decorative text-2xl font-bold leading-none" style={{ color: "var(--dnd-gold)" }}>
-                  Wildgipfel
-                </h1>
-                <p className="font-cinzel text-xs tracking-[0.3em] uppercase mt-0.5" style={{ color: "var(--dnd-red)" }}>
-                  NPC Kompendium
-                </p>
-              </div>
+              <Image
+                src="/wildgipfel_logo.png"
+                alt="Wildgipfel"
+                width={180}
+                height={80}
+                className="object-contain"
+                style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.8))" }}
+              />
+              <p className="font-cinzel text-xs tracking-[0.3em] uppercase" style={{ color: "var(--dnd-red)" }}>
+                NPC Kompendium
+              </p>
             </div>
 
             {/* Add Button */}
