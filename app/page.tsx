@@ -14,7 +14,7 @@ export default async function Home() {
       <header style={{ borderBottom: "1px solid #2A1A1A", position: "relative", overflow: "hidden" }}>
         {/* Background map image */}
         <Image
-          src="/Wildgipfel_header.png"
+          src="/wildgipfel_header.png"
           alt="Wildgipfel Karte"
           fill
           className="object-cover object-top"
