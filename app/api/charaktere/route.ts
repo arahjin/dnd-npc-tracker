@@ -17,7 +17,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
-  const userId = session.user.id as string;
+  const userId = session.user!.id as string;
   const { organisationen, ...data } = await req.json();
 
   const charakter = await prisma.charakter.create({

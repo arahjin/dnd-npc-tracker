@@ -6,7 +6,7 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
   const { id } = await params;
-  const userId = session.user.id as string;
+  const userId = session.user!.id as string;
   const isDM = (session.user as { role: string }).role === "DUNGEON_MASTER";
 
   const entry = await prisma.journalEntry.findUnique({ where: { id } });

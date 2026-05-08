@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
 
   const typ = req.nextUrl.searchParams.get("typ");
-  const userId = session.user.id as string;
+  const userId = session.user!.id as string;
   const isDM = (session.user as { role: string }).role === "DUNGEON_MASTER";
 
   const where =
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
 
-  const userId = session.user.id as string;
+  const userId = session.user!.id as string;
   const { titel, inhalt, typ, tags } = await req.json();
 
   if (!inhalt?.trim()) return NextResponse.json({ error: "Inhalt darf nicht leer sein." }, { status: 400 });
