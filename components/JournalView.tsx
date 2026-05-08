@@ -16,15 +16,23 @@ type Props = {
   tagOptions: TagOption[];
 };
 
+const TAG_ICON: Record<string, string> = { PERSON: "👤", ORGANISATION: "🏛", CHARAKTER: "⚔", SPIELER: "🎲" };
+
 export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+
+  // new entry
   const [titel, setTitel] = useState("");
   const [inhalt, setInhalt] = useState("");
   const [selectedTags, setSelectedTags] = useState<TagOption[]>([]);
   const [tagSearch, setTagSearch] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // filter
+  const [filterTag, setFilterTag] = useState<TagOption | null>(null);
+  const [filterSearch, setFilterSearch] = useState("");
 
   useEffect(() => { loadEntries(); }, []);
 
@@ -64,18 +72,73 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
     (t) => t.label.toLowerCase().includes(tagSearch.toLowerCase()) && !selectedTags.find((s) => s.id === t.id)
   );
 
+  const filterTagOptions = tagOptions.filter(
+    (t) => t.label.toLowerCase().includes(filterSearch.toLowerCase()) && t.id !== filterTag?.id
+  );
+
+  const visibleEntries = filterTag
+    ? entries.filter((e) => e.tags.some((t) => t.referenzId === filterTag.id))
+    : entries;
+
   const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "#D8D0C8", fontFamily: "'Roboto', sans-serif" };
 
   return (
     <div>
-      {/* New Entry Button */}
+      {/* ── Tag Filter ── */}
+      <div className="mb-6 p-4" style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
+        <div className="flex items-center gap-3">
+          <span className="font-cinzel text-xs tracking-widest uppercase shrink-0" style={{ color: "var(--dnd-label)" }}>
+            Filter
+          </span>
+          {filterTag ? (
+            <span className="font-cinzel text-xs px-2 py-1 flex items-center gap-2"
+              style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
+              {TAG_ICON[filterTag.typ]} {filterTag.label}
+              <button onClick={() => { setFilterTag(null); setFilterSearch(""); }} style={{ opacity: 0.7 }}>✕</button>
+            </span>
+          ) : (
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={filterSearch}
+                onChange={(e) => setFilterSearch(e.target.value)}
+                placeholder="Nach Person, Org oder Charakter filtern..."
+                className="w-full px-3 py-1.5 text-sm outline-none"
+                style={inputStyle}
+              />
+              {filterSearch && filterTagOptions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 z-20"
+                  style={{ background: "#111", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
+                  {filterTagOptions.slice(0, 8).map((t) => (
+                    <button key={t.id} type="button"
+                      onClick={() => { setFilterTag(t); setFilterSearch(""); }}
+                      className="w-full text-left px-4 py-2 font-cinzel text-xs"
+                      style={{ color: "var(--dnd-text)", borderBottom: "1px solid #1A1A1A" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#1A1A1A")}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "")}>
+                      {TAG_ICON[t.typ]} {t.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          {filterTag && (
+            <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
+              {visibleEntries.length} {visibleEntries.length === 1 ? "Eintrag" : "Einträge"}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* ── New Entry Button ── */}
       {!showForm && (
         <button onClick={() => setShowForm(true)} className="ddb-cta mb-8">
           + Neuer Eintrag
         </button>
       )}
 
-      {/* New Entry Form */}
+      {/* ── New Entry Form ── */}
       {showForm && (
         <form onSubmit={handleSubmit} className="mb-8 p-5 space-y-4" style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
           <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
@@ -89,8 +152,6 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
             <textarea value={inhalt} onChange={(e) => setInhalt(e.target.value)} rows={6} required
               placeholder="Was ist passiert..." className="w-full px-4 py-2 outline-none resize-none" style={inputStyle} />
           </div>
-
-          {/* Tagging */}
           <div>
             <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Personen / Orgs / Charaktere taggen</label>
             {selectedTags.length > 0 && (
@@ -115,14 +176,12 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                     style={{ color: "var(--dnd-text)", borderBottom: "1px solid #1A1A1A" }}
                     onMouseEnter={(e) => (e.currentTarget.style.background = "#1A1A1A")}
                     onMouseLeave={(e) => (e.currentTarget.style.background = "")}>
-                    <span style={{ color: "var(--dnd-text-muted)" }}>{t.typ === "PERSON" ? "👤" : t.typ === "ORGANISATION" ? "🏛" : t.typ === "CHARAKTER" ? "⚔" : "🎲"}</span>
-                    {" "}{t.label}
+                    <span style={{ color: "var(--dnd-text-muted)" }}>{TAG_ICON[t.typ]}</span>{" "}{t.label}
                   </button>
                 ))}
               </div>
             )}
           </div>
-
           <div className="flex gap-3">
             <button type="submit" disabled={saving} className="ddb-cta">{saving ? "SPEICHERN..." : "EINTRAG SPEICHERN"}</button>
             <button type="button" onClick={() => setShowForm(false)} className="font-cinzel text-sm px-4 py-2"
@@ -131,17 +190,19 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
         </form>
       )}
 
-      {/* Entries */}
+      {/* ── Entries ── */}
       {loading ? (
         <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>Lade Einträge...</p>
-      ) : entries.length === 0 ? (
+      ) : visibleEntries.length === 0 ? (
         <div className="flex flex-col items-center py-20">
           <p className="text-4xl mb-4">📖</p>
-          <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>Noch keine Einträge.</p>
+          <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
+            {filterTag ? `Keine Einträge mit Tag @${filterTag.label}.` : "Noch keine Einträge."}
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
-          {entries.map((entry) => {
+          {visibleEntries.map((entry) => {
             const canDelete = isDM || entry.user.id === userId;
             return (
               <article key={entry.id} style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
@@ -168,10 +229,12 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                       {entry.tags.map((tag) => {
                         const opt = tagOptions.find((o) => o.id === tag.referenzId);
                         return opt ? (
-                          <span key={tag.id} className="font-cinzel text-xs px-2 py-0.5"
+                          <button key={tag.id}
+                            onClick={() => { setFilterTag(opt); setFilterSearch(""); }}
+                            className="font-cinzel text-xs px-2 py-0.5 transition-opacity hover:opacity-80"
                             style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
                             @{opt.label}
-                          </span>
+                          </button>
                         ) : null;
                       })}
                     </div>
