@@ -7,8 +7,8 @@ export const dynamic = "force-dynamic";
 
 export default async function GeschichtePage() {
   const session = await auth();
-  const userId = session!.user.id as string;
-  const isDM = (session!.user as { role: string }).role === "DUNGEON_MASTER";
+  const userId = session!.user!.id as string;
+  const isDM = (session!.user! as { role: string }).role === "DUNGEON_MASTER";
 
   const [npcs, orgs, chars, users] = await Promise.all([
     prisma.nPC.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
