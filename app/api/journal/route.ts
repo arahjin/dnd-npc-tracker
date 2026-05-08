@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
 
   const typ = req.nextUrl.searchParams.get("typ");
   const userId = session.user!.id as string;
-  const isDM = (session.user as { role: string }).role === "DUNGEON_MASTER";
+  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session.user as { role: string }).role);
 
   const where =
     typ === "GESCHICHTE"

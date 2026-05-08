@@ -12,6 +12,7 @@ datasource db {
 enum Role {
   SPIELER
   DUNGEON_MASTER
+  ADMIN
 }
 
 enum JournalTyp {
@@ -40,10 +41,11 @@ model User {
 }
 
 model Invite {
-  id        String    @id @default(cuid())
-  token     String    @unique @default(cuid())
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
   usedById  String?
-  createdAt DateTime  @default(now())
+  role      Role     @default(SPIELER)
+  createdAt DateTime @default(now())
 }
 
 // ─── Existing DM content ─────────────────────────────────

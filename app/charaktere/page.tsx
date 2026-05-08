@@ -13,7 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
 export default async function CharakterePage() {
   const session = await auth();
   const userId = session!.user!.id as string;
-  const isDM = (session!.user! as { role: string }).role === "DUNGEON_MASTER";
+  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
 
   const charaktere = await prisma.charakter.findMany({
     orderBy: { name: "asc" },

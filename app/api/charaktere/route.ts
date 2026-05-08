@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
-  const isDM = (session.user as { role: string }).role === "DUNGEON_MASTER";
+  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session.user as { role: string }).role);
   const charaktere = await prisma.charakter.findMany({
     where: isDM ? undefined : undefined, // all chars visible to everyone
     orderBy: { name: "asc" },

@@ -7,7 +7,7 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
   if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
   const { id } = await params;
   const userId = session.user!.id as string;
-  const isDM = (session.user as { role: string }).role === "DUNGEON_MASTER";
+  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session.user as { role: string }).role);
 
   const entry = await prisma.journalEntry.findUnique({ where: { id } });
   if (!entry) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });

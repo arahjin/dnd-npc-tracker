@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 async function canEdit(userId: string, charakterId: string, role: string) {
-  if (role === "DUNGEON_MASTER") return true;
+  if (role === "DUNGEON_MASTER" || role === "ADMIN") return true;
   const c = await prisma.charakter.findUnique({ where: { id: charakterId }, select: { userId: true } });
   return c?.userId === userId;
 }

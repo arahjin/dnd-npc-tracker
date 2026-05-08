@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
-// One-time setup route to create the first Dungeon Master account.
+// One-time setup route to create the first Admin account.
 // Disabled once any user exists in the database.
 export async function POST(req: NextRequest) {
   const count = await prisma.user.count();
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   const passwordHash = await bcrypt.hash(password, 12);
   const user = await prisma.user.create({
-    data: { name, email, passwordHash, role: "DUNGEON_MASTER" },
+    data: { name, email, passwordHash, role: "ADMIN" },
   });
 
   return NextResponse.json({ ok: true, id: user.id });

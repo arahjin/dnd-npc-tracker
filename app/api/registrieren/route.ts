@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "E-Mail bereits registriert." }, { status: 400 });
 
   const passwordHash = await bcrypt.hash(password, 12);
-  const user = await prisma.user.create({ data: { email, name, passwordHash } });
+  const user = await prisma.user.create({ data: { email, name, passwordHash, role: invite.role } });
   await prisma.invite.update({ where: { token }, data: { usedById: user.id } });
 
   return NextResponse.json({ ok: true });

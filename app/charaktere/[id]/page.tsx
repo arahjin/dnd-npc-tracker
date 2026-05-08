@@ -23,7 +23,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
   const { id } = await params;
   const session = await auth();
   const userId = session!.user!.id as string;
-  const isDM = (session!.user! as { role: string }).role === "DUNGEON_MASTER";
+  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
 
   const [charakter, orgs] = await Promise.all([
     prisma.charakter.findUnique({
