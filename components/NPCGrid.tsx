@@ -12,7 +12,6 @@ type NPC = {
   status: string;
   beziehung: string;
   rasse: string | null;
-  organisationen: string | null;
   aktuellePosition: string | null;
 };
 
