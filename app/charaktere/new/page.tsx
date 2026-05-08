@@ -9,7 +9,7 @@ export default async function NewCharakterPage() {
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
-      <SiteHeader active="npcs" />
+      <SiteHeader active="charaktere" />
       <div className="mx-auto max-w-2xl px-6 py-10">
         <div className="mb-8">
           <h1 className="font-cinzel text-3xl font-bold" style={{ color: "var(--dnd-heading)" }}>Neuen Charakter erstellen</h1>
