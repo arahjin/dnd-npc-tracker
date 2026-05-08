@@ -29,16 +29,16 @@ export default async function Home() {
         <div className="mx-auto max-w-7xl px-6 py-6" style={{ position: "relative", zIndex: 2 }}>
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col items-start">
               <Image
                 src="/wildgipfel_logo.png"
                 alt="Wildgipfel"
-                width={180}
-                height={80}
+                width={200}
+                height={90}
                 className="object-contain"
-                style={{ filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.8))" }}
+                style={{ filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.9))" }}
               />
-              <p className="font-cinzel text-xs tracking-[0.3em] uppercase" style={{ color: "var(--dnd-red)" }}>
+              <p className="font-cinzel font-bold text-sm tracking-[0.25em] uppercase mt-1" style={{ color: "var(--dnd-heading)" }}>
                 NPC Kompendium
               </p>
             </div>

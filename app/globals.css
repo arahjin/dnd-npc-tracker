@@ -2,16 +2,19 @@
 @import "tailwindcss";
 
 :root {
-  --dnd-red: #C53131;
-  --dnd-red-dark: #8B1A1A;
+  --dnd-red: #A32020;
+  --dnd-red-dark: #6B1111;
+  --dnd-red-light: #C84040;
   --dnd-gold: #C9A84C;
   --dnd-gold-light: #E8C97A;
+  --dnd-heading: #FFFFFF;
+  --dnd-label: #B8A090;
   --dnd-bg: #0E0E0E;
   --dnd-bg-card: #1A1A1A;
   --dnd-bg-card2: #141414;
   --dnd-border: #2A2A2A;
-  --dnd-text: #E8E0D0;
-  --dnd-text-muted: #8A7A6A;
+  --dnd-text: #D8D0C8;
+  --dnd-text-muted: #7A6A5A;
 }
 
 body {

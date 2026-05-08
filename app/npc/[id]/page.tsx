@@ -32,7 +32,7 @@ function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
     <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #1E1E1E" }}>
-      <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-red)" }}>
+      <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-label)" }}>
         {label}
       </span>
       <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
@@ -60,7 +60,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
           <div className="flex gap-2">
             <Link href={`/npc/${id}/edit`}
               className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
-              style={{ border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>
+              style={{ border: "1px solid var(--dnd-gold)", color: "var(--dnd-heading)" }}>
               BEARBEITEN
             </Link>
             <DeleteButton id={id} />
@@ -108,20 +108,20 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
           <div className="md:col-span-2">
             {/* Name */}
             <div className="mb-6">
-              <h1 className="font-cinzel text-4xl font-bold leading-tight" style={{ color: "var(--dnd-gold)" }}>
+              <h1 className="font-cinzel text-4xl font-bold leading-tight" style={{ color: "var(--dnd-heading)" }}>
                 {npc.name}
               </h1>
               {/* Decorative line */}
               <div className="mt-3 flex items-center gap-3">
                 <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
-                <span style={{ color: "var(--dnd-red)" }}>✦</span>
+                <span style={{ color: "var(--dnd-label)" }}>✦</span>
               </div>
             </div>
 
             {/* Stats Block */}
             <div className="mb-6" style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
               <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
-                <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-gold-light)" }}>
+                <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>
                   Charakterdaten
                 </h2>
               </div>
@@ -141,7 +141,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
             {npc.notizen && (
               <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
                 <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
-                  <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-gold-light)" }}>
+                  <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>
                     Notizen
                   </h2>
                 </div>

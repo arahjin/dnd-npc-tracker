@@ -122,7 +122,7 @@ export default function NPCForm({ initial, id }: Props) {
 
       {/* Name */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Name *</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Name *</label>
         <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)}
           placeholder="z.B. Thandrel Nachtschatten" className={inputClass} style={inputStyle} />
       </div>
@@ -131,7 +131,7 @@ export default function NPCForm({ initial, id }: Props) {
       <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
         {/* Section Header */}
         <div className="px-4 py-2 flex items-center gap-2" style={{ borderBottom: "1px solid #2A2A2A", background: "var(--dnd-red-dark)" }}>
-          <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-gold-light)" }}>
+          <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-heading)" }}>
             Charakterbild
           </span>
         </div>
@@ -217,14 +217,14 @@ export default function NPCForm({ initial, id }: Props) {
       {/* Status + Beziehung */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Status</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Status</label>
           <select value={form.status} onChange={(e) => set("status", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Beziehung</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Beziehung</label>
           <select value={form.beziehung} onChange={(e) => set("beziehung", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
@@ -235,12 +235,12 @@ export default function NPCForm({ initial, id }: Props) {
       {/* Rasse + Alter */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Rasse</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Rasse</label>
           <input type="text" value={form.rasse} onChange={(e) => set("rasse", e.target.value)}
             placeholder="z.B. Elf, Mensch, Zwerg..." className={inputClass} style={inputStyle} />
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Alter</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Alter</label>
           <input type="text" value={form.alter} onChange={(e) => set("alter", e.target.value)}
             placeholder="z.B. 47" className={inputClass} style={inputStyle} />
         </div>
@@ -248,28 +248,28 @@ export default function NPCForm({ initial, id }: Props) {
 
       {/* Herkunft */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Herkunft</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Herkunft</label>
         <input type="text" value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)}
           placeholder="Geburtsort oder Heimat" className={inputClass} style={inputStyle} />
       </div>
 
       {/* Aktuelle Position */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Aktuelle Position</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Aktuelle Position</label>
         <input type="text" value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
           placeholder="Wo hält sich der NPC auf?" className={inputClass} style={inputStyle} />
       </div>
 
       {/* Organisationen */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Organisationen</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Organisationen</label>
         <input type="text" value={form.organisationen} onChange={(e) => set("organisationen", e.target.value)}
           placeholder="Gilden, Fraktionen, Orden..." className={inputClass} style={inputStyle} />
       </div>
 
       {/* Notizen */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-red)" }}>Notizen</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Notizen</label>
         <textarea value={form.notizen} onChange={(e) => set("notizen", e.target.value)}
           placeholder="Hintergrundgeschichte, Quests, wichtige Infos..."
           rows={6} className={inputClass + " resize-none"} style={inputStyle} />
@@ -278,7 +278,7 @@ export default function NPCForm({ initial, id }: Props) {
       {/* Divider */}
       <div className="flex items-center gap-3">
         <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red-dark), transparent)" }} />
-        <span style={{ color: "var(--dnd-red)" }}>✦</span>
+        <span style={{ color: "var(--dnd-label)" }}>✦</span>
       </div>
 
       {/* Buttons */}

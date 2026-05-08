@@ -137,7 +137,7 @@ export default function NPCGrid({ npcs }: { npcs: NPC[] }) {
               {/* Info */}
               <div className="p-4">
                 <h2 className="font-cinzel font-semibold text-base leading-tight group-hover:transition-colors"
-                  style={{ color: "var(--dnd-gold-light)" }}>
+                  style={{ color: "var(--dnd-heading)" }}>
                   {npc.name}
                 </h2>
                 {npc.rasse && (
