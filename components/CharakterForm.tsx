@@ -191,7 +191,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
         </label>
         <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
           rows={6} className={inputClass + " resize-none"} style={inputStyle}
-          placeholder="@ tippen um Personen, Orgs oder Charaktere zu verknüpfen" />
+          placeholder="@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen" />
       </div>
 
       <div className="flex items-center gap-3">

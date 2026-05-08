@@ -25,7 +25,7 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
 
           {/* Nav Links */}
           <nav style={{ display: "flex", alignItems: "stretch", flex: 1 }}>
-            <Link href="/" className={`ddb-nav-link${active === "npcs" ? " ddb-nav-active" : ""}`}>Personen</Link>
+            <Link href="/" className={`ddb-nav-link${active === "npcs" ? " ddb-nav-active" : ""}`}>NPCs</Link>
             <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen" ? " ddb-nav-active" : ""}`}>Organisationen</Link>
             <Link href="/charaktere" className={`ddb-nav-link${active === "charaktere" ? " ddb-nav-active" : ""}`}>Charaktere</Link>
             <Link href="/geschichte" className={`ddb-nav-link${active === "geschichte" ? " ddb-nav-active" : ""}`}>Geschichte</Link>
@@ -37,7 +37,7 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
             <NavSearch />
             {actionSlot ?? (
               <Link href={active === "organisationen" ? "/organisationen/new" : "/npc/new"} className="ddb-cta">
-                {active === "organisationen" ? "+ Organisation" : "+ Person"}
+                {active === "organisationen" ? "+ Organisation" : "+ NPC"}
               </Link>
             )}
             {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} />}

@@ -361,7 +361,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
           Notizen <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
         </label>
         <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
-          placeholder={"Hintergrundgeschichte, Quests, wichtige Infos...\n\n@ tippen um Personen, Orgs oder Charaktere zu verknüpfen"}
+          placeholder={"Hintergrundgeschichte, Quests, wichtige Infos...\n\n@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
           rows={6} className={inputClass + " resize-none"} style={inputStyle} />
       </div>
 

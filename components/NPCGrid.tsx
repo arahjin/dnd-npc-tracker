@@ -65,7 +65,7 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
         <div className="flex-1 min-w-48 relative">
           <input
             type="text"
-            placeholder="Person suchen..."
+            placeholder="NPC suchen..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-4 py-2 font-cinzel text-sm tracking-wide outline-none transition-colors"

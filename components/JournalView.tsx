@@ -124,7 +124,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
           ) : (
             <div className="relative flex-1">
               <input type="text" value={filterSearch} onChange={(e) => setFilterSearch(e.target.value)}
-                placeholder="Nach Person, Org oder Charakter filtern..."
+                placeholder="Nach NPC, Org oder Charakter filtern..."
                 className="w-full px-3 py-1.5 text-sm outline-none" style={inputStyle} />
               {filterSearch && filterTagOptions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 z-20"
@@ -171,7 +171,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
             </label>
             <MentionTextarea
               value={inhalt} onChange={setInhalt} tagOptions={tagOptions} rows={6} required
-              placeholder={"Was ist passiert...\n\nTipp: @ tippen um Personen, Orgs oder Charaktere zu verknüpfen"}
+              placeholder={"Was ist passiert...\n\nTipp: @ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
               className="w-full px-4 py-2 outline-none resize-none" style={inputStyle}
             />
           </div>

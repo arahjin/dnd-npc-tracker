@@ -167,10 +167,10 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
           </div>
         )}
 
-        {/* ── Personen ── */}
+        {/* ── NPCs ── */}
         {npcs.length > 0 && (
           <section className="mb-10">
-            <SectionHeader label="Personen" count={npcs.length} />
+            <SectionHeader label="NPCs" count={npcs.length} />
             <div className="space-y-2">
               {npcs.map((npc) => (
                 <Link key={npc.id} href={`/npc/${npc.id}`}

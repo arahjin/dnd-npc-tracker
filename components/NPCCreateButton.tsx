@@ -16,7 +16,7 @@ export default function NPCCreateButton({ availableOrgs }: Props) {
         onClick={() => setOpen(true)}
         className="ddb-cta"
       >
-        + Person
+        + NPC
       </button>
 
       <NPCModal
