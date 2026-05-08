@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS, REGION_OPTIONS } from "@/lib/constants";
+import MentionTextarea from "./MentionTextarea";
 
 type OrgMembership = { organisationId: string; rolle: string };
 
@@ -185,9 +186,12 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
       )}
 
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Notizen</label>
-        <textarea value={form.notizen} onChange={(e) => set("notizen", e.target.value)}
-          rows={6} className={inputClass + " resize-none"} style={inputStyle} />
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
+          Notizen <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+        </label>
+        <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
+          rows={6} className={inputClass + " resize-none"} style={inputStyle}
+          placeholder="@ tippen um Personen, Orgs oder Charaktere zu verknüpfen" />
       </div>
 
       <div className="flex items-center gap-3">

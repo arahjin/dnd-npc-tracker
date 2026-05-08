@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS, REGION_OPTIONS } from "@/lib/constants";
+import MentionTextarea from "./MentionTextarea";
 
 type NPCData = {
   name: string;
@@ -356,9 +357,11 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
 
       {/* Notizen */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Notizen</label>
-        <textarea value={form.notizen} onChange={(e) => set("notizen", e.target.value)}
-          placeholder="Hintergrundgeschichte, Quests, wichtige Infos..."
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
+          Notizen <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+        </label>
+        <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
+          placeholder={"Hintergrundgeschichte, Quests, wichtige Infos...\n\n@ tippen um Personen, Orgs oder Charaktere zu verknüpfen"}
           rows={6} className={inputClass + " resize-none"} style={inputStyle} />
       </div>
 

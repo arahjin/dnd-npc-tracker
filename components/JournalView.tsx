@@ -1,22 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import MentionTextarea from "./MentionTextarea";
+import RenderMentions from "./RenderMentions";
+import { extractTagsFromText, MENTION_ICON, type MentionOption } from "@/lib/mentions";
 
 type Tag = { id: string; tagTyp: string; referenzId: string };
 type Entry = {
   id: string; titel: string | null; inhalt: string; typ: string;
   createdAt: string; user: { id: string; name: string }; tags: Tag[];
 };
-type TagOption = { id: string; label: string; typ: string };
 
 type Props = {
   typ: "TAGEBUCH" | "GESCHICHTE";
   userId: string;
   isDM: boolean;
-  tagOptions: TagOption[];
+  tagOptions: MentionOption[];
 };
-
-const TAG_ICON: Record<string, string> = { PERSON: "👤", ORGANISATION: "🏛", CHARAKTER: "⚔", SPIELER: "🎲" };
 
 export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -26,20 +26,16 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
   // new entry
   const [titel, setTitel] = useState("");
   const [inhalt, setInhalt] = useState("");
-  const [selectedTags, setSelectedTags] = useState<TagOption[]>([]);
-  const [tagSearch, setTagSearch] = useState("");
   const [saving, setSaving] = useState(false);
 
   // filter
-  const [filterTag, setFilterTag] = useState<TagOption | null>(null);
+  const [filterTag, setFilterTag] = useState<MentionOption | null>(null);
   const [filterSearch, setFilterSearch] = useState("");
 
   // editing
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitel, setEditTitel] = useState("");
   const [editInhalt, setEditInhalt] = useState("");
-  const [editTags, setEditTags] = useState<TagOption[]>([]);
-  const [editTagSearch, setEditTagSearch] = useState("");
   const [editSaving, setEditSaving] = useState(false);
 
   useEffect(() => { loadEntries(); }, []);
@@ -55,16 +51,14 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
     e.preventDefault();
     if (!inhalt.trim()) return;
     setSaving(true);
+    const tags = extractTagsFromText(inhalt);
     const res = await fetch("/api/journal", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        typ, titel, inhalt,
-        tags: selectedTags.map((t) => ({ tagTyp: t.typ, referenzId: t.id })),
-      }),
+      body: JSON.stringify({ typ, titel, inhalt, tags }),
     });
     if (res.ok) {
-      setTitel(""); setInhalt(""); setSelectedTags([]); setShowForm(false);
+      setTitel(""); setInhalt(""); setShowForm(false);
       await loadEntries();
     }
     setSaving(false);
@@ -80,31 +74,21 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
     setEditingId(entry.id);
     setEditTitel(entry.titel ?? "");
     setEditInhalt(entry.inhalt);
-    setEditTags(
-      entry.tags
-        .map((t) => tagOptions.find((o) => o.id === t.referenzId))
-        .filter((o): o is TagOption => !!o)
-    );
-    setEditTagSearch("");
   }
 
   function cancelEdit() {
-    setEditingId(null);
-    setEditTitel(""); setEditInhalt(""); setEditTags([]); setEditTagSearch("");
+    setEditingId(null); setEditTitel(""); setEditInhalt("");
   }
 
   async function handleEdit(e: React.FormEvent, id: string) {
     e.preventDefault();
     if (!editInhalt.trim()) return;
     setEditSaving(true);
+    const tags = extractTagsFromText(editInhalt);
     const res = await fetch(`/api/journal/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        titel: editTitel,
-        inhalt: editInhalt,
-        tags: editTags.map((t) => ({ tagTyp: t.typ, referenzId: t.id })),
-      }),
+      body: JSON.stringify({ titel: editTitel, inhalt: editInhalt, tags }),
     });
     if (res.ok) {
       const updated = await res.json();
@@ -113,10 +97,6 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
     }
     setEditSaving(false);
   }
-
-  const filteredTagOptions = tagOptions.filter(
-    (t) => t.label.toLowerCase().includes(tagSearch.toLowerCase()) && !selectedTags.find((s) => s.id === t.id)
-  );
 
   const filterTagOptions = tagOptions.filter(
     (t) => t.label.toLowerCase().includes(filterSearch.toLowerCase()) && t.id !== filterTag?.id
@@ -127,31 +107,25 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
     : entries;
 
   const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "#D8D0C8", fontFamily: "'Roboto', sans-serif" };
+  const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
   return (
     <div>
       {/* ── Tag Filter ── */}
       <div className="mb-6 p-4" style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
         <div className="flex items-center gap-3">
-          <span className="font-cinzel text-xs tracking-widest uppercase shrink-0" style={{ color: "var(--dnd-label)" }}>
-            Filter
-          </span>
+          <span className="font-cinzel text-xs tracking-widest uppercase shrink-0" style={{ color: "var(--dnd-label)" }}>Filter</span>
           {filterTag ? (
             <span className="font-cinzel text-xs px-2 py-1 flex items-center gap-2"
               style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
-              {TAG_ICON[filterTag.typ]} {filterTag.label}
+              {MENTION_ICON[filterTag.typ]} {filterTag.label}
               <button onClick={() => { setFilterTag(null); setFilterSearch(""); }} style={{ opacity: 0.7 }}>✕</button>
             </span>
           ) : (
             <div className="relative flex-1">
-              <input
-                type="text"
-                value={filterSearch}
-                onChange={(e) => setFilterSearch(e.target.value)}
+              <input type="text" value={filterSearch} onChange={(e) => setFilterSearch(e.target.value)}
                 placeholder="Nach Person, Org oder Charakter filtern..."
-                className="w-full px-3 py-1.5 text-sm outline-none"
-                style={inputStyle}
-              />
+                className="w-full px-3 py-1.5 text-sm outline-none" style={inputStyle} />
               {filterSearch && filterTagOptions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 z-20"
                   style={{ background: "#111", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
@@ -162,7 +136,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                       style={{ color: "var(--dnd-text)", borderBottom: "1px solid #1A1A1A" }}
                       onMouseEnter={(e) => (e.currentTarget.style.background = "#1A1A1A")}
                       onMouseLeave={(e) => (e.currentTarget.style.background = "")}>
-                      {TAG_ICON[t.typ]} {t.label}
+                      {MENTION_ICON[t.typ]} {t.label}
                     </button>
                   ))}
                 </div>
@@ -179,9 +153,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
 
       {/* ── New Entry Button ── */}
       {!showForm && (
-        <button onClick={() => setShowForm(true)} className="ddb-cta mb-8">
-          + Neuer Eintrag
-        </button>
+        <button onClick={() => setShowForm(true)} className="ddb-cta mb-8">+ Neuer Eintrag</button>
       )}
 
       {/* ── New Entry Form ── */}
@@ -189,44 +161,19 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
         <form onSubmit={handleSubmit} className="mb-8 p-5 space-y-4" style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
           <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
           <div>
-            <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Titel (optional)</label>
+            <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Titel (optional)</label>
             <input type="text" value={titel} onChange={(e) => setTitel(e.target.value)}
               placeholder="Titel des Eintrags" className="w-full px-4 py-2 outline-none" style={inputStyle} />
           </div>
           <div>
-            <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Inhalt *</label>
-            <textarea value={inhalt} onChange={(e) => setInhalt(e.target.value)} rows={6} required
-              placeholder="Was ist passiert..." className="w-full px-4 py-2 outline-none resize-none" style={inputStyle} />
-          </div>
-          <div>
-            <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Personen / Orgs / Charaktere taggen</label>
-            {selectedTags.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2">
-                {selectedTags.map((t) => (
-                  <span key={t.id} className="font-cinzel text-xs px-2 py-1 flex items-center gap-1"
-                    style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
-                    @{t.label}
-                    <button type="button" onClick={() => setSelectedTags((p) => p.filter((s) => s.id !== t.id))} style={{ opacity: 0.7 }}>✕</button>
-                  </span>
-                ))}
-              </div>
-            )}
-            <input type="text" value={tagSearch} onChange={(e) => setTagSearch(e.target.value)}
-              placeholder="Person, Org oder Charakter suchen..." className="w-full px-4 py-2 outline-none" style={inputStyle} />
-            {tagSearch && filteredTagOptions.length > 0 && (
-              <div style={{ background: "#111", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
-                {filteredTagOptions.slice(0, 8).map((t) => (
-                  <button key={t.id} type="button"
-                    onClick={() => { setSelectedTags((p) => [...p, t]); setTagSearch(""); }}
-                    className="w-full text-left px-4 py-2 font-cinzel text-xs transition-colors"
-                    style={{ color: "var(--dnd-text)", borderBottom: "1px solid #1A1A1A" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = "#1A1A1A")}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "")}>
-                    <span style={{ color: "var(--dnd-text-muted)" }}>{TAG_ICON[t.typ]}</span>{" "}{t.label}
-                  </button>
-                ))}
-              </div>
-            )}
+            <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
+              Inhalt * <span className="normal-case tracking-normal opacity-60">— @ tippen zum Verknüpfen</span>
+            </label>
+            <MentionTextarea
+              value={inhalt} onChange={setInhalt} tagOptions={tagOptions} rows={6} required
+              placeholder={"Was ist passiert...\n\nTipp: @ tippen um Personen, Orgs oder Charaktere zu verknüpfen"}
+              className="w-full px-4 py-2 outline-none resize-none" style={inputStyle}
+            />
           </div>
           <div className="flex gap-3">
             <button type="submit" disabled={saving} className="ddb-cta">{saving ? "SPEICHERN..." : "EINTRAG SPEICHERN"}</button>
@@ -243,7 +190,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
         <div className="flex flex-col items-center py-20">
           <p className="text-4xl mb-4">📖</p>
           <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-            {filterTag ? `Keine Einträge mit Tag @${filterTag.label}.` : "Noch keine Einträge."}
+            {filterTag ? `Keine Einträge mit @${filterTag.label}.` : "Noch keine Einträge."}
           </p>
         </div>
       ) : (
@@ -251,9 +198,6 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
           {visibleEntries.map((entry) => {
             const canEdit = isDM || entry.user.id === userId;
             const isEditing = editingId === entry.id;
-            const editFilteredTags = tagOptions.filter(
-              (t) => t.label.toLowerCase().includes(editTagSearch.toLowerCase()) && !editTags.find((s) => s.id === t.id)
-            );
             return (
               <article key={entry.id} style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                 <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
@@ -261,44 +205,18 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                 {isEditing ? (
                   <form onSubmit={(e) => handleEdit(e, entry.id)} className="px-5 py-4 space-y-4">
                     <div>
-                      <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Titel (optional)</label>
+                      <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Titel (optional)</label>
                       <input type="text" value={editTitel} onChange={(e) => setEditTitel(e.target.value)}
                         className="w-full px-4 py-2 outline-none" style={inputStyle} />
                     </div>
                     <div>
-                      <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Inhalt *</label>
-                      <textarea value={editInhalt} onChange={(e) => setEditInhalt(e.target.value)} rows={6} required
-                        className="w-full px-4 py-2 outline-none resize-none" style={inputStyle} />
-                    </div>
-                    <div>
-                      <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Tags</label>
-                      {editTags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-2">
-                          {editTags.map((t) => (
-                            <span key={t.id} className="font-cinzel text-xs px-2 py-1 flex items-center gap-1"
-                              style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
-                              @{t.label}
-                              <button type="button" onClick={() => setEditTags((p) => p.filter((s) => s.id !== t.id))} style={{ opacity: 0.7 }}>✕</button>
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                      <input type="text" value={editTagSearch} onChange={(e) => setEditTagSearch(e.target.value)}
-                        placeholder="Person, Org oder Charakter suchen..." className="w-full px-4 py-2 outline-none" style={inputStyle} />
-                      {editTagSearch && editFilteredTags.length > 0 && (
-                        <div style={{ background: "#111", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
-                          {editFilteredTags.slice(0, 8).map((t) => (
-                            <button key={t.id} type="button"
-                              onClick={() => { setEditTags((p) => [...p, t]); setEditTagSearch(""); }}
-                              className="w-full text-left px-4 py-2 font-cinzel text-xs"
-                              style={{ color: "var(--dnd-text)", borderBottom: "1px solid #1A1A1A" }}
-                              onMouseEnter={(e) => (e.currentTarget.style.background = "#1A1A1A")}
-                              onMouseLeave={(e) => (e.currentTarget.style.background = "")}>
-                              {TAG_ICON[t.typ]} {t.label}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                      <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
+                        Inhalt * <span className="normal-case tracking-normal opacity-60">— @ tippen zum Verknüpfen</span>
+                      </label>
+                      <MentionTextarea
+                        value={editInhalt} onChange={setEditInhalt} tagOptions={tagOptions} rows={6} required
+                        className="w-full px-4 py-2 outline-none resize-none" style={inputStyle}
+                      />
                     </div>
                     <div className="flex gap-3">
                       <button type="submit" disabled={editSaving} className="ddb-cta">
@@ -329,7 +247,9 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                         </div>
                       )}
                     </div>
-                    <p className="leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{entry.inhalt}</p>
+                    <div className="leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
+                      <RenderMentions text={entry.inhalt} />
+                    </div>
                     {entry.tags.length > 0 && (
                       <div className="mt-3 flex flex-wrap gap-2">
                         {entry.tags.map((tag) => {

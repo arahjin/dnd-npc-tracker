@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import DeleteButton from "@/components/DeleteButton";
 import NPCEditButton from "@/components/NPCEditButton";
+import RenderMentions from "@/components/RenderMentions";
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   Lebendig:  { bg: "#0D2010", text: "#4ADE80", border: "#166534" },
@@ -179,8 +180,8 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                   </h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "1.1rem" }}>
-                    {npc.notizen}
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "1.1rem" }}>
+                    <RenderMentions text={npc.notizen} />
                   </p>
                 </div>
               </div>

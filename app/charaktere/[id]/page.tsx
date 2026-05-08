@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import SiteHeader from "@/components/SiteHeader";
 import CharakterEditButton from "@/components/CharakterEditButton";
 import CharakterDeleteButton from "@/components/CharakterDeleteButton";
+import RenderMentions from "@/components/RenderMentions";
 
 export const dynamic = "force-dynamic";
 
@@ -132,7 +133,9 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
                   <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Notizen</h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{charakter.notizen}</p>
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
+                    <RenderMentions text={charakter.notizen} />
+                  </p>
                 </div>
               </div>
             )}
