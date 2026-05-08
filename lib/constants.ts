@@ -27,3 +27,27 @@ export const REGION_OPTIONS = [
   "Wogenimperium",
   "Luxaria",
 ];
+
+export const ALIGNMENT_OPTIONS = [
+  "Rechtschaffen Gut",
+  "Neutral Gut",
+  "Chaotisch Gut",
+  "Rechtschaffen Neutral",
+  "Wahrhaft Neutral",
+  "Chaotisch Neutral",
+  "Rechtschaffen Böse",
+  "Neutral Böse",
+  "Chaotisch Böse",
+];
+
+export const ORGANISATION_TYP_OPTIONS = [
+  "Gilde",
+  "Fraktion",
+  "Orden",
+  "Regierung",
+  "Kult",
+  "Händlerverband",
+  "Militär",
+  "Kriminelle Organisation",
+  "Sonstiges",
+];

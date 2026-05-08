@@ -44,7 +44,10 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function NPCDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const npc = await prisma.nPC.findUnique({ where: { id } });
+  const npc = await prisma.nPC.findUnique({
+    where: { id },
+    include: { organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } } },
+  });
   if (!npc) notFound();
 
   return (
@@ -138,6 +141,25 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                 )}
               </div>
             </div>
+
+            {/* Organisationen */}
+            {npc.organisationen.length > 0 && (
+              <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+                <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+                  <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Organisationen</h2>
+                </div>
+                <div className="divide-y" style={{ borderColor: "#1E1E1E" }}>
+                  {npc.organisationen.map((m) => (
+                    <div key={m.id} className="px-4 py-3 flex items-center justify-between gap-4">
+                      <Link href={`/organisationen/${m.organisationId}`} className="font-cinzel text-sm font-semibold hover:underline" style={{ color: "var(--dnd-heading)" }}>
+                        {m.organisation.name}
+                      </Link>
+                      {m.rolle && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>{m.rolle}</span>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Notes */}
             {npc.notizen && (

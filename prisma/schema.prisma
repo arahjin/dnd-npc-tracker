@@ -8,19 +8,44 @@ datasource db {
 }
 
 model NPC {
-  id               String   @id @default(cuid())
+  id               String            @id @default(cuid())
   name             String
   image            String?
-  status           String   @default("Unbekannt")
-  beziehung        String   @default("Unbekannt")
+  status           String            @default("Unbekannt")
+  beziehung        String            @default("Unbekannt")
   geschlecht       String?
   region           String?
-  organisationen   String?
   alter            String?
   rasse            String?
   herkunft         String?
   aktuellePosition String?
   notizen          String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  organisationen   NPCOrganisation[]
+}
+
+model Organisation {
+  id                 String            @id @default(cuid())
+  name               String
+  beschreibung       String?
+  typ                String?
+  region             String?
+  alignment          String?
+  beziehungZurGruppe String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  mitglieder         NPCOrganisation[]
+}
+
+model NPCOrganisation {
+  id             String       @id @default(cuid())
+  npc            NPC          @relation(fields: [npcId], references: [id], onDelete: Cascade)
+  npcId          String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  organisationId String
+  rolle          String?
+  createdAt      DateTime     @default(now())
+
+  @@unique([npcId, organisationId])
 }
