@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import OrgDeleteButton from "@/components/OrgDeleteButton";
 import OrgMitglieder from "@/components/OrgMitglieder";
+import CharakterMitglieder from "@/components/CharakterMitglieder";
 
 const ALIGNMENT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   "Rechtschaffen Gut":    { bg: "#0A1020", text: "#60A5FA", border: "#1E3A8A" },
@@ -31,11 +32,20 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
   const { id } = await params;
   const org = await prisma.organisation.findUnique({
     where: { id },
-    include: { mitglieder: { include: { npc: true }, orderBy: { createdAt: "asc" } } },
+    include: {
+      mitglieder: { include: { npc: true }, orderBy: { createdAt: "asc" } },
+      charakterMitglieder: {
+        include: { charakter: { include: { user: { select: { id: true, name: true } } } } },
+        orderBy: { createdAt: "asc" },
+      },
+    },
   });
   if (!org) notFound();
 
-  const alleNPCs = await prisma.nPC.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
+  const [alleNPCs, alleCharaktere] = await Promise.all([
+    prisma.nPC.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.charakter.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, user: { select: { id: true, name: true } } } }),
+  ]);
   const alignColors = org.alignment ? (ALIGNMENT_COLORS[org.alignment] ?? ALIGNMENT_COLORS["Wahrhaft Neutral"]) : null;
 
   return (
@@ -96,7 +106,22 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
         </div>
 
         {/* Mitglieder */}
-        <OrgMitglieder orgId={id} mitglieder={org.mitglieder.map(m => ({ id: m.id, npcId: m.npcId, name: m.npc.name, image: m.npc.image, rolle: m.rolle }))} alleNPCs={alleNPCs} />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <OrgMitglieder
+            orgId={id}
+            mitglieder={org.mitglieder.map((m) => ({ id: m.id, npcId: m.npcId, name: m.npc.name, image: m.npc.image, rolle: m.rolle }))}
+            alleNPCs={alleNPCs}
+          />
+          <CharakterMitglieder
+            orgId={id}
+            mitglieder={org.charakterMitglieder.map((m) => ({
+              id: m.id, charakterId: m.charakterId,
+              name: m.charakter.name, image: m.charakter.image ?? null,
+              rolle: m.rolle, playerName: m.charakter.user.name,
+            }))}
+            alleCharaktere={alleCharaktere}
+          />
+        </div>
       </div>
     </main>
   );
