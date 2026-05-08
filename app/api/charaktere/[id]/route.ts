@@ -25,8 +25,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
   const { id } = await params;
-  const role = (session.user as { role: string }).role;
-  if (!(await canEdit(session.user.id as string, id, role)))
+  const user = session.user!;
+  const role = (user as { role: string }).role;
+  if (!(await canEdit(user.id as string, id, role)))
     return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
 
   const { organisationen, ...data } = await req.json();
@@ -48,8 +49,9 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
   const session = await auth();
   if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
   const { id } = await params;
-  const role = (session.user as { role: string }).role;
-  if (!(await canEdit(session.user.id as string, id, role)))
+  const user = session.user!;
+  const role = (user as { role: string }).role;
+  if (!(await canEdit(user.id as string, id, role)))
     return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
   await prisma.charakter.delete({ where: { id } });
   return NextResponse.json({ ok: true });
