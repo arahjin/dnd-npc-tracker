@@ -11,10 +11,11 @@ type OrgData = {
   region: string;
   alignment: string;
   beziehungZurGruppe: string;
+  gottheit: string;
 };
 
 const EMPTY: OrgData = {
-  name: "", beschreibung: "", typ: "", region: "", alignment: "", beziehungZurGruppe: "",
+  name: "", beschreibung: "", typ: "", region: "", alignment: "", beziehungZurGruppe: "", gottheit: "",
 };
 
 export default function OrgForm({ initial, id }: { initial?: Partial<OrgData>; id?: string }) {
@@ -39,6 +40,7 @@ export default function OrgForm({ initial, id }: { initial?: Partial<OrgData>; i
       region: form.region || null,
       alignment: form.alignment || null,
       beziehungZurGruppe: form.beziehungZurGruppe.trim() || null,
+      gottheit: form.gottheit.trim() || null,
     };
     const res = id
       ? await fetch(`/api/organisationen/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
@@ -91,6 +93,12 @@ export default function OrgForm({ initial, id }: { initial?: Partial<OrgData>; i
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Beziehung zur Gruppe</label>
         <textarea value={form.beziehungZurGruppe} onChange={(e) => set("beziehungZurGruppe", e.target.value)}
           placeholder="Wie verhält sich die Organisation zur Spielergruppe?" rows={3} className={inputClass + " resize-none"} style={inputStyle} />
+      </div>
+
+      <div>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Gottheit</label>
+        <input type="text" value={form.gottheit} onChange={(e) => set("gottheit", e.target.value)}
+          placeholder="Verehrte oder schützende Gottheit(en)" className={inputClass} style={inputStyle} />
       </div>
 
       <div>

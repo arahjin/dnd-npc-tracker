@@ -16,6 +16,7 @@ type NPCData = {
   rasse: string;
   herkunft: string;
   aktuellePosition: string;
+  gottheit: string;
   notizen: string;
 };
 
@@ -32,7 +33,7 @@ type Props = {
 const EMPTY: NPCData = {
   name: "", image: "", status: "Unbekannt", beziehung: "Unbekannt",
   geschlecht: "", region: "",
-  alter: "", rasse: "", herkunft: "", aktuellePosition: "", notizen: "",
+  alter: "", rasse: "", herkunft: "", aktuellePosition: "", gottheit: "", notizen: "",
 };
 
 export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], onSuccess }: Props) {
@@ -98,6 +99,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       rasse: form.rasse.trim() || null,
       herkunft: form.herkunft.trim() || null,
       aktuellePosition: form.aktuellePosition.trim() || null,
+      gottheit: form.gottheit.trim() || null,
       notizen: form.notizen.trim() || null,
       organisationen: selectedOrgs.filter((o) => o.organisationId),
     };
@@ -296,6 +298,13 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       </div>
 
       {/* Organisationen */}
+      {/* Gottheit */}
+      <div>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Gottheit</label>
+        <input type="text" value={form.gottheit} onChange={(e) => set("gottheit", e.target.value)}
+          placeholder="Verehrte Gottheit(en)" className={inputClass} style={inputStyle} />
+      </div>
+
       {availableOrgs.length > 0 && (
         <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
           <div className="px-4 py-2" style={{ borderBottom: "1px solid #2A2A2A", background: "var(--dnd-red-dark)" }}>

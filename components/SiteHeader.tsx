@@ -1,51 +1,46 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { auth } from "@/auth";
 import NavSearch from "./NavSearch";
+import UserMenu from "./UserMenu";
 
-export default function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen"; actionSlot?: React.ReactNode }) {
+export default async function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch"; actionSlot?: React.ReactNode }) {
+  const session = await auth();
+  const user = session?.user as { name?: string | null; role?: string } | undefined;
+
   return (
     <header>
       {/* ── Top Nav Bar ── */}
       <div style={{ background: "#111111", borderBottom: "1px solid #252525", position: "relative", zIndex: 10 }}>
-        {/* Thin accent line */}
         <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
 
         <div className="mx-auto max-w-7xl px-6" style={{ display: "flex", alignItems: "stretch", height: "60px" }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "32px", flexShrink: 0 }}>
-            <Image
-              src="/wildgipfel_logo.png"
-              alt="Wildgipfel"
-              width={150}
-              height={68}
-              className="object-contain"
-              style={{ filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.9))" }}
-            />
+          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "24px", flexShrink: 0 }}>
+            <Image src="/wildgipfel_logo.png" alt="Wildgipfel" width={140} height={63} className="object-contain"
+              style={{ filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.9))" }} />
           </Link>
 
           {/* Nav Links */}
           <nav style={{ display: "flex", alignItems: "stretch", flex: 1 }}>
-            <Link href="/" className={`ddb-nav-link${active === "npcs" ? " ddb-nav-active" : ""}`}>
-              Personen
-            </Link>
-            <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen" ? " ddb-nav-active" : ""}`}>
-              Organisationen
-            </Link>
+            <Link href="/" className={`ddb-nav-link${active === "npcs" ? " ddb-nav-active" : ""}`}>Personen</Link>
+            <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen" ? " ddb-nav-active" : ""}`}>Organisationen</Link>
+            <Link href="/charaktere" className={`ddb-nav-link${active === "charaktere" ? " ddb-nav-active" : ""}`}>Charaktere</Link>
+            <Link href="/geschichte" className={`ddb-nav-link${active === "geschichte" ? " ddb-nav-active" : ""}`}>Geschichte</Link>
+            <Link href="/tagebuch" className={`ddb-nav-link${active === "tagebuch" ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
           </nav>
 
-          {/* Right: Search + CTA */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          {/* Right: Search + CTA + User */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <NavSearch />
             {actionSlot ?? (
-              <Link
-                href={active === "organisationen" ? "/organisationen/new" : "/npc/new"}
-                className="ddb-cta"
-              >
+              <Link href={active === "organisationen" ? "/organisationen/new" : "/npc/new"} className="ddb-cta">
                 {active === "organisationen" ? "+ Organisation" : "+ Person"}
               </Link>
             )}
+            {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} />}
           </div>
 
         </div>

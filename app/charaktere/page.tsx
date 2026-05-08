@@ -1,0 +1,90 @@
+import Link from "next/link";
+import Image from "next/image";
+import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import SiteHeader from "@/components/SiteHeader";
+
+export const dynamic = "force-dynamic";
+
+const STATUS_COLORS: Record<string, string> = {
+  Lebendig: "#4ADE80", Tot: "#F87171", Vermisst: "#FCD34D", Unbekannt: "#9CA3AF",
+};
+
+export default async function CharakterePage() {
+  const session = await auth();
+  const userId = session!.user.id as string;
+  const isDM = (session!.user as { role: string }).role === "DUNGEON_MASTER";
+
+  const charaktere = await prisma.charakter.findMany({
+    orderBy: { name: "asc" },
+    include: { user: { select: { id: true, name: true } } },
+  });
+
+  const own = charaktere.filter((c) => c.userId === userId);
+  const others = charaktere.filter((c) => c.userId !== userId);
+
+  return (
+    <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
+      <SiteHeader active="npcs" actionSlot={
+        <Link href="/charaktere/new" className="ddb-cta">+ Charakter</Link>
+      } />
+      <div className="mx-auto max-w-7xl px-6 py-8">
+
+        {/* Own characters */}
+        <section className="mb-10">
+          <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
+            style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
+            Meine Charaktere
+          </h2>
+          {own.length === 0 ? (
+            <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
+              Du hast noch keinen Charakter. <Link href="/charaktere/new" style={{ color: "var(--dnd-red-light)" }}>Erstelle einen.</Link>
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {own.map((c) => <CharCard key={c.id} c={c} />)}
+            </div>
+          )}
+        </section>
+
+        {/* Other players' characters */}
+        {others.length > 0 && (
+          <section>
+            <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
+              style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
+              Charaktere der anderen Spieler
+            </h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {others.map((c) => <CharCard key={c.id} c={c} />)}
+            </div>
+          </section>
+        )}
+      </div>
+    </main>
+  );
+}
+
+function CharCard({ c }: { c: { id: string; name: string; image: string | null; status: string; rasse: string | null; aktuellePosition: string | null; user: { name: string } } }) {
+  return (
+    <Link href={`/charaktere/${c.id}`}
+      className="group card-hover transition-all duration-300 block"
+      style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
+      <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
+      <div className="relative h-52 w-full overflow-hidden" style={{ background: "#0A0A0A" }}>
+        {c.image
+          ? <Image src={c.image} alt={c.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+          : <div className="flex h-full items-center justify-center"><Image src="/wildgipfel_logo.png" alt="" width={80} height={36} className="object-contain opacity-20" /></div>
+        }
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)" }} />
+      </div>
+      <div className="p-4">
+        <p className="font-cinzel text-xs mb-1" style={{ color: "var(--dnd-text-muted)" }}>{c.user.name}</p>
+        <h2 className="font-cinzel font-semibold text-base leading-tight" style={{ color: "var(--dnd-heading)" }}>{c.name}</h2>
+        {c.rasse && <p className="font-cinzel text-xs mt-1" style={{ color: "var(--dnd-text-muted)" }}>{c.rasse}</p>}
+        <p className="mt-2 text-xs font-cinzel" style={{ color: STATUS_COLORS[c.status] ?? "#9CA3AF" }}>{c.status}</p>
+        {c.aktuellePosition && <p className="mt-1 text-xs" style={{ color: "var(--dnd-text-muted)" }}>📍 {c.aktuellePosition}</p>}
+      </div>
+      <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--dnd-border), transparent)" }} />
+    </Link>
+  );
+}

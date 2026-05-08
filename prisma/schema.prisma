@@ -7,6 +7,47 @@ datasource db {
   provider = "postgresql"
 }
 
+// ─── Enums ───────────────────────────────────────────────
+
+enum Role {
+  SPIELER
+  DUNGEON_MASTER
+}
+
+enum JournalTyp {
+  TAGEBUCH
+  GESCHICHTE
+}
+
+enum TagTyp {
+  PERSON
+  ORGANISATION
+  CHARAKTER
+  SPIELER
+}
+
+// ─── Auth ────────────────────────────────────────────────
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  name         String
+  passwordHash String
+  role         Role           @default(SPIELER)
+  createdAt    DateTime       @default(now())
+  charaktere   Charakter[]
+  eintraege    JournalEntry[]
+}
+
+model Invite {
+  id        String    @id @default(cuid())
+  token     String    @unique @default(cuid())
+  usedById  String?
+  createdAt DateTime  @default(now())
+}
+
+// ─── Existing DM content ─────────────────────────────────
+
 model NPC {
   id               String            @id @default(cuid())
   name             String
@@ -19,6 +60,7 @@ model NPC {
   rasse            String?
   herkunft         String?
   aktuellePosition String?
+  gottheit         String?
   notizen          String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
@@ -26,16 +68,18 @@ model NPC {
 }
 
 model Organisation {
-  id                 String            @id @default(cuid())
+  id                 String                    @id @default(cuid())
   name               String
   beschreibung       String?
   typ                String?
   region             String?
   alignment          String?
   beziehungZurGruppe String?
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  gottheit           String?
+  createdAt          DateTime                  @default(now())
+  updatedAt          DateTime                  @updatedAt
   mitglieder         NPCOrganisation[]
+  charakterMitglieder CharakterOrganisation[]
 }
 
 model NPCOrganisation {
@@ -48,4 +92,61 @@ model NPCOrganisation {
   createdAt      DateTime     @default(now())
 
   @@unique([npcId, organisationId])
+}
+
+// ─── Player characters ───────────────────────────────────
+
+model Charakter {
+  id               String                    @id @default(cuid())
+  userId           String
+  user             User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String
+  image            String?
+  status           String                    @default("Lebendig")
+  beziehung        String                    @default("Neutral")
+  geschlecht       String?
+  region           String?
+  alter            String?
+  rasse            String?
+  herkunft         String?
+  aktuellePosition String?
+  gottheit         String?
+  notizen          String?
+  createdAt        DateTime                  @default(now())
+  updatedAt        DateTime                  @updatedAt
+  organisationen   CharakterOrganisation[]
+}
+
+model CharakterOrganisation {
+  id             String       @id @default(cuid())
+  charakter      Charakter    @relation(fields: [charakterId], references: [id], onDelete: Cascade)
+  charakterId    String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  organisationId String
+  rolle          String?
+  createdAt      DateTime     @default(now())
+
+  @@unique([charakterId, organisationId])
+}
+
+// ─── Journal ─────────────────────────────────────────────
+
+model JournalEntry {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  typ       JournalTyp
+  titel     String?
+  inhalt    String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  tags      JournalTag[]
+}
+
+model JournalTag {
+  id         String       @id @default(cuid())
+  entry      JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  entryId    String
+  tagTyp     TagTyp
+  referenzId String
 }
