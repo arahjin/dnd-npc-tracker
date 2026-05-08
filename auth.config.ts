@@ -6,7 +6,7 @@ export const authConfig = {
     authorized({ auth, request }) {
       const isLoggedIn = !!auth?.user;
       const { pathname } = request.nextUrl;
-      const isPublic = pathname.startsWith("/login") || pathname.startsWith("/registrieren");
+      const isPublic = pathname.startsWith("/login") || pathname.startsWith("/registrieren") || pathname.startsWith("/setup");
       if (isPublic) return true;
       return isLoggedIn;
     },
