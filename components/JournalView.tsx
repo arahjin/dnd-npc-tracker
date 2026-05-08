@@ -34,6 +34,14 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
   const [filterTag, setFilterTag] = useState<TagOption | null>(null);
   const [filterSearch, setFilterSearch] = useState("");
 
+  // editing
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitel, setEditTitel] = useState("");
+  const [editInhalt, setEditInhalt] = useState("");
+  const [editTags, setEditTags] = useState<TagOption[]>([]);
+  const [editTagSearch, setEditTagSearch] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
+
   useEffect(() => { loadEntries(); }, []);
 
   async function loadEntries() {
@@ -66,6 +74,44 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
     if (!confirm("Eintrag löschen?")) return;
     await fetch(`/api/journal/${id}`, { method: "DELETE" });
     setEntries((prev) => prev.filter((e) => e.id !== id));
+  }
+
+  function startEdit(entry: Entry) {
+    setEditingId(entry.id);
+    setEditTitel(entry.titel ?? "");
+    setEditInhalt(entry.inhalt);
+    setEditTags(
+      entry.tags
+        .map((t) => tagOptions.find((o) => o.id === t.referenzId))
+        .filter((o): o is TagOption => !!o)
+    );
+    setEditTagSearch("");
+  }
+
+  function cancelEdit() {
+    setEditingId(null);
+    setEditTitel(""); setEditInhalt(""); setEditTags([]); setEditTagSearch("");
+  }
+
+  async function handleEdit(e: React.FormEvent, id: string) {
+    e.preventDefault();
+    if (!editInhalt.trim()) return;
+    setEditSaving(true);
+    const res = await fetch(`/api/journal/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        titel: editTitel,
+        inhalt: editInhalt,
+        tags: editTags.map((t) => ({ tagTyp: t.typ, referenzId: t.id })),
+      }),
+    });
+    if (res.ok) {
+      const updated = await res.json();
+      setEntries((prev) => prev.map((en) => (en.id === id ? updated : en)));
+      cancelEdit();
+    }
+    setEditSaving(false);
   }
 
   const filteredTagOptions = tagOptions.filter(
@@ -203,43 +249,104 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
       ) : (
         <div className="space-y-4">
           {visibleEntries.map((entry) => {
-            const canDelete = isDM || entry.user.id === userId;
+            const canEdit = isDM || entry.user.id === userId;
+            const isEditing = editingId === entry.id;
+            const editFilteredTags = tagOptions.filter(
+              (t) => t.label.toLowerCase().includes(editTagSearch.toLowerCase()) && !editTags.find((s) => s.id === t.id)
+            );
             return (
               <article key={entry.id} style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                 <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
-                <div className="px-5 py-4">
-                  <div className="flex items-start justify-between gap-4 mb-3">
+
+                {isEditing ? (
+                  <form onSubmit={(e) => handleEdit(e, entry.id)} className="px-5 py-4 space-y-4">
                     <div>
-                      {entry.titel && (
-                        <h3 className="font-cinzel text-base font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>{entry.titel}</h3>
-                      )}
-                      <p className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
-                        {typ === "GESCHICHTE" && <span style={{ color: "var(--dnd-gold)" }}>{entry.user.name} · </span>}
-                        {new Date(entry.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" })}
-                      </p>
+                      <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Titel (optional)</label>
+                      <input type="text" value={editTitel} onChange={(e) => setEditTitel(e.target.value)}
+                        className="w-full px-4 py-2 outline-none" style={inputStyle} />
                     </div>
-                    {canDelete && (
-                      <button onClick={() => handleDelete(entry.id)} className="font-cinzel text-xs px-3 py-1 shrink-0"
-                        style={{ border: "1px solid #991B1B", color: "#F87171" }}>✕</button>
+                    <div>
+                      <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Inhalt *</label>
+                      <textarea value={editInhalt} onChange={(e) => setEditInhalt(e.target.value)} rows={6} required
+                        className="w-full px-4 py-2 outline-none resize-none" style={inputStyle} />
+                    </div>
+                    <div>
+                      <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Tags</label>
+                      {editTags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-2">
+                          {editTags.map((t) => (
+                            <span key={t.id} className="font-cinzel text-xs px-2 py-1 flex items-center gap-1"
+                              style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
+                              @{t.label}
+                              <button type="button" onClick={() => setEditTags((p) => p.filter((s) => s.id !== t.id))} style={{ opacity: 0.7 }}>✕</button>
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <input type="text" value={editTagSearch} onChange={(e) => setEditTagSearch(e.target.value)}
+                        placeholder="Person, Org oder Charakter suchen..." className="w-full px-4 py-2 outline-none" style={inputStyle} />
+                      {editTagSearch && editFilteredTags.length > 0 && (
+                        <div style={{ background: "#111", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
+                          {editFilteredTags.slice(0, 8).map((t) => (
+                            <button key={t.id} type="button"
+                              onClick={() => { setEditTags((p) => [...p, t]); setEditTagSearch(""); }}
+                              className="w-full text-left px-4 py-2 font-cinzel text-xs"
+                              style={{ color: "var(--dnd-text)", borderBottom: "1px solid #1A1A1A" }}
+                              onMouseEnter={(e) => (e.currentTarget.style.background = "#1A1A1A")}
+                              onMouseLeave={(e) => (e.currentTarget.style.background = "")}>
+                              {TAG_ICON[t.typ]} {t.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex gap-3">
+                      <button type="submit" disabled={editSaving} className="ddb-cta">
+                        {editSaving ? "SPEICHERN..." : "ÄNDERUNGEN SPEICHERN"}
+                      </button>
+                      <button type="button" onClick={cancelEdit} className="font-cinzel text-sm px-4 py-2"
+                        style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>ABBRECHEN</button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="px-5 py-4">
+                    <div className="flex items-start justify-between gap-4 mb-3">
+                      <div>
+                        {entry.titel && (
+                          <h3 className="font-cinzel text-base font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>{entry.titel}</h3>
+                        )}
+                        <p className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
+                          {typ === "GESCHICHTE" && <span style={{ color: "var(--dnd-gold)" }}>{entry.user.name} · </span>}
+                          {new Date(entry.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" })}
+                        </p>
+                      </div>
+                      {canEdit && (
+                        <div className="flex gap-2 shrink-0">
+                          <button onClick={() => startEdit(entry)} className="font-cinzel text-xs px-3 py-1"
+                            style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>✎</button>
+                          <button onClick={() => handleDelete(entry.id)} className="font-cinzel text-xs px-3 py-1"
+                            style={{ border: "1px solid #991B1B", color: "#F87171" }}>✕</button>
+                        </div>
+                      )}
+                    </div>
+                    <p className="leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{entry.inhalt}</p>
+                    {entry.tags.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {entry.tags.map((tag) => {
+                          const opt = tagOptions.find((o) => o.id === tag.referenzId);
+                          return opt ? (
+                            <button key={tag.id}
+                              onClick={() => { setFilterTag(opt); setFilterSearch(""); }}
+                              className="font-cinzel text-xs px-2 py-0.5 transition-opacity hover:opacity-80"
+                              style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
+                              @{opt.label}
+                            </button>
+                          ) : null;
+                        })}
+                      </div>
                     )}
                   </div>
-                  <p className="leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{entry.inhalt}</p>
-                  {entry.tags.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {entry.tags.map((tag) => {
-                        const opt = tagOptions.find((o) => o.id === tag.referenzId);
-                        return opt ? (
-                          <button key={tag.id}
-                            onClick={() => { setFilterTag(opt); setFilterSearch(""); }}
-                            className="font-cinzel text-xs px-2 py-0.5 transition-opacity hover:opacity-80"
-                            style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
-                            @{opt.label}
-                          </button>
-                        ) : null;
-                      })}
-                    </div>
-                  )}
-                </div>
+                )}
               </article>
             );
           })}
