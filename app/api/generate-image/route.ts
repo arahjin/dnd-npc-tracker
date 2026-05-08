@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     quality: "standard",
   });
 
-  const tempUrl = response.data[0]?.url;
+  const tempUrl = response.data?.[0]?.url;
   if (!tempUrl) return NextResponse.json({ error: "Kein Bild erhalten." }, { status: 500 });
 
   // Bild herunterladen
