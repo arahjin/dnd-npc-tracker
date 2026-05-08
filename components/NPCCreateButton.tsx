@@ -14,13 +14,8 @@ export default function NPCCreateButton({ availableOrgs }: Props) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="font-cinzel text-sm font-semibold px-5 py-2.5 transition-all tracking-wider"
-        style={{
-          background: "var(--dnd-red)",
-          color: "#F5EDD6",
-          border: "1px solid var(--dnd-red-dark)",
-          clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)",
-        }}
+        className="font-cinzel text-sm font-semibold px-5 py-2.5 transition-all tracking-wider action-btn"
+        style={{ clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)" }}
       >
         + Person hinzufügen
       </button>

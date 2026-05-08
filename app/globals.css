@@ -45,11 +45,36 @@ body {
   box-shadow: 0 0 20px rgba(197, 49, 49, 0.15), 0 0 40px rgba(197, 49, 49, 0.05);
 }
 
-/* Nav tab hover */
-.nav-tab:hover {
-  color: #F5EDD6 !important;
-  border-color: var(--dnd-red) !important;
-  background: rgba(107, 17, 17, 0.4) !important;
+/* Nav tabs */
+.nav-tab-active {
+  color: #F5EDD6;
+  background: var(--dnd-red-dark);
+  border: 1px solid var(--dnd-red);
+}
+
+.nav-tab-inactive {
+  color: #C8B8A8;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid #4A3A3A;
+}
+
+.nav-tab-inactive:hover {
+  color: #F5EDD6;
+  background: rgba(107, 17, 17, 0.4);
+  border-color: var(--dnd-red);
+}
+
+/* Action button (red top-right button) */
+.action-btn {
+  background: var(--dnd-red);
+  color: #F5EDD6;
+  border: 1px solid var(--dnd-red-dark);
+}
+
+.action-btn:hover {
+  background: #C02828;
+  border-color: var(--dnd-red);
+  box-shadow: 0 0 12px rgba(163, 32, 32, 0.5);
 }
 
 /* Gold glow */

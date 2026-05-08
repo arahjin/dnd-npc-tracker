@@ -16,31 +16,19 @@ export default function SiteHeader({ active, actionSlot }: { active: "npcs" | "o
           {actionSlot ?? (
             <Link
               href={active === "organisationen" ? "/organisationen/new" : "/npc/new"}
-              className="font-cinzel text-sm font-semibold px-5 py-2.5 transition-all tracking-wider"
-              style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)", clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)" }}>
-              {active === "organisationen" ? "+ Organisation hinzufügen" : "+ NPC hinzufügen"}
+              className="font-cinzel text-sm font-semibold px-5 py-2.5 transition-all tracking-wider action-btn"
+              style={{ clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)" }}>
+              {active === "organisationen" ? "+ Organisation hinzufügen" : "+ Person hinzufügen"}
             </Link>
           )}
         </div>
 
         {/* Navigation Tabs */}
         <div className="mt-5 flex items-center gap-1">
-          <Link href="/" className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all nav-tab"
-            style={{
-              color: active === "npcs" ? "#F5EDD6" : "var(--dnd-text-muted)",
-              background: active === "npcs" ? "var(--dnd-red-dark)" : "transparent",
-              border: "1px solid",
-              borderColor: active === "npcs" ? "var(--dnd-red)" : "var(--dnd-border)",
-            }}>
+          <Link href="/" className={`font-cinzel text-xs tracking-widest px-4 py-2 transition-all ${active === "npcs" ? "nav-tab-active" : "nav-tab-inactive"}`}>
             PERSONEN
           </Link>
-          <Link href="/organisationen" className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all nav-tab"
-            style={{
-              color: active === "organisationen" ? "#F5EDD6" : "var(--dnd-text-muted)",
-              background: active === "organisationen" ? "var(--dnd-red-dark)" : "transparent",
-              border: "1px solid",
-              borderColor: active === "organisationen" ? "var(--dnd-red)" : "var(--dnd-border)",
-            }}>
+          <Link href="/organisationen" className={`font-cinzel text-xs tracking-widest px-4 py-2 transition-all ${active === "organisationen" ? "nav-tab-active" : "nav-tab-inactive"}`}>
             ORGANISATIONEN
           </Link>
           <div className="flex-1 h-px ml-2" style={{ background: "linear-gradient(90deg, var(--dnd-border), transparent)" }} />
