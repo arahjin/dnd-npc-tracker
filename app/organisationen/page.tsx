@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import SiteHeader from "@/components/SiteHeader";
 
