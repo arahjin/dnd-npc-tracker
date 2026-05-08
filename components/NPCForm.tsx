@@ -56,13 +56,13 @@ export default function NPCForm({ initial, id }: Props) {
       body: JSON.stringify({ prompt: imagePrompt }),
     });
 
+    const data = await res.json();
     if (!res.ok) {
-      setGenError("Fehler beim Generieren. Bitte erneut versuchen.");
+      setGenError(data.error ?? "Fehler beim Generieren. Bitte erneut versuchen.");
       setGenerating(false);
       return;
     }
 
-    const data = await res.json();
     setGeneratedImage(data.url);
     setGenerating(false);
   }
