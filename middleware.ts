@@ -1,17 +1,7 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import NextAuth from "next-auth";
+import { authConfig } from "./auth.config";
 
-export default auth((req) => {
-  const isLoggedIn = !!req.auth;
-  const { pathname } = req.nextUrl;
-
-  const publicPaths = ["/login", "/registrieren"];
-  const isPublic = publicPaths.some((p) => pathname.startsWith(p));
-
-  if (!isLoggedIn && !isPublic) {
-    return NextResponse.redirect(new URL("/login", req.nextUrl));
-  }
-});
+export default NextAuth(authConfig).auth;
 
 export const config = {
   matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico|wildgipfel|wildgipfel_logo).*)"],
