@@ -4,36 +4,56 @@ import Image from "next/image";
 
 export default function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen"; actionSlot?: React.ReactNode }) {
   return (
-    <header style={{ borderBottom: "1px solid #2A1A1A", position: "relative", overflow: "hidden" }}>
-      <Image src="/wildgipfel_header.png" alt="Wildgipfel" fill className="object-cover object-top" style={{ zIndex: 0 }} priority />
-      <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)", zIndex: 1 }} />
-      <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)", position: "relative", zIndex: 2 }} />
+    <header>
+      {/* ── Top Nav Bar ── */}
+      <div style={{ background: "#111111", borderBottom: "1px solid #252525", position: "relative", zIndex: 10 }}>
+        {/* Thin accent line */}
+        <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
 
-      <div className="mx-auto max-w-7xl px-6 py-6" style={{ position: "relative", zIndex: 2 }}>
-        <div className="flex items-center justify-between">
-          <Image src="/wildgipfel_logo.png" alt="Wildgipfel" width={200} height={90} className="object-contain"
-            style={{ filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.9))" }} />
-          {actionSlot ?? (
-            <Link
-              href={active === "organisationen" ? "/organisationen/new" : "/npc/new"}
-              className="font-cinzel text-sm font-semibold px-5 py-2.5 transition-all tracking-wider action-btn"
-              style={{ clipPath: "polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%)" }}>
-              {active === "organisationen" ? "+ Organisation hinzufügen" : "+ Person hinzufügen"}
+        <div className="mx-auto max-w-7xl px-6" style={{ display: "flex", alignItems: "stretch", height: "60px" }}>
+
+          {/* Logo */}
+          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "32px", flexShrink: 0 }}>
+            <Image
+              src="/wildgipfel_logo.png"
+              alt="Wildgipfel"
+              width={150}
+              height={68}
+              className="object-contain"
+              style={{ filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.9))" }}
+            />
+          </Link>
+
+          {/* Nav Links */}
+          <nav style={{ display: "flex", alignItems: "stretch", flex: 1 }}>
+            <Link href="/" className={`ddb-nav-link${active === "npcs" ? " ddb-nav-active" : ""}`}>
+              Personen
             </Link>
-          )}
-        </div>
+            <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen" ? " ddb-nav-active" : ""}`}>
+              Organisationen
+            </Link>
+          </nav>
 
-        {/* Navigation Tabs */}
-        <div className="mt-5 flex items-center gap-1">
-          <Link href="/" className={`font-cinzel text-xs tracking-widest px-4 py-2 transition-all ${active === "npcs" ? "nav-tab-active" : "nav-tab-inactive"}`}>
-            PERSONEN
-          </Link>
-          <Link href="/organisationen" className={`font-cinzel text-xs tracking-widest px-4 py-2 transition-all ${active === "organisationen" ? "nav-tab-active" : "nav-tab-inactive"}`}>
-            ORGANISATIONEN
-          </Link>
-          <div className="flex-1 h-px ml-2" style={{ background: "linear-gradient(90deg, var(--dnd-border), transparent)" }} />
-          <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>✦</span>
+          {/* Right: CTA */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            {actionSlot ?? (
+              <Link
+                href={active === "organisationen" ? "/organisationen/new" : "/npc/new"}
+                className="ddb-cta"
+              >
+                {active === "organisationen" ? "+ Organisation" : "+ Person"}
+              </Link>
+            )}
+          </div>
+
         </div>
+      </div>
+
+      {/* ── Hero Banner ── */}
+      <div style={{ position: "relative", height: "140px", overflow: "hidden" }}>
+        <Image src="/wildgipfel_header.png" alt="Wildgipfel" fill className="object-cover object-top" priority style={{ zIndex: 0 }} />
+        <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(17,17,17,0.25) 0%, rgba(14,14,14,0.65) 100%)" }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "2px", zIndex: 2, background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
       </div>
     </header>
   );

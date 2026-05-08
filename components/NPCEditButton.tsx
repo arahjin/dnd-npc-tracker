@@ -24,10 +24,10 @@ export default function NPCEditButton({ id, name, availableOrgs, initialOrgs, in
     <>
       <button
         onClick={() => setOpen(true)}
-        className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
-        style={{ border: "1px solid var(--dnd-gold)", color: "var(--dnd-heading)" }}
+        className="ddb-cta"
+        style={{ background: "transparent", borderColor: "var(--dnd-gold)", color: "var(--dnd-gold)" }}
       >
-        BEARBEITEN
+        Bearbeiten
       </button>
 
       <NPCModal

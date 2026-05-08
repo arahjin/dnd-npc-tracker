@@ -57,11 +57,10 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       {/* Header */}
-      <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
-        <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
-        <div className="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="font-cinzel text-xs tracking-widest uppercase flex items-center gap-2 transition-colors"
-            style={{ color: "var(--dnd-text-muted)" }}>
+      <header style={{ background: "#111111", borderBottom: "1px solid #252525" }}>
+        <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
+        <div className="mx-auto max-w-5xl px-6" style={{ height: "60px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <Link href="/" className="ddb-nav-link" style={{ height: "60px", paddingLeft: 0 }}>
             ← Zurück
           </Link>
           <div className="flex gap-2">

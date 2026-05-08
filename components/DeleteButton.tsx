@@ -14,8 +14,8 @@ export default function DeleteButton({ id }: { id: string }) {
 
   return (
     <button onClick={handleDelete}
-      className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
-      style={{ border: "1px solid #991B1B", color: "#F87171", background: "#200D0D" }}>
+      className="ddb-cta"
+      style={{ background: "transparent", borderColor: "#991B1B", color: "#F87171" }}>
       LÖSCHEN
     </button>
   );
