@@ -18,16 +18,26 @@ export default function SetupPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const res = await fetch("/api/setup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
-    const data = await res.json();
-    if (!res.ok) { setError(data.error ?? "Fehler."); setLoading(false); return; }
-    setDone(true);
-    await signIn("credentials", { email, password, redirect: false });
-    router.push("/");
+    try {
+      const res = await fetch("/api/setup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+      let data: { error?: string; ok?: boolean } = {};
+      try { data = await res.json(); } catch { /* ignore parse errors */ }
+      if (!res.ok) {
+        setError(data.error ?? `Fehler (HTTP ${res.status})`);
+        setLoading(false);
+        return;
+      }
+      setDone(true);
+      await signIn("credentials", { email, password, redirect: false });
+      router.push("/");
+    } catch (err) {
+      setError(`Netzwerkfehler: ${String(err)}`);
+      setLoading(false);
+    }
   }
 
   const inputStyle = {
