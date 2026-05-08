@@ -3,13 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS } from "@/lib/constants";
+import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS, REGION_OPTIONS } from "@/lib/constants";
 
 type NPCData = {
   name: string;
   image: string;
   status: string;
   beziehung: string;
+  geschlecht: string;
+  region: string;
   organisationen: string;
   alter: string;
   rasse: string;
@@ -25,6 +27,7 @@ type Props = {
 
 const EMPTY: NPCData = {
   name: "", image: "", status: "Unbekannt", beziehung: "Unbekannt",
+  geschlecht: "", region: "",
   organisationen: "", alter: "", rasse: "", herkunft: "", aktuellePosition: "", notizen: "",
 };
 
@@ -84,6 +87,8 @@ export default function NPCForm({ initial, id }: Props) {
       image: form.image.trim() || null,
       status: form.status,
       beziehung: form.beziehung,
+      geschlecht: form.geschlecht || null,
+      region: form.region || null,
       organisationen: form.organisationen.trim() || null,
       alter: form.alter.trim() || null,
       rasse: form.rasse.trim() || null,
@@ -228,6 +233,26 @@ export default function NPCForm({ initial, id }: Props) {
           <select value={form.beziehung} onChange={(e) => set("beziehung", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
+          </select>
+        </div>
+      </div>
+
+      {/* Geschlecht + Region */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Geschlecht</label>
+          <select value={form.geschlecht} onChange={(e) => set("geschlecht", e.target.value)}
+            className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
+            <option value="">— Wählen —</option>
+            {GESCHLECHT_OPTIONS.map((g) => <option key={g}>{g}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Region</label>
+          <select value={form.region} onChange={(e) => set("region", e.target.value)}
+            className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
+            <option value="">— Wählen —</option>
+            {REGION_OPTIONS.map((r) => <option key={r}>{r}</option>)}
           </select>
         </div>
       </div>

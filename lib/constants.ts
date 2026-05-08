@@ -12,3 +12,18 @@ export const BEZIEHUNG_OPTIONS = [
   "Feindlich",
   "Unbekannt",
 ];
+
+export const GESCHLECHT_OPTIONS = [
+  "Männlich",
+  "Weiblich",
+  "Divers",
+];
+
+export const REGION_OPTIONS = [
+  "Kaiserreich Asim",
+  "Königreich Drakenfall",
+  "Freie Inseln von Sangor",
+  "Königreich der Nebelwölfe",
+  "Wogenimperium",
+  "Luxaria",
+];

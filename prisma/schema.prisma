@@ -13,6 +13,8 @@ model NPC {
   image            String?
   status           String   @default("Unbekannt")
   beziehung        String   @default("Unbekannt")
+  geschlecht       String?
+  region           String?
   organisationen   String?
   alter            String?
   rasse            String?

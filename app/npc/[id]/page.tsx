@@ -126,12 +126,14 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                 </h2>
               </div>
               <div className="px-4">
+                <Field label="Geschlecht" value={npc.geschlecht} />
                 <Field label="Rasse" value={npc.rasse} />
                 <Field label="Alter" value={npc.alter} />
+                <Field label="Region" value={npc.region} />
                 <Field label="Herkunft" value={npc.herkunft} />
                 <Field label="Position" value={npc.aktuellePosition} />
                 <Field label="Organisationen" value={npc.organisationen} />
-                {!npc.rasse && !npc.alter && !npc.herkunft && !npc.aktuellePosition && !npc.organisationen && (
+                {!npc.geschlecht && !npc.rasse && !npc.alter && !npc.region && !npc.herkunft && !npc.aktuellePosition && !npc.organisationen && (
                   <p className="py-4 text-sm" style={{ color: "var(--dnd-text-muted)" }}>Keine Details eingetragen.</p>
                 )}
               </div>

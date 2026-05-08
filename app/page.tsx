@@ -38,9 +38,6 @@ export default async function Home() {
                 className="object-contain"
                 style={{ filter: "drop-shadow(0 2px 10px rgba(0,0,0,0.9))" }}
               />
-              <p className="font-cinzel font-bold text-sm tracking-[0.25em] uppercase mt-1" style={{ color: "var(--dnd-heading)" }}>
-                NPC Kompendium
-              </p>
             </div>
 
             {/* Add Button */}
