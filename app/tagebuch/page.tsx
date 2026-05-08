@@ -10,18 +10,16 @@ export default async function TagebuchPage() {
   const userId = session!.user!.id as string;
   const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
 
-  const [npcs, orgs, chars, users] = await Promise.all([
+  const [npcs, orgs, chars] = await Promise.all([
     prisma.nPC.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
     prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
     prisma.charakter.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.user.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
 
   const tagOptions = [
     ...npcs.map((n) => ({ id: n.id, label: n.name, typ: "PERSON" })),
     ...orgs.map((o) => ({ id: o.id, label: o.name, typ: "ORGANISATION" })),
     ...chars.map((c) => ({ id: c.id, label: c.name, typ: "CHARAKTER" })),
-    ...users.map((u) => ({ id: u.id, label: u.name, typ: "SPIELER" })),
   ];
 
   return (
