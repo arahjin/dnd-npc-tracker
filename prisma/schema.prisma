@@ -30,28 +30,62 @@ enum TagTyp {
 // ─── Auth ────────────────────────────────────────────────
 
 model User {
-  id           String         @id @default(cuid())
-  email        String         @unique
+  id           String             @id @default(cuid())
+  email        String             @unique
   name         String
   passwordHash String
-  role         Role           @default(SPIELER)
-  createdAt    DateTime       @default(now())
+  role         Role               @default(SPIELER)
+  createdAt    DateTime           @default(now())
   charaktere   Charakter[]
   eintraege    JournalEntry[]
+  kampagnen    KampagneMitglied[]
 }
 
 model Invite {
-  id        String   @id @default(cuid())
-  token     String   @unique @default(cuid())
-  usedById  String?
-  role      Role     @default(SPIELER)
-  createdAt DateTime @default(now())
+  id         String    @id @default(cuid())
+  token      String    @unique @default(cuid())
+  usedById   String?
+  role       Role      @default(SPIELER)
+  kampagneId String?
+  kampagne   Kampagne? @relation(fields: [kampagneId], references: [id], onDelete: SetNull)
+  createdAt  DateTime  @default(now())
 }
 
-// ─── Existing DM content ─────────────────────────────────
+// ─── Kampagnen ───────────────────────────────────────────
+
+model Kampagne {
+  id             String             @id @default(cuid())
+  name           String
+  beschreibung   String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  mitglieder     KampagneMitglied[]
+  npcs           NPC[]
+  organisationen Organisation[]
+  charaktere     Charakter[]
+  eintraege      JournalEntry[]
+  invites        Invite[]
+}
+
+model KampagneMitglied {
+  id         String   @id @default(cuid())
+  kampagneId String
+  userId     String
+  isDM       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  kampagne Kampagne @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([kampagneId, userId])
+}
+
+// ─── DM content ──────────────────────────────────────────
 
 model NPC {
   id               String            @id @default(cuid())
+  kampagneId       String?
+  kampagne         Kampagne?         @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
   name             String
   image            String?
   status           String            @default("Unbekannt")
@@ -70,17 +104,19 @@ model NPC {
 }
 
 model Organisation {
-  id                 String                    @id @default(cuid())
-  name               String
-  beschreibung       String?
-  typ                String?
-  region             String?
-  alignment          String?
-  beziehungZurGruppe String?
-  gottheit           String?
-  createdAt          DateTime                  @default(now())
-  updatedAt          DateTime                  @updatedAt
-  mitglieder         NPCOrganisation[]
+  id                  String                  @id @default(cuid())
+  kampagneId          String?
+  kampagne            Kampagne?               @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  name                String
+  beschreibung        String?
+  typ                 String?
+  region              String?
+  alignment           String?
+  beziehungZurGruppe  String?
+  gottheit            String?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  mitglieder          NPCOrganisation[]
   charakterMitglieder CharakterOrganisation[]
 }
 
@@ -99,13 +135,15 @@ model NPCOrganisation {
 // ─── Player characters ───────────────────────────────────
 
 model Charakter {
-  id               String                    @id @default(cuid())
+  id               String                  @id @default(cuid())
+  kampagneId       String?
+  kampagne         Kampagne?               @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
   userId           String
-  user             User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   name             String
   image            String?
-  status           String                    @default("Lebendig")
-  beziehung        String                    @default("Neutral")
+  status           String                  @default("Lebendig")
+  beziehung        String                  @default("Neutral")
   geschlecht       String?
   region           String?
   alter            String?
@@ -114,8 +152,8 @@ model Charakter {
   aktuellePosition String?
   gottheit         String?
   notizen          String?
-  createdAt        DateTime                  @default(now())
-  updatedAt        DateTime                  @updatedAt
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
   organisationen   CharakterOrganisation[]
 }
 
@@ -134,15 +172,17 @@ model CharakterOrganisation {
 // ─── Journal ─────────────────────────────────────────────
 
 model JournalEntry {
-  id        String       @id @default(cuid())
-  userId    String
-  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  typ       JournalTyp
-  titel     String?
-  inhalt    String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  tags      JournalTag[]
+  id         String       @id @default(cuid())
+  kampagneId String?
+  kampagne   Kampagne?    @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  typ        JournalTyp
+  titel      String?
+  inhalt     String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  tags       JournalTag[]
 }
 
 model JournalTag {

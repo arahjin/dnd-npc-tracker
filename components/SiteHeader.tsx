@@ -1,13 +1,45 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { cookies } from "next/headers";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import NavSearch from "./NavSearch";
 import UserMenu from "./UserMenu";
+import KampagneSelector from "./KampagneSelector";
 
 export default async function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch"; actionSlot?: React.ReactNode }) {
   const session = await auth();
-  const user = session?.user as { name?: string | null; role?: string } | undefined;
+  const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
+
+  // Load active campaign for selector
+  let kampagneSelector: React.ReactNode = null;
+  if (user?.id) {
+    const cookieStore = await cookies();
+    const aktiveId = cookieStore.get("aktiveKampagne")?.value ?? null;
+    if (aktiveId) {
+      const isAdmin = user.role === "ADMIN";
+      const [aktive, kampagnen] = await Promise.all([
+        prisma.kampagne.findUnique({ where: { id: aktiveId }, select: { id: true, name: true } }),
+        isAdmin
+          ? prisma.kampagne.findMany({ orderBy: { createdAt: "asc" }, select: { id: true, name: true } })
+          : prisma.kampagneMitglied.findMany({
+              where: { userId: user.id },
+              include: { kampagne: { select: { id: true, name: true } } },
+              orderBy: { createdAt: "asc" },
+            }).then((ms) => ms.map((m) => m.kampagne)),
+      ]);
+      if (aktive) {
+        kampagneSelector = (
+          <KampagneSelector
+            aktiveId={aktiveId}
+            aktiveKampagne={aktive.name}
+            kampagnen={kampagnen}
+          />
+        );
+      }
+    }
+  }
 
   return (
     <header>
@@ -32,8 +64,9 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
             <Link href="/tagebuch" className={`ddb-nav-link${active === "tagebuch" ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
           </nav>
 
-          {/* Right: Search + CTA + User */}
+          {/* Right: Campaign + Search + CTA + User */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            {kampagneSelector}
             <NavSearch />
             {actionSlot ?? (
               <Link href={active === "organisationen" ? "/organisationen/new" : "/npc/new"} className="ddb-cta">

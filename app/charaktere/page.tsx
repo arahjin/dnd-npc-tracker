@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireKampagne } from "@/lib/kampagne";
 import SiteHeader from "@/components/SiteHeader";
 
 export const dynamic = "force-dynamic";
@@ -11,17 +11,16 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default async function CharakterePage() {
-  const session = await auth();
-  const userId = session!.user!.id as string;
-  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
+  const ctx = await requireKampagne();
 
   const charaktere = await prisma.charakter.findMany({
+    where: { kampagneId: ctx.kampagneId },
     orderBy: { name: "asc" },
     include: { user: { select: { id: true, name: true } } },
   });
 
-  const own = charaktere.filter((c) => c.userId === userId);
-  const others = charaktere.filter((c) => c.userId !== userId);
+  const own = charaktere.filter((c) => c.userId === ctx.userId);
+  const others = charaktere.filter((c) => c.userId !== ctx.userId);
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -29,8 +28,6 @@ export default async function CharakterePage() {
         <Link href="/charaktere/new" className="ddb-cta">+ Charakter</Link>
       } />
       <div className="mx-auto max-w-7xl px-6 py-8">
-
-        {/* Own characters */}
         <section className="mb-10">
           <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
             style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
@@ -46,8 +43,6 @@ export default async function CharakterePage() {
             </div>
           )}
         </section>
-
-        {/* Other players' characters */}
         {others.length > 0 && (
           <section>
             <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"

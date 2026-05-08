@@ -17,8 +17,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "E-Mail bereits registriert." }, { status: 400 });
 
   const passwordHash = await bcrypt.hash(password, 12);
-  const user = await prisma.user.create({ data: { email, name, passwordHash, role: invite.role } });
-  await prisma.invite.update({ where: { token }, data: { usedById: user.id } });
 
-  return NextResponse.json({ ok: true });
+  const user = await prisma.$transaction(async (tx) => {
+    const newUser = await tx.user.create({
+      data: { email, name, passwordHash, role: invite.role },
+    });
+    await tx.invite.update({ where: { token }, data: { usedById: newUser.id } });
+
+    // Add user to the campaign the invite belongs to
+    if (invite.kampagneId) {
+      await tx.kampagneMitglied.create({
+        data: {
+          kampagneId: invite.kampagneId,
+          userId: newUser.id,
+          isDM: invite.role === "DUNGEON_MASTER",
+        },
+      });
+    }
+
+    return newUser;
+  });
+
+  return NextResponse.json({ ok: true, userId: user.id });
 }

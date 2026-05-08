@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { requireKampagne } from "@/lib/kampagne";
 import SiteHeader from "@/components/SiteHeader";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,10 @@ const ALIGNMENT_COLORS: Record<string, { bg: string; text: string; border: strin
 };
 
 export default async function OrganisationenPage() {
+  const ctx = await requireKampagne();
+
   const orgs = await prisma.organisation.findMany({
+    where: { kampagneId: ctx.kampagneId },
     orderBy: { name: "asc" },
     include: { mitglieder: true },
   });
@@ -25,12 +29,10 @@ export default async function OrganisationenPage() {
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <SiteHeader active="organisationen" />
-
       <div className="mx-auto max-w-7xl px-6 py-8">
         <p className="font-cinzel text-xs tracking-widest mb-6" style={{ color: "var(--dnd-text-muted)" }}>
           {orgs.length} {orgs.length === 1 ? "ORGANISATION" : "ORGANISATIONEN"}
         </p>
-
         {orgs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32">
             <p className="text-5xl mb-4">🏛️</p>

@@ -1,19 +1,17 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireKampagne } from "@/lib/kampagne";
 import SiteHeader from "@/components/SiteHeader";
 import JournalView from "@/components/JournalView";
 
 export const dynamic = "force-dynamic";
 
 export default async function TagebuchPage() {
-  const session = await auth();
-  const userId = session!.user!.id as string;
-  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
+  const ctx = await requireKampagne();
 
   const [npcs, orgs, chars] = await Promise.all([
-    prisma.nPC.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.charakter.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
 
   const tagOptions = [
@@ -33,10 +31,10 @@ export default async function TagebuchPage() {
             <span style={{ color: "var(--dnd-red)" }}>✦</span>
           </div>
           <p className="mt-2 font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
-            Privat · Nur du{isDM ? " und der Dungeon Master" : ""} kannst diese Einträge sehen
+            Privat · Nur du{ctx.isDM ? " und der Dungeon Master" : ""} kannst diese Einträge sehen
           </p>
         </div>
-        <JournalView typ="TAGEBUCH" userId={userId} isDM={isDM} tagOptions={tagOptions} />
+        <JournalView typ="TAGEBUCH" userId={ctx.userId} isDM={ctx.isDM} tagOptions={tagOptions} />
       </div>
     </main>
   );

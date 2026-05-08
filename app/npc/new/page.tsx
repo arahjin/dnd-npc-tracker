@@ -1,9 +1,15 @@
 import Link from "next/link";
 import NPCForm from "@/components/NPCForm";
 import { prisma } from "@/lib/prisma";
+import { requireKampagne } from "@/lib/kampagne";
 
 export default async function NewNPC() {
-  const orgs = await prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
+  const ctx = await requireKampagne();
+  const orgs = await prisma.organisation.findMany({
+    where: { kampagneId: ctx.kampagneId },
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>

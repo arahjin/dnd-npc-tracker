@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireKampagneApi } from "@/lib/kampagne";
 
 export async function GET() {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
-  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session.user as { role: string }).role);
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
+
   const charaktere = await prisma.charakter.findMany({
-    where: isDM ? undefined : undefined, // all chars visible to everyone
+    where: { kampagneId: ctx.kampagneId },
     orderBy: { name: "asc" },
     include: { user: { select: { id: true, name: true } } },
   });
@@ -15,15 +15,16 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
-  const userId = session.user!.id as string;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
+
   const { organisationen, ...data } = await req.json();
 
   const charakter = await prisma.charakter.create({
     data: {
       ...data,
-      userId,
+      userId: ctx.userId,
+      kampagneId: ctx.kampagneId,
       ...(organisationen?.length > 0 && {
         organisationen: {
           create: organisationen.map((o: { organisationId: string; rolle: string }) => ({
