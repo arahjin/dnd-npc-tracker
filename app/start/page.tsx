@@ -131,30 +131,30 @@ export default async function StartPage() {
         {/* Gradient overlays */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(14,14,14,0.3) 0%, rgba(14,14,14,0.5) 60%, rgba(14,14,14,1) 100%)" }} />
 
-        {/* Content */}
-        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "60px 24px 80px" }}>
+        {/* Content — tight group, vertically centered */}
+        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 24px", gap: "16px" }}>
           <Image
             src="/lorehub_logo.png"
             alt="Lorehub"
             width={380} height={171}
             className="object-contain"
-            style={{ width: "clamp(180px, 35vw, 340px)", height: "auto", filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.8))", marginBottom: "24px" }}
+            style={{ width: "clamp(180px, 35vw, 320px)", height: "auto", filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.8))" }}
             priority
           />
 
           {subtitle && (
             <p className="font-cinzel" style={{
-              color: "var(--dnd-gold)", fontSize: "clamp(0.95rem, 2.2vw, 1.3rem)",
-              letterSpacing: "0.1em", maxWidth: 640, marginBottom: paragraphs.length ? "20px" : "36px",
+              color: "var(--dnd-gold)", fontSize: "clamp(0.9rem, 2vw, 1.2rem)",
+              letterSpacing: "0.1em", maxWidth: 580,
             }}>
               {subtitle}
             </p>
           )}
 
           {paragraphs.length > 0 && (
-            <div style={{ maxWidth: 640, marginBottom: "36px" }}>
+            <div style={{ maxWidth: 580 }}>
               {paragraphs.map((p, i) => (
-                <p key={i} style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "1rem", lineHeight: 1.7, marginBottom: "12px" }}>
+                <p key={i} style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "0.95rem", lineHeight: 1.7 }}>
                   {p}
                 </p>
               ))}
@@ -162,17 +162,17 @@ export default async function StartPage() {
           )}
 
           {isLoggedIn ? (
-            <Link href="/" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "14px 40px" }}>
+            <Link href="/" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "13px 38px", marginTop: "8px" }}>
               Zur App →
             </Link>
           ) : (
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
-              <Link href="/registrieren" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "14px 40px" }}>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: "8px" }}>
+              <Link href="/registrieren" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "13px 38px" }}>
                 Kostenlos starten
               </Link>
               <Link href="/login"
                 className="font-cinzel text-sm tracking-widest uppercase"
-                style={{ padding: "14px 28px", border: "1px solid var(--dnd-border)", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>
+                style={{ padding: "13px 24px", border: "1px solid var(--dnd-border)", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>
                 Anmelden
               </Link>
             </div>
