@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MentionTextarea from "./MentionTextarea";
 
-const ART_OPTIONS = ["Land", "Region", "Stadt", "Dorf", "Besonderer Ort", "Wald", "Gewässer"];
+const ART_OPTIONS = ["Kontinent", "Land", "Region", "Stadt", "Dorf", "Besonderer Ort", "Wald", "Gewässer"];
 
 type LinkedItem = { id: string; name: string };
 

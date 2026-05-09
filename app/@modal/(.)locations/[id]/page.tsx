@@ -11,6 +11,7 @@ import RenderMentions from "@/components/RenderMentions";
 export const dynamic = "force-dynamic";
 
 const ART_ICON: Record<string, string> = {
+  Kontinent: "🌐",
   Land: "🌍", Region: "🗺️", Stadt: "🏰", Dorf: "🏘️",
   "Besonderer Ort": "✨", Wald: "🌲", Gewässer: "🌊",
 };

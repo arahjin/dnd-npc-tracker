@@ -8,6 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 export const dynamic = "force-dynamic";
 
 const ART_ICON: Record<string, string> = {
+  Kontinent: "🌐",
   Land: "🌍",
   Region: "🗺️",
   Stadt: "🏰",

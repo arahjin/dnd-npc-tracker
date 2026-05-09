@@ -11,6 +11,7 @@ import LocationDeleteButton from "@/components/LocationDeleteButton";
 import RenderMentions from "@/components/RenderMentions";
 
 const ART_ICON: Record<string, string> = {
+  Kontinent: "🌐",
   Land: "🌍",
   Region: "🗺️",
   Stadt: "🏰",
