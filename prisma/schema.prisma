@@ -223,3 +223,14 @@ model JournalTag {
   tagTyp     TagTyp
   referenzId String
 }
+
+// ─── Site Settings (singleton) ───────────────────────────
+
+model SiteSettings {
+  id                 String   @id @default("singleton")
+  copyrightText      String   @default("© Lorehub. Alle Rechte vorbehalten.")
+  kontaktEmail       String   @default("")
+  impressumContent   String   @default("")
+  datenschutzContent String   @default("")
+  updatedAt          DateTime @updatedAt
+}

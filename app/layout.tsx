@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: "Lorehub",
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col antialiased">
         {children}
         {modal}
+        <SiteFooter />
       </body>
     </html>
   );

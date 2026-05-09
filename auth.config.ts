@@ -12,12 +12,15 @@ export const authConfig = {
         pathname.startsWith("/setup") ||
         pathname.startsWith("/passwort-vergessen") ||
         pathname.startsWith("/passwort-zuruecksetzen") ||
+        pathname.startsWith("/impressum") ||
+        pathname.startsWith("/datenschutz") ||
         pathname.startsWith("/api/setup") ||
         pathname.startsWith("/api/registrieren") ||
         pathname.startsWith("/api/invite/check") ||
         pathname.startsWith("/api/auth/passwort-vergessen") ||
         pathname.startsWith("/api/auth/passwort-zuruecksetzen") ||
-        pathname === "/api/setup/promote";
+        pathname === "/api/setup/promote" ||
+        (pathname === "/api/site-settings" && request.method === "GET");
 
       if (isPublic) return true;
       if (!isLoggedIn) return false;

@@ -28,6 +28,19 @@ export default function AdminPage() {
           <MigrationButton />
         </section>
 
+        <section className="p-5 mb-6" style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
+          <div style={{ height: "2px", marginBottom: "1rem", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
+          <h2 className="font-cinzel text-sm font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>
+            Website-Einstellungen
+          </h2>
+          <p className="text-sm mb-4" style={{ color: "var(--dnd-text-muted)" }}>
+            Footer-Texte, Kontakt-E-Mail, Impressum und Datenschutzerklärung pflegen.
+          </p>
+          <Link href="/dm/site-settings" className="ddb-cta">
+            Einstellungen bearbeiten
+          </Link>
+        </section>
+
         <Link href="/" className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
           ← Zurück zur Startseite
         </Link>
