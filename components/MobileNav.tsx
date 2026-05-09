@@ -169,7 +169,7 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
                 </div>
 
                 {[
-                  { href: "/kampagnen/verwalten", label: "Kampagnen verwalten", show: true },
+                  { href: "/kampagnen", label: "Kampagnen", show: true },
                   { href: "/dm/einladungen", label: "Einladungen verwalten", show: canManageInvites },
                   { href: "/dm/admin", label: "Admin-Bereich", show: isAdmin },
                 ].filter(i => i.show).map(item => (

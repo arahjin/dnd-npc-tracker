@@ -59,7 +59,7 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
             </div>
 
             {/* Kampagnen section */}
-            {menuItem("/kampagnen/verwalten", "Kampagnen verwalten")}
+            {menuItem("/kampagnen", "Kampagnen")}
             {canManageInvites && menuItem("/dm/einladungen", "Einladungen verwalten")}
             {divider}
 
