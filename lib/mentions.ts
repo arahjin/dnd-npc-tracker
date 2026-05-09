@@ -17,6 +17,11 @@ export const MENTION_ICON: Record<string, string> = {
   LOCATION: "📍",
 };
 
+/** Strip @mention syntax, leaving only the display name */
+export function stripMentions(text: string): string {
+  return text.replace(/@\[([^\]]+)\]\((PERSON|ORGANISATION|CHARAKTER|LOCATION):[^)]+\)/g, "$1");
+}
+
 /** Extract unique tags from @mention syntax in a text string */
 export function extractTagsFromText(text: string): Array<{ tagTyp: string; referenzId: string }> {
   const tags: Array<{ tagTyp: string; referenzId: string }> = [];

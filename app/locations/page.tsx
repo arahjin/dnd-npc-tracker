@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
+import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
 
 export const dynamic = "force-dynamic";
@@ -78,7 +79,7 @@ export default async function LocationsPage() {
 
                     {loc.wissenswertes && (
                       <p className="text-sm leading-relaxed line-clamp-2 mb-3" style={{ color: "var(--dnd-text)" }}>
-                        {loc.wissenswertes}
+                        {stripMentions(loc.wissenswertes)}
                       </p>
                     )}
 
