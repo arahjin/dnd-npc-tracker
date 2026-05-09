@@ -11,11 +11,148 @@ export const metadata = {
     "Lorehub hilft Dungeon Masters und Spielern, ihre Pen-&-Paper-Kampagnen zu verwalten: NPCs, Organisationen, Locations, Charaktere, Tagebuch und mehr – alles an einem Ort.",
 };
 
+// ─── SVG Icons ───────────────────────────────────────────────────────────────
+
+const gold = "var(--dnd-gold)";
+const iconProps = { fill: "none", stroke: gold, strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+
+/** NPCs, Orgs, Chars, Locations — stacked profile cards */
+function IconObjekte() {
+  return (
+    <svg viewBox="0 0 56 56" width={52} height={52} {...iconProps}>
+      {/* Back card */}
+      <rect x="18" y="8" width="26" height="32" rx="2" stroke={gold} opacity="0.4" />
+      {/* Front card */}
+      <rect x="10" y="16" width="26" height="32" rx="2" fill="rgba(201,168,76,0.06)" stroke={gold} />
+      {/* Portrait circle */}
+      <circle cx="23" cy="26" r="5" stroke={gold} />
+      {/* Name line */}
+      <line x1="15" y1="35" x2="31" y2="35" stroke={gold} />
+      {/* Sub line */}
+      <line x1="15" y1="40" x2="27" y2="40" stroke={gold} opacity="0.6" />
+      {/* Location pin top-right */}
+      <circle cx="40" cy="10" r="3" stroke={gold} />
+      <path d="M40 13 L40 18" stroke={gold} />
+    </svg>
+  );
+}
+
+/** Nodes connected by lines — network graph */
+function IconVerbindungen() {
+  return (
+    <svg viewBox="0 0 56 56" width={52} height={52} {...iconProps}>
+      {/* Three outer nodes */}
+      <circle cx="28" cy="9"  r="5" stroke={gold} />
+      <circle cx="9"  cy="43" r="5" stroke={gold} />
+      <circle cx="47" cy="43" r="5" stroke={gold} />
+      {/* Edges */}
+      <line x1="28" y1="14" x2="13" y2="38" stroke={gold} />
+      <line x1="28" y1="14" x2="43" y2="38" stroke={gold} />
+      <line x1="14" y1="43" x2="42" y2="43" stroke={gold} />
+      {/* Central node */}
+      <circle cx="28" cy="30" r="3.5" fill="rgba(201,168,76,0.25)" stroke={gold} />
+      {/* Edges to center */}
+      <line x1="28" y1="14" x2="28" y2="26.5" stroke={gold} strokeDasharray="2 2" opacity="0.5" />
+      <line x1="13" y1="40" x2="25" y2="32" stroke={gold} strokeDasharray="2 2" opacity="0.5" />
+      <line x1="43" y1="40" x2="31" y2="32" stroke={gold} strokeDasharray="2 2" opacity="0.5" />
+    </svg>
+  );
+}
+
+/** Open book with quill */
+function IconTagebuch() {
+  return (
+    <svg viewBox="0 0 56 56" width={52} height={52} {...iconProps}>
+      {/* Left page */}
+      <path d="M28 12 L10 17 L10 46 L28 42 Z" fill="rgba(201,168,76,0.06)" stroke={gold} />
+      {/* Right page */}
+      <path d="M28 12 L46 17 L46 46 L28 42 Z" fill="rgba(201,168,76,0.04)" stroke={gold} />
+      {/* Spine */}
+      <line x1="28" y1="12" x2="28" y2="42" stroke={gold} />
+      {/* Lines left page */}
+      <line x1="14" y1="24" x2="25" y2="22" stroke={gold} opacity="0.7" />
+      <line x1="14" y1="29" x2="25" y2="27" stroke={gold} opacity="0.7" />
+      <line x1="14" y1="34" x2="22" y2="32" stroke={gold} opacity="0.5" />
+      {/* Lines right page */}
+      <line x1="31" y1="22" x2="42" y2="24" stroke={gold} opacity="0.7" />
+      <line x1="31" y1="27" x2="42" y2="29" stroke={gold} opacity="0.7" />
+      {/* Quill */}
+      <path d="M46 8 Q52 4 54 8 Q50 14 46 18 Z" fill="rgba(201,168,76,0.2)" stroke={gold} strokeWidth={1.2} />
+      <line x1="47" y1="17" x2="43" y2="26" stroke={gold} strokeWidth={1.2} />
+    </svg>
+  );
+}
+
+/** Shield with sword — campaigns */
+function IconKampagnen() {
+  return (
+    <svg viewBox="0 0 56 56" width={52} height={52} {...iconProps}>
+      {/* Shield */}
+      <path d="M28 7 L47 15 L47 30 Q47 44 28 52 Q9 44 9 30 L9 15 Z"
+        fill="rgba(201,168,76,0.06)" stroke={gold} />
+      {/* Sword blade */}
+      <line x1="28" y1="19" x2="28" y2="41" stroke={gold} strokeWidth={2} />
+      {/* Guard */}
+      <line x1="22" y1="27" x2="34" y2="27" stroke={gold} strokeWidth={1.5} />
+      {/* Pommel */}
+      <circle cx="28" cy="43" r="2.5" fill="rgba(201,168,76,0.3)" stroke={gold} />
+      {/* Tip */}
+      <path d="M26 19 L30 19 L28 15 Z" fill="rgba(201,168,76,0.4)" stroke={gold} strokeWidth={1} />
+    </svg>
+  );
+}
+
+/** D20 die — Dungeon Master */
+function IconDM() {
+  return (
+    <svg viewBox="0 0 56 56" width={52} height={52} {...iconProps}>
+      {/* Outer hexagon */}
+      <polygon points="28,6 50,19 50,38 28,51 6,38 6,19"
+        fill="rgba(201,168,76,0.06)" stroke={gold} />
+      {/* Inner triangle top */}
+      <polygon points="28,6 50,19 6,19" fill="rgba(201,168,76,0.1)" stroke={gold} strokeWidth={1} />
+      {/* Face lines */}
+      <line x1="6"  y1="19" x2="28" y2="27" stroke={gold} opacity="0.5" strokeWidth={1} />
+      <line x1="50" y1="19" x2="28" y2="27" stroke={gold} opacity="0.5" strokeWidth={1} />
+      <line x1="6"  y1="38" x2="28" y2="27" stroke={gold} opacity="0.5" strokeWidth={1} />
+      <line x1="50" y1="38" x2="28" y2="27" stroke={gold} opacity="0.5" strokeWidth={1} />
+      {/* "20" text */}
+      <text x="28" y="37" textAnchor="middle" fontSize="11" fontFamily="'Oswald', sans-serif"
+        fill={gold} stroke="none" fontWeight="600" letterSpacing="1">20</text>
+    </svg>
+  );
+}
+
+/** Crossed swords — Players */
+function IconSpieler() {
+  return (
+    <svg viewBox="0 0 56 56" width={52} height={52} {...iconProps}>
+      {/* Sword 1 — top-left to bottom-right */}
+      <line x1="12" y1="12" x2="44" y2="44" stroke={gold} strokeWidth={2} />
+      {/* Tip 1 */}
+      <path d="M10 10 L14 10 L14 14 Z" fill="rgba(201,168,76,0.5)" stroke={gold} strokeWidth={1} />
+      {/* Guard 1 */}
+      <line x1="18" y1="22" x2="28" y2="12" stroke={gold} strokeWidth={1.5} />
+      {/* Pommel 1 */}
+      <circle cx="44" cy="44" r="3" fill="rgba(201,168,76,0.3)" stroke={gold} />
+
+      {/* Sword 2 — top-right to bottom-left */}
+      <line x1="44" y1="12" x2="12" y2="44" stroke={gold} strokeWidth={2} />
+      {/* Tip 2 */}
+      <path d="M46 10 L42 10 L42 14 Z" fill="rgba(201,168,76,0.5)" stroke={gold} strokeWidth={1} />
+      {/* Guard 2 */}
+      <line x1="38" y1="22" x2="28" y2="12" stroke={gold} strokeWidth={1.5} />
+      {/* Pommel 2 */}
+      <circle cx="12" cy="44" r="3" fill="rgba(201,168,76,0.3)" stroke={gold} />
+    </svg>
+  );
+}
+
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
 function FeatureCard({
   icon, title, description,
-}: { icon: string; title: string; description: string }) {
+}: { icon: React.ReactNode; title: string; description: string }) {
   return (
     <div style={{
       background: "var(--dnd-bg-card)",
@@ -30,7 +167,7 @@ function FeatureCard({
       <div style={{ position: "absolute", bottom: 0, left: 0, width: 12, height: 12, borderBottom: "2px solid var(--dnd-gold)", borderLeft: "2px solid var(--dnd-gold)" }} />
       <div style={{ position: "absolute", bottom: 0, right: 0, width: 12, height: 12, borderBottom: "2px solid var(--dnd-gold)", borderRight: "2px solid var(--dnd-gold)" }} />
 
-      <div style={{ fontSize: "2rem", marginBottom: "16px" }}>{icon}</div>
+      <div style={{ marginBottom: "16px" }}>{icon}</div>
       <h3 className="font-cinzel font-bold mb-3" style={{ color: "var(--dnd-heading)", fontSize: "1.05rem", letterSpacing: "0.04em" }}>
         {title}
       </h3>
@@ -189,22 +326,22 @@ export default async function StartPage() {
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center" }}>
             <FeatureCard
-              icon="📜"
+              icon={<IconObjekte />}
               title="Objekte & Weltelemente"
               description="Verwalte NPCs, Organisationen, Spielercharaktere und Locations mit detaillierten Profilen, Bildern, Statusangaben und privaten Notizen – nur für den DM sichtbar."
             />
             <FeatureCard
-              icon="🔗"
+              icon={<IconVerbindungen />}
               title="Verbindungen & Netzwerke"
               description="Verknüpfe Charaktere mit Orten, ordne NPCs Organisationen zu und tagge beliebige Objekte gegenseitig per @-Erwähnung. Zusammenhänge auf einen Blick."
             />
             <FeatureCard
-              icon="📖"
+              icon={<IconTagebuch />}
               title="Tagebuch & Geschichte"
               description="Spieler führen persönliche Tagebücher, der DM schreibt die offizielle Geschichte der Kampagne. Einträge lassen sich mit NPCs, Orten und Organisationen verknüpfen."
             />
             <FeatureCard
-              icon="⚔️"
+              icon={<IconKampagnen />}
               title="Kampagnen & Teams"
               description="Erstelle mehrere Kampagnen und lade dein Team ein. Jede Kampagne hat ihren eigenen Bereich mit eigenen Daten, Spielern und Dungeon Masters."
             />
@@ -262,7 +399,7 @@ export default async function StartPage() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
             {/* DM */}
             <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", padding: "32px 28px" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: "16px" }}>🎲</div>
+              <div style={{ marginBottom: "16px" }}><IconDM /></div>
               <h3 className="font-cinzel font-bold mb-4" style={{ color: "var(--dnd-heading)", fontSize: "1.1rem" }}>
                 Dungeon Masters
               </h3>
@@ -284,7 +421,7 @@ export default async function StartPage() {
 
             {/* Players */}
             <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", padding: "32px 28px" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: "16px" }}>⚔️</div>
+              <div style={{ marginBottom: "16px" }}><IconSpieler /></div>
               <h3 className="font-cinzel font-bold mb-4" style={{ color: "var(--dnd-heading)", fontSize: "1.1rem" }}>
                 Spieler
               </h3>
