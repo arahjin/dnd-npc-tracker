@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const ART_OPTIONS = ["Land", "Region", "Stadt", "Dorf", "Besonderer Ort", "Wald", "Gewässer"];
@@ -27,57 +27,199 @@ const inputStyle: React.CSSProperties = {
 };
 const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
+// ── Dropdown Multi-Select ────────────────────────────────────────────────────
+
 function MultiSelect({
-  label, items, selected, onToggle, searchPlaceholder,
+  label,
+  items,
+  selected,
+  onToggle,
+  placeholder,
 }: {
   label: string;
   items: LinkedItem[];
   selected: Set<string>;
   onToggle: (id: string) => void;
-  searchPlaceholder: string;
+  placeholder: string;
 }) {
+  const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const filtered = items.filter((i) => i.name.toLowerCase().includes(search.toLowerCase()));
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+        setSearch("");
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open]);
+
+  const selectedItems = items.filter((i) => selected.has(i.id));
+  const filtered = items.filter((i) =>
+    i.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <div>
+    <div ref={containerRef} style={{ position: "relative" }}>
       <p className={labelStyle} style={{ color: "var(--dnd-label)" }}>{label}</p>
-      {items.length === 0 ? (
-        <p className="text-sm" style={{ color: "var(--dnd-text-muted)" }}>Keine verfügbar</p>
-      ) : (
-        <div style={{ border: "1px solid #2A2A2A", background: "#0A0A0A" }}>
+
+      {/* Trigger: shows tags + opens dropdown */}
+      <div
+        onClick={() => { setOpen((o) => !o); }}
+        style={{
+          cursor: "pointer",
+          border: "1px solid #2A2A2A",
+          background: "#0A0A0A",
+          minHeight: "42px",
+          padding: "6px 10px",
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "4px",
+          alignItems: "center",
+          userSelect: "none",
+        }}
+      >
+        {selectedItems.length === 0 ? (
+          <span style={{ color: "var(--dnd-text-muted)", fontSize: "0.875rem", flex: 1 }}>
+            {placeholder}
+          </span>
+        ) : (
+          selectedItems.map((item) => (
+            <span
+              key={item.id}
+              className="font-cinzel"
+              style={{
+                background: "rgba(163,32,32,0.18)",
+                border: "1px solid var(--dnd-red)",
+                color: "var(--dnd-heading)",
+                fontSize: "0.7rem",
+                letterSpacing: "0.06em",
+                padding: "2px 4px 2px 8px",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+              }}
+            >
+              {item.name}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onToggle(item.id); }}
+                style={{
+                  color: "var(--dnd-red-light)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  lineHeight: 1,
+                  padding: "0 2px",
+                  fontSize: "0.9rem",
+                }}
+              >
+                ×
+              </button>
+            </span>
+          ))
+        )}
+        <span style={{ marginLeft: "auto", color: "var(--dnd-text-muted)", fontSize: "0.75rem", paddingLeft: "4px" }}>
+          {open ? "▴" : "▾"}
+        </span>
+      </div>
+
+      {/* Dropdown panel */}
+      {open && (
+        <div
+          style={{
+            position: "absolute",
+            top: "calc(100% + 2px)",
+            left: 0,
+            right: 0,
+            zIndex: 100,
+            background: "#0E0E0E",
+            border: "1px solid #2A2A2A",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
+            maxHeight: "220px",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {/* Search inside dropdown */}
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder={searchPlaceholder}
-            className="w-full px-3 py-2 text-sm outline-none"
-            style={{ ...inputStyle, borderBottom: "1px solid #2A2A2A" }}
+            placeholder="Suchen…"
+            autoFocus
+            onClick={(e) => e.stopPropagation()}
+            className="text-sm outline-none"
+            style={{
+              ...inputStyle,
+              border: "none",
+              borderBottom: "1px solid #2A2A2A",
+              padding: "8px 12px",
+              flexShrink: 0,
+            }}
           />
-          <div className="max-h-40 overflow-y-auto">
-            {filtered.length === 0 ? (
-              <p className="px-3 py-2 text-sm" style={{ color: "var(--dnd-text-muted)" }}>Keine Treffer</p>
+
+          {/* Options list */}
+          <div style={{ overflowY: "auto" }}>
+            {items.length === 0 ? (
+              <p className="px-3 py-2 text-sm" style={{ color: "var(--dnd-text-muted)" }}>
+                Keine verfügbar
+              </p>
+            ) : filtered.length === 0 ? (
+              <p className="px-3 py-2 text-sm" style={{ color: "var(--dnd-text-muted)" }}>
+                Keine Treffer
+              </p>
             ) : (
-              filtered.map((item) => (
-                <label
-                  key={item.id}
-                  className="flex items-center gap-3 px-3 py-2 cursor-pointer"
-                  style={{
-                    borderBottom: "1px solid #1A1A1A",
-                    background: selected.has(item.id) ? "rgba(163,32,32,0.12)" : "transparent",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={selected.has(item.id)}
-                    onChange={() => onToggle(item.id)}
-                    className="accent-red-700"
-                  />
-                  <span className="font-cinzel text-sm" style={{ color: selected.has(item.id) ? "var(--dnd-heading)" : "var(--dnd-text)" }}>
-                    {item.name}
-                  </span>
-                </label>
-              ))
+              filtered.map((item) => {
+                const isSelected = selected.has(item.id);
+                return (
+                  <div
+                    key={item.id}
+                    onClick={(e) => { e.stopPropagation(); onToggle(item.id); }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      padding: "9px 12px",
+                      cursor: "pointer",
+                      borderBottom: "1px solid #181818",
+                      background: isSelected ? "rgba(163,32,32,0.12)" : "transparent",
+                      transition: "background 0.1s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isSelected) (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.04)";
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLDivElement).style.background = isSelected ? "rgba(163,32,32,0.12)" : "transparent";
+                    }}
+                  >
+                    {/* Checkmark indicator */}
+                    <span style={{
+                      width: 14, height: 14, flexShrink: 0,
+                      border: isSelected ? "1px solid var(--dnd-red)" : "1px solid #444",
+                      background: isSelected ? "var(--dnd-red)" : "transparent",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      {isSelected && (
+                        <svg width="9" height="7" viewBox="0 0 9 7" fill="none">
+                          <path d="M1 3.5L3.5 6L8 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </span>
+                    <span
+                      className="font-cinzel text-sm"
+                      style={{ color: isSelected ? "var(--dnd-heading)" : "var(--dnd-text)" }}
+                    >
+                      {item.name}
+                    </span>
+                  </div>
+                );
+              })
             )}
           </div>
         </div>
@@ -85,6 +227,8 @@ function MultiSelect({
     </div>
   );
 }
+
+// ── Main Form ────────────────────────────────────────────────────────────────
 
 export default function LocationForm({
   id,
@@ -101,7 +245,9 @@ export default function LocationForm({
   const [art, setArt] = useState(initial.art ?? "");
   const [land, setLand] = useState(initial.land ?? "");
   const [region, setRegion] = useState(initial.region ?? "");
-  const [population, setPopulation] = useState(initial.population != null ? String(initial.population) : "");
+  const [population, setPopulation] = useState(
+    initial.population != null ? String(initial.population) : ""
+  );
   const [klima, setKlima] = useState(initial.klima ?? "");
   const [floraFauna, setFloraFauna] = useState(initial.floraFauna ?? "");
   const [wissenswertes, setWissenswertes] = useState(initial.wissenswertes ?? "");
@@ -113,9 +259,9 @@ export default function LocationForm({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  function toggle(set: Set<string>, setFn: (s: Set<string>) => void, id: string) {
+  function toggle(set: Set<string>, setFn: (s: Set<string>) => void, itemId: string) {
     const next = new Set(set);
-    next.has(id) ? next.delete(id) : next.add(id);
+    next.has(itemId) ? next.delete(itemId) : next.add(itemId);
     setFn(next);
   }
 
@@ -209,7 +355,7 @@ export default function LocationForm({
         </div>
       </div>
 
-      {/* Population */}
+      {/* Population – no spinner */}
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Population</label>
         <input
@@ -260,27 +406,27 @@ export default function LocationForm({
         <div className="h-px flex-1" style={{ background: "linear-gradient(270deg, var(--dnd-red), transparent)" }} />
       </div>
 
-      {/* Multi-selects */}
+      {/* Dropdown multi-selects */}
       <MultiSelect
         label="NPCs"
         items={availableNpcs}
         selected={npcIds}
-        onToggle={(id) => toggle(npcIds, setNpcIds, id)}
-        searchPlaceholder="NPC suchen..."
+        onToggle={(itemId) => toggle(npcIds, setNpcIds, itemId)}
+        placeholder="NPCs auswählen…"
       />
       <MultiSelect
         label="Organisationen"
         items={availableOrgs}
         selected={orgIds}
-        onToggle={(id) => toggle(orgIds, setOrgIds, id)}
-        searchPlaceholder="Organisation suchen..."
+        onToggle={(itemId) => toggle(orgIds, setOrgIds, itemId)}
+        placeholder="Organisationen auswählen…"
       />
       <MultiSelect
         label="Charaktere"
         items={availableChars}
         selected={charIds}
-        onToggle={(id) => toggle(charIds, setCharIds, id)}
-        searchPlaceholder="Charakter suchen..."
+        onToggle={(itemId) => toggle(charIds, setCharIds, itemId)}
+        placeholder="Charaktere auswählen…"
       />
 
       {/* Submit */}
