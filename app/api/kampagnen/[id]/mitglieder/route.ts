@@ -64,6 +64,11 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   });
   if (!targetMitglied) return NextResponse.json({ error: "Mitglied nicht gefunden." }, { status: 404 });
 
+  // Owners cannot be removed by anyone except admins
+  if (targetMitglied.isOwner && !isAdmin) {
+    return NextResponse.json({ error: "Der Ersteller einer Kampagne kann nicht entfernt werden." }, { status: 403 });
+  }
+
   // Protect the last DM from being removed (unless admin)
   if (targetMitglied.isDM && !isAdmin) {
     const dmCount = await prisma.kampagneMitglied.count({ where: { kampagneId, isDM: true } });

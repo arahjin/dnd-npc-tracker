@@ -72,6 +72,7 @@ model KampagneMitglied {
   kampagneId String
   userId     String
   isDM       Boolean  @default(false)
+  isOwner    Boolean  @default(false)
   createdAt  DateTime @default(now())
 
   kampagne Kampagne @relation(fields: [kampagneId], references: [id], onDelete: Cascade)

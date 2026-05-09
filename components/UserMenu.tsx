@@ -59,11 +59,6 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
             </div>
 
             {/* Kampagnen section */}
-            <div className="px-4 pt-2 pb-1">
-              <p className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-label)", fontSize: "0.6rem" }}>
-                Kampagnen
-              </p>
-            </div>
             {menuItem("/kampagnen/verwalten", "Kampagnen verwalten")}
             {canManageInvites && menuItem("/dm/einladungen", "Einladungen verwalten")}
             {divider}

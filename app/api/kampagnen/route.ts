@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       name: name.trim(),
       beschreibung: beschreibung?.trim() || null,
       mitglieder: {
-        create: { userId, isDM: true },
+        create: { userId, isDM: true, isOwner: true },
       },
     },
   });

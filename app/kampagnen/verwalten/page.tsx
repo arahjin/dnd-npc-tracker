@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 type Member = {
   id: string;
   isDM: boolean;
+  isOwner: boolean;
   userId: string;
   user: { id: string; name: string; email: string };
 };
@@ -210,16 +211,25 @@ export default function KampagnenVerwaltenPage() {
                         return (
                           <div key={m.id} className="flex items-center gap-3 py-1.5 px-2"
                             style={{ borderBottom: "1px solid #1A1A1A" }}>
-                            <div className="flex-1 min-w-0">
+                            <div className="flex-1 min-w-0 flex items-center gap-2">
                               <span className="font-cinzel text-sm" style={{ color: "var(--dnd-text)" }}>
                                 {m.user.name}
                                 {isSelf && <span className="ml-1" style={{ color: "var(--dnd-text-muted)", fontSize: "0.7rem" }}>(du)</span>}
                               </span>
-                              <span className="ml-2 font-cinzel text-xs" style={{ color: m.isDM ? "var(--dnd-gold)" : "var(--dnd-text-muted)" }}>
-                                {m.isDM ? "DM" : "Spieler"}
-                              </span>
+                              {m.isOwner && (
+                                <span className="font-cinzel text-xs px-1.5 py-0.5"
+                                  style={{ background: "#1A0800", border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>
+                                  Ersteller
+                                </span>
+                              )}
+                              {!m.isOwner && m.isDM && (
+                                <span className="font-cinzel text-xs" style={{ color: "var(--dnd-gold)" }}>DM</span>
+                              )}
+                              {!m.isDM && (
+                                <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>Spieler</span>
+                              )}
                             </div>
-                            {!isSelf && (
+                            {!isSelf && !m.isOwner && (
                               <button
                                 onClick={() => removeMember(k.id, m.userId)}
                                 disabled={removing === removeKey}
