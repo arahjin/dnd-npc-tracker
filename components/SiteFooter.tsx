@@ -67,9 +67,8 @@ export default async function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Discord"
-                style={{ color: "#6B6860", padding: "4px 16px", display: "flex", alignItems: "center", textDecoration: "none", transition: "color 0.15s" }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = "#5865F2")}
-                onMouseLeave={(e) => (e.currentTarget.style.color = "#6B6860")}
+                className="footer-discord"
+                style={{ padding: "4px 16px", display: "flex", alignItems: "center", textDecoration: "none" }}
               >
                 {/* Discord SVG icon */}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

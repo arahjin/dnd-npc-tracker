@@ -115,6 +115,9 @@ body {
   button, a { -webkit-tap-highlight-color: transparent; }
 }
 
+.footer-discord { color: #6B6860; transition: color 0.15s; }
+.footer-discord:hover { color: #5865F2; }
+
 /* Hide number input spinners */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
