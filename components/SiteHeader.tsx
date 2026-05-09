@@ -77,7 +77,7 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
             {kampagneSelector}
             <NavSearch />
             {actionSlot ?? (
-              <Link href={active === "organisationen" ? "/organisationen/new" : "/npc/new"} className="ddb-cta">
+              <Link href={active === "organisationen" ? "/organisationen/neu" : "/npc/neu"} className="ddb-cta">
                 {active === "organisationen" ? "+ Organisation" : "+ NPC"}
               </Link>
             )}

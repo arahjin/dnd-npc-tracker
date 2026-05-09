@@ -70,7 +70,7 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
               </button>
             ))}
             <Link
-              href="/kampagnen/new"
+              href="/kampagnen/neu"
               onClick={() => setOpen(false)}
               className="block px-4 py-2.5 font-cinzel text-xs transition-colors"
               style={{ color: "var(--dnd-text-muted)", borderTop: "1px solid #1A1A1A" }}

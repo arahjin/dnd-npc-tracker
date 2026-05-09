@@ -29,7 +29,7 @@ export default async function OrganisationenPage() {
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <SiteHeader active="organisationen" actionSlot={
-        <Link href="/organisationen/new" className="ddb-cta">+ Organisation</Link>
+        <Link href="/organisationen/neu" className="ddb-cta">+ Organisation</Link>
       } />
       <div className="mx-auto max-w-7xl px-6 py-8">
         <p className="font-cinzel text-xs tracking-widest mb-6" style={{ color: "var(--dnd-text-muted)" }}>
