@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { LogoFull } from "@/components/Icons";
+import Image from "next/image";
 
 function LoginForm() {
   const router = useRouter();
@@ -46,8 +46,11 @@ function LoginForm() {
       <div className="w-full max-w-md px-4">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <LogoFull
-            color="var(--dnd-gold)"
+          <Image
+            src="/lorehub_logo.png"
+            alt="Lorehub"
+            width={280} height={80}
+            className="object-contain"
             style={{ height: "60px", width: "auto" }}
           />
         </div>

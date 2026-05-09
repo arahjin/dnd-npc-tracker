@@ -7,7 +7,7 @@ import { canSeePrivate } from "@/lib/visibility";
 import DeleteButton from "@/components/DeleteButton";
 import NPCEditButton from "@/components/NPCEditButton";
 import RenderMentions from "@/components/RenderMentions";
-import { LogoIcon, IconLock } from "@/components/Icons";
+import { IconLock } from "@/components/Icons";
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   Lebendig:  { bg: "#0D2010", text: "#4ADE80", border: "#166534" },
@@ -128,7 +128,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                 <Image src={npc.image} alt={npc.name} fill className="object-cover" />
               ) : (
                 <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
-                  <LogoIcon size={180} color="var(--dnd-text-muted)" style={{ opacity: 0.15 }} />
+                  <Image src="/lorehub_icon.png" alt="Kein Bild" width={180} height={180} className="object-contain opacity-20" />
                 </div>
               )}
 

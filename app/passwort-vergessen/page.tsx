@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LogoFull } from "@/components/Icons";
+import Image from "next/image";
 
 export default function PasswortVergessenPage() {
   const [email, setEmail] = useState("");
@@ -36,8 +36,11 @@ export default function PasswortVergessenPage() {
     <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--dnd-bg)" }}>
       <div className="w-full max-w-md px-4">
         <div className="flex justify-center mb-8">
-          <LogoFull
-            color="var(--dnd-gold)"
+          <Image
+            src="/lorehub_logo.png"
+            alt="Lorehub"
+            width={280} height={80}
+            className="object-contain"
             style={{ height: "60px", width: "auto" }}
           />
         </div>

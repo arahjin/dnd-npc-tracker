@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BEZIEHUNG_OPTIONS, STATUS_OPTIONS } from "@/lib/constants";
-import { LogoIcon, IconPin, IconMap } from "@/components/Icons";
+import { IconPin, IconMap } from "@/components/Icons";
 
 type NPC = {
   id: string;
@@ -140,7 +140,7 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
                   <Image src={npc.image} alt={npc.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
                   <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
-                    <LogoIcon size={150} color="var(--dnd-text-muted)" style={{ opacity: 0.15 }} />
+                    <Image src="/lorehub_icon.png" alt="" width={150} height={150} className="object-contain opacity-20" />
                   </div>
                 )}
                 {/* Gradient overlay */}

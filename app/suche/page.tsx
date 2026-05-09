@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
-import { LogoIcon, IconPerson, IconOrganisation, IconSword, IconDice, IconPin, IconSearch } from "@/components/Icons";
+import { IconPerson, IconOrganisation, IconSword, IconDice, IconPin, IconSearch } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -243,7 +243,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                 <Link key={npc.id} href={`/npc/${npc.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                   <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#0A0A0A" }}>
-                    {npc.image ? <Image src={npc.image} alt={npc.name} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><LogoIcon size={52} color="var(--dnd-text-muted)" style={{ opacity: 0.2 }} /></div>}
+                    {npc.image ? <Image src={npc.image} alt={npc.name} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={52} height={52} className="object-contain opacity-20" /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{npc.name}</p>
@@ -288,7 +288,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                 <Link key={c.id} href={`/charaktere/${c.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                   <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#0A0A0A" }}>
-                    {c.image ? <Image src={c.image} alt={c.name} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><LogoIcon size={52} color="var(--dnd-text-muted)" style={{ opacity: 0.2 }} /></div>}
+                    {c.image ? <Image src={c.image} alt={c.name} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={52} height={52} className="object-contain opacity-20" /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{c.name}</p>

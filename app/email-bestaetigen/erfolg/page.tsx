@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { signOut } from "next-auth/react";
-import { LogoFull } from "@/components/Icons";
+import Image from "next/image";
 
 export default function EmailErfolgPage() {
   // Sign out so the next login refreshes the JWT with emailVerified: true
@@ -16,8 +16,11 @@ export default function EmailErfolgPage() {
     <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--dnd-bg)" }}>
       <div className="w-full max-w-md px-4 text-center">
         <div className="flex justify-center mb-8">
-          <LogoFull
-            color="var(--dnd-gold)"
+          <Image
+            src="/lorehub_logo.png"
+            alt="Lorehub"
+            width={280} height={80}
+            className="object-contain"
             style={{ height: "60px", width: "auto" }}
           />
         </div>

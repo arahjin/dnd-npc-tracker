@@ -3,7 +3,7 @@
 import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { PASSWORD_HINT } from "@/lib/password";
-import { LogoFull } from "@/components/Icons";
+import Image from "next/image";
 
 function ResetForm() {
   const searchParams = useSearchParams();
@@ -89,8 +89,11 @@ export default function PasswortZuruecksetzenPage() {
     <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--dnd-bg)" }}>
       <div className="w-full max-w-md px-4">
         <div className="flex justify-center mb-8">
-          <LogoFull
-            color="var(--dnd-gold)"
+          <Image
+            src="/lorehub_logo.png"
+            alt="Lorehub"
+            width={280} height={80}
+            className="object-contain"
             style={{ height: "60px", width: "auto" }}
           />
         </div>

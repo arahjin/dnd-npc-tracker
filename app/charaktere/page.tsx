@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { charakterVisibilityWhere } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
-import { LogoIcon, IconPin } from "@/components/Icons";
+import { IconPin } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -74,7 +74,7 @@ function CharCard({ c }: { c: { id: string; name: string; image: string | null; 
       <div className="relative h-52 w-full overflow-hidden" style={{ background: "#0A0A0A" }}>
         {c.image
           ? <Image src={c.image} alt={c.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
-          : <div className="flex h-full items-center justify-center"><LogoIcon size={150} color="var(--dnd-text-muted)" style={{ opacity: 0.15 }} /></div>
+          : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={150} height={150} className="object-contain opacity-20" /></div>
         }
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)" }} />
       </div>

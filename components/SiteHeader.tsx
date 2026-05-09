@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
-import { LogoFull } from "@/components/Icons";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import NavSearch from "./NavSearch";
@@ -81,9 +80,12 @@ export default async function SiteHeader({ active }: {
 
           {/* Logo */}
           <Link href="/start" style={{ display: "flex", alignItems: "center", marginRight: "8px", flexShrink: 0 }}>
-            <LogoFull
-              color="var(--dnd-gold)"
-              style={{ height: "52px", width: "auto", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}
+            <Image
+              src="/lorehub_logo.png"
+              alt="Lorehub"
+              width={280} height={80}
+              className="object-contain"
+              style={{ height: "54px", width: "auto", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}
             />
           </Link>
 
