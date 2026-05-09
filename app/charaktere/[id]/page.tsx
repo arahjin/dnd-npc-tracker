@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
 import CharakterEditButton from "@/components/CharakterEditButton";
 import CharakterDeleteButton from "@/components/CharakterDeleteButton";
@@ -25,7 +26,11 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
   const { id } = await params;
   const session = await auth();
   const userId = session!.user!.id as string;
-  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
+  const userRole = (session!.user! as { role: string }).role;
+  const isDM = userRole === "DUNGEON_MASTER";
+  const isAdmin = userRole === "ADMIN";
+  // Keep backward-compat: canEdit uses isDM which previously included ADMIN
+  const isDMOrAdmin = isDM || isAdmin;
 
   const cookieStore = await cookies();
   const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
@@ -51,8 +56,10 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
     }),
   ]);
   if (!charakter) notFound();
+  if (charakter.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, charakter.userId)) notFound();
 
-  const canEdit = isDM || charakter.userId === userId;
+  const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, charakter.userId);
+  const canEdit = isDMOrAdmin || charakter.userId === userId;
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -71,6 +78,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
                   region: charakter.region ?? "", alter: charakter.alter ?? "", rasse: charakter.rasse ?? "",
                   herkunft: charakter.herkunft ?? "", aktuellePosition: charakter.aktuellePosition ?? "",
                   gottheit: charakter.gottheit ?? "", notizen: charakter.notizen ?? "",
+                  sichtbarkeit: charakter.sichtbarkeit ?? "public", privateNotizen: charakter.privateNotizen ?? "",
                 }}
               />
               <CharakterDeleteButton id={id} />
@@ -168,6 +176,21 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
                 <div className="px-4 py-4">
                   <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
                     <RenderMentions text={charakter.notizen} />
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {showPrivate && charakter.privateNotizen && (
+              <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+                <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
+                  <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FCA5A5" }}>
+                    🔒 Private Notizen
+                  </h2>
+                </div>
+                <div className="px-4 py-4">
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+                    {charakter.privateNotizen}
                   </p>
                 </div>
               </div>

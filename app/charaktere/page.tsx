@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { charakterVisibilityWhere } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +15,7 @@ export default async function CharakterePage() {
   const ctx = await requireKampagne();
 
   const charaktere = await prisma.charakter.findMany({
-    where: { kampagneId: ctx.kampagneId },
+    where: { kampagneId: ctx.kampagneId, ...charakterVisibilityWhere(ctx) },
     orderBy: { name: "asc" },
     include: { user: { select: { id: true, name: true } } },
   });

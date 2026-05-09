@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 import DeleteButton from "@/components/DeleteButton";
 import NPCEditButton from "@/components/NPCEditButton";
 import RenderMentions from "@/components/RenderMentions";
@@ -46,6 +48,12 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function NPCDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await auth();
+  const userId = session!.user!.id as string;
+  const role = (session!.user! as { role: string }).role;
+  const isDM = role === "DUNGEON_MASTER";
+  const isAdmin = role === "ADMIN";
+
   const [npc, orgs] = await Promise.all([
     prisma.nPC.findUnique({
       where: { id },
@@ -57,12 +65,15 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
     prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
   if (!npc) notFound();
+  if (npc.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId)) notFound();
 
   const locations = await prisma.location.findMany({
     where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {},
     orderBy: { name: "asc" },
     select: { id: true, name: true },
   });
+
+  const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId);
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -85,6 +96,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                 beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
                 alter: npc.alter ?? "", rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
                 aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
+                sichtbarkeit: npc.sichtbarkeit ?? "public", privateNotizen: npc.privateNotizen ?? "",
               }}
             />
             <DeleteButton id={id} />
@@ -212,6 +224,22 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                 <div className="px-4 py-4">
                   <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "1.1rem" }}>
                     <RenderMentions text={npc.notizen} />
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Private Notes */}
+            {showPrivate && npc.privateNotizen && (
+              <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+                <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
+                  <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FCA5A5" }}>
+                    🔒 Private Notizen
+                  </h2>
+                </div>
+                <div className="px-4 py-4">
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+                    {npc.privateNotizen}
                   </p>
                 </div>
               </div>

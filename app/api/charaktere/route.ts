@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
+import { charakterVisibilityWhere } from "@/lib/visibility";
 
 export async function GET() {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
 
   const charaktere = await prisma.charakter.findMany({
-    where: { kampagneId: ctx.kampagneId },
+    where: { kampagneId: ctx.kampagneId, ...charakterVisibilityWhere(ctx) },
     orderBy: { name: "asc" },
     include: { user: { select: { id: true, name: true } } },
   });

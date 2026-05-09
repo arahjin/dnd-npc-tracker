@@ -12,6 +12,7 @@ type Props = {
   initial?: {
     name?: string; art?: string; land?: string; region?: string;
     population?: number | null; klima?: string; floraFauna?: string; wissenswertes?: string;
+    sichtbarkeit?: string; privateNotizen?: string;
   };
   initialNpcIds?: string[];
   initialOrgIds?: string[];
@@ -251,6 +252,8 @@ export default function LocationForm({
   const [klima, setKlima] = useState(initial.klima ?? "");
   const [floraFauna, setFloraFauna] = useState(initial.floraFauna ?? "");
   const [wissenswertes, setWissenswertes] = useState(initial.wissenswertes ?? "");
+  const [sichtbarkeit, setSichtbarkeit] = useState(initial.sichtbarkeit ?? "public");
+  const [privateNotizen, setPrivateNotizen] = useState(initial.privateNotizen ?? "");
 
   const [npcIds, setNpcIds] = useState<Set<string>>(new Set(initialNpcIds));
   const [orgIds, setOrgIds] = useState<Set<string>>(new Set(initialOrgIds));
@@ -275,6 +278,8 @@ export default function LocationForm({
       name, art, land, region,
       population: population !== "" ? Number(population) : null,
       klima, floraFauna, wissenswertes,
+      sichtbarkeit,
+      privateNotizen: privateNotizen.trim() || null,
       npcIds: [...npcIds],
       orgIds: [...orgIds],
       charakterIds: [...charIds],
@@ -396,6 +401,28 @@ export default function LocationForm({
           className="w-full px-4 py-2.5 text-sm outline-none resize-none"
           style={inputStyle}
         />
+      </div>
+
+      {/* Sichtbarkeit */}
+      <div>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Sichtbarkeit</label>
+        <select value={sichtbarkeit} onChange={(e) => setSichtbarkeit(e.target.value)}
+          className="w-full px-4 py-2.5 text-sm outline-none font-cinzel"
+          style={inputStyle}>
+          <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
+          <option value="privat">Privat – nur Ersteller &amp; DM/Admin</option>
+        </select>
+      </div>
+
+      {/* Private Notizen */}
+      <div>
+        <label className={labelStyle} style={{ color: "#FCA5A5" }}>
+          Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
+        </label>
+        <textarea value={privateNotizen} onChange={(e) => setPrivateNotizen(e.target.value)}
+          placeholder="Geheime Infos, DM-Notizen..." rows={4}
+          className="w-full px-4 py-2.5 text-sm outline-none resize-none"
+          style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
       </div>
 
       {/* Divider */}

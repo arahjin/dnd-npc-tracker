@@ -10,7 +10,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { organisationen, ...data } = await req.json();
+  const { organisationen, erstellerId: _eid, ...data } = await req.json();
 
   const npc = await prisma.$transaction(async (tx) => {
     await tx.nPCOrganisation.deleteMany({ where: { npcId: id } });

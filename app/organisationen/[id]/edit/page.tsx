@@ -32,6 +32,7 @@ export default async function EditOrganisation({ params }: { params: Promise<{ i
         <OrgForm id={id} availableLocations={locations} initial={{
           name: org.name, beschreibung: org.beschreibung ?? "", typ: org.typ ?? "",
           region: org.region ?? "", alignment: org.alignment ?? "", beziehungZurGruppe: org.beziehungZurGruppe ?? "",
+          gottheit: org.gottheit ?? "", sichtbarkeit: org.sichtbarkeit ?? "public", privateNotizen: org.privateNotizen ?? "",
         }} />
       </div>
     </main>

@@ -30,7 +30,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!(await canEdit(user.id as string, id, role)))
     return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
 
-  const { organisationen, ...data } = await req.json();
+  const { organisationen, userId: _uid, ...data } = await req.json();
   const charakter = await prisma.$transaction(async (tx) => {
     await tx.charakterOrganisation.deleteMany({ where: { charakterId: id } });
     if (organisationen?.length > 0) {

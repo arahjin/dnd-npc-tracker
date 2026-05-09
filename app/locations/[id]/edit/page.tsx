@@ -54,6 +54,8 @@ export default async function EditLocationPage({ params }: { params: Promise<{ i
             klima: location.klima ?? "",
             floraFauna: location.floraFauna ?? "",
             wissenswertes: location.wissenswertes ?? "",
+            sichtbarkeit: location.sichtbarkeit ?? "public",
+            privateNotizen: location.privateNotizen ?? "",
           }}
           initialNpcIds={location.npcs.map((n) => n.id)}
           initialOrgIds={location.organisationen.map((o) => o.id)}

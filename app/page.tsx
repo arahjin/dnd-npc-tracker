@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { visibilityWhere } from "@/lib/visibility";
 import NPCGrid from "@/components/NPCGrid";
 import SiteHeader from "@/components/SiteHeader";
 import NPCCreateButton from "@/components/NPCCreateButton";
@@ -11,7 +12,7 @@ export default async function Home() {
 
   const [npcs, orgs, locations] = await Promise.all([
     prisma.nPC.findMany({
-      where: { kampagneId: ctx.kampagneId },
+      where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
       orderBy: { name: "asc" },
       include: { organisationen: { include: { organisation: { select: { id: true, name: true } } } } },
     }),

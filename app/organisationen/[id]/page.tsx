@@ -4,7 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 import OrgDeleteButton from "@/components/OrgDeleteButton";
 import OrgMitglieder from "@/components/OrgMitglieder";
 import CharakterMitglieder from "@/components/CharakterMitglieder";
@@ -34,6 +36,12 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function OrganisationDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await auth();
+  const userId = session!.user!.id as string;
+  const role = (session!.user! as { role: string }).role;
+  const isDM = role === "DUNGEON_MASTER";
+  const isAdmin = role === "ADMIN";
+
   const org = await prisma.organisation.findUnique({
     where: { id },
     include: {
@@ -46,7 +54,9 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
     },
   });
   if (!org) notFound();
+  if (org.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId)) notFound();
 
+  const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId);
   const cookieStore = await cookies();
   const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
 
@@ -120,6 +130,22 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
             </div>
           )}
         </div>
+
+        {/* Private Notes */}
+        {showPrivate && org.privateNotizen && (
+          <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+            <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
+              <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FCA5A5" }}>
+                🔒 Private Notizen
+              </h2>
+            </div>
+            <div className="px-4 py-4">
+              <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+                {org.privateNotizen}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Locations */}
         {org.locations.length > 0 && (

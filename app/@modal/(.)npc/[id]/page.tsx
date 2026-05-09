@@ -1,7 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 import DetailModal from "@/components/DetailModal";
 import ModalCloseButton from "@/components/ModalCloseButton";
 import NPCEditButton from "@/components/NPCEditButton";
@@ -44,11 +46,20 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function NPCModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await auth();
+  const userId = session!.user!.id as string;
+  const role = (session!.user! as { role: string }).role;
+  const isDM = role === "DUNGEON_MASTER";
+  const isAdmin = role === "ADMIN";
+
   const npc = await prisma.nPC.findUnique({
     where: { id },
     include: { organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } } },
   });
   if (!npc) notFound();
+  if (npc.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId)) notFound();
+
+  const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId);
 
   const [orgs, locations] = await Promise.all([
     prisma.organisation.findMany({ where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
@@ -70,6 +81,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
                 beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
                 alter: npc.alter ?? "", rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
                 aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
+                sichtbarkeit: npc.sichtbarkeit ?? "public", privateNotizen: npc.privateNotizen ?? "",
               }}
             />
             <DeleteButton id={id} />
@@ -149,6 +161,21 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
                 <div className="px-4 py-4">
                   <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
                     <RenderMentions text={npc.notizen} />
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {showPrivate && npc.privateNotizen && (
+              <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+                <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
+                  <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FCA5A5" }}>
+                    🔒 Private Notizen
+                  </h2>
+                </div>
+                <div className="px-4 py-4">
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+                    {npc.privateNotizen}
                   </p>
                 </div>
               </div>

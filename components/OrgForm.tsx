@@ -13,13 +13,16 @@ type OrgData = {
   alignment: string;
   beziehungZurGruppe: string;
   gottheit: string;
+  sichtbarkeit: string;
+  privateNotizen: string;
 };
 
 const EMPTY: OrgData = {
   name: "", beschreibung: "", typ: "", region: "", alignment: "", beziehungZurGruppe: "", gottheit: "",
+  sichtbarkeit: "public", privateNotizen: "",
 };
 
-export default function OrgForm({ initial, id, availableLocations = [] }: { initial?: Partial<OrgData>; id?: string; availableLocations?: { id: string; name: string }[] }) {
+export default function OrgForm({ initial, id, availableLocations = [] }: { initial?: Partial<OrgData & { sichtbarkeit?: string; privateNotizen?: string }>; id?: string; availableLocations?: { id: string; name: string }[] }) {
   const router = useRouter();
   const [form, setForm] = useState<OrgData>({ ...EMPTY, ...initial });
   const [saving, setSaving] = useState(false);
@@ -42,6 +45,8 @@ export default function OrgForm({ initial, id, availableLocations = [] }: { init
       alignment: form.alignment || null,
       beziehungZurGruppe: form.beziehungZurGruppe.trim() || null,
       gottheit: form.gottheit.trim() || null,
+      sichtbarkeit: form.sichtbarkeit,
+      privateNotizen: form.privateNotizen.trim() || null,
     };
     const res = id
       ? await fetch(`/api/organisationen/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
@@ -108,6 +113,27 @@ export default function OrgForm({ initial, id, availableLocations = [] }: { init
         <MentionTextarea value={form.beschreibung} onChange={(v) => set("beschreibung", v)}
           placeholder={"Geschichte, Ziele, Aktivitäten...\n\n@ tippen um NPCs, Orgs, Chars oder Locations zu verknüpfen"}
           rows={5} className={inputClass + " resize-none"} style={inputStyle} />
+      </div>
+
+      {/* Sichtbarkeit */}
+      <div>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Sichtbarkeit</label>
+        <select value={form.sichtbarkeit} onChange={(e) => setForm(f => ({ ...f, sichtbarkeit: e.target.value }))}
+          className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
+          <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
+          <option value="privat">Privat – nur Ersteller &amp; DM/Admin</option>
+        </select>
+      </div>
+
+      {/* Private Notizen */}
+      <div>
+        <label className={labelStyle} style={{ color: "#FCA5A5" }}>
+          Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
+        </label>
+        <textarea value={form.privateNotizen} onChange={(e) => set("privateNotizen", e.target.value)}
+          placeholder="Geheime Infos, DM-Notizen..." rows={4}
+          className={inputClass + " resize-none"}
+          style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
       </div>
 
       <div className="flex items-center gap-3">

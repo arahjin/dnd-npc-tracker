@@ -44,6 +44,9 @@ model User {
   charaktere         Charakter[]
   eintraege          JournalEntry[]
   kampagnen          KampagneMitglied[]
+  erstellteNPCs           NPC[]          @relation("erstellteNPCs")
+  erstellteOrganisationen Organisation[] @relation("erstellteOrganisationen")
+  erstellteLocations      Location[]     @relation("erstellteLocations")
 }
 
 model Invite {
@@ -105,6 +108,10 @@ model NPC {
   aktuellePosition String?
   gottheit         String?
   notizen          String?
+  sichtbarkeit     String            @default("public")
+  privateNotizen   String?
+  erstellerId      String?
+  ersteller        User?             @relation("erstellteNPCs", fields: [erstellerId], references: [id], onDelete: SetNull)
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   organisationen   NPCOrganisation[]
@@ -122,6 +129,10 @@ model Organisation {
   alignment           String?
   beziehungZurGruppe  String?
   gottheit            String?
+  sichtbarkeit        String                  @default("public")
+  privateNotizen      String?
+  erstellerId         String?
+  ersteller           User?                   @relation("erstellteOrganisationen", fields: [erstellerId], references: [id], onDelete: SetNull)
   createdAt           DateTime                @default(now())
   updatedAt           DateTime                @updatedAt
   mitglieder          NPCOrganisation[]
@@ -161,6 +172,8 @@ model Charakter {
   aktuellePosition String?
   gottheit         String?
   notizen          String?
+  sichtbarkeit     String                  @default("public")
+  privateNotizen   String?
   createdAt        DateTime                @default(now())
   updatedAt        DateTime                @updatedAt
   organisationen   CharakterOrganisation[]
@@ -192,12 +205,16 @@ model Location {
   population    Int?
   klima         String?
   floraFauna    String?
-  wissenswertes String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  npcs          NPC[]
+  wissenswertes  String?
+  sichtbarkeit   String         @default("public")
+  privateNotizen String?
+  erstellerId    String?
+  ersteller      User?          @relation("erstellteLocations", fields: [erstellerId], references: [id], onDelete: SetNull)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  npcs           NPC[]
   organisationen Organisation[]
-  charaktere    Charakter[]
+  charaktere     Charakter[]
 }
 
 // ─── Journal ─────────────────────────────────────────────

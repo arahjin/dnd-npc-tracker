@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { visibilityWhere } from "@/lib/visibility";
 
 export async function GET() {
   try {
     const ctx = await requireKampagne();
     const locations = await prisma.location.findMany({
-      where: { kampagneId: ctx.kampagneId },
+      where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
       orderBy: { name: "asc" },
       include: {
         npcs: { select: { id: true, name: true } },
@@ -23,7 +24,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const ctx = await requireKampagne();
-    const { name, art, land, region, population, klima, floraFauna, wissenswertes, npcIds = [], orgIds = [], charakterIds = [] } = await req.json();
+    const { name, art, land, region, population, klima, floraFauna, wissenswertes, sichtbarkeit, privateNotizen, npcIds = [], orgIds = [], charakterIds = [] } = await req.json();
 
     if (!name?.trim()) {
       return NextResponse.json({ error: "Name ist erforderlich." }, { status: 400 });
@@ -40,6 +41,9 @@ export async function POST(req: NextRequest) {
         klima: klima || null,
         floraFauna: floraFauna || null,
         wissenswertes: wissenswertes || null,
+        sichtbarkeit: sichtbarkeit || "public",
+        privateNotizen: privateNotizen || null,
+        erstellerId: ctx.userId,
         npcs: { connect: (npcIds as string[]).map((id) => ({ id })) },
         organisationen: { connect: (orgIds as string[]).map((id) => ({ id })) },
         charaktere: { connect: (charakterIds as string[]).map((id) => ({ id })) },

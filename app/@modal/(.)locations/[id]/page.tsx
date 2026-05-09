@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 import DetailModal from "@/components/DetailModal";
 import ModalCloseButton from "@/components/ModalCloseButton";
 import LocationDeleteButton from "@/components/LocationDeleteButton";
@@ -53,6 +55,11 @@ function LinkedList({ items, baseHref }: { items: { id: string; name: string }[]
 
 export default async function LocationModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await auth();
+  const userId = session!.user!.id as string;
+  const role = (session!.user! as { role: string }).role;
+  const isDM = role === "DUNGEON_MASTER";
+  const isAdmin = role === "ADMIN";
 
   const location = await prisma.location.findUnique({
     where: { id },
@@ -63,7 +70,9 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
     },
   });
   if (!location) notFound();
+  if (location.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, location.erstellerId)) notFound();
 
+  const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, location.erstellerId);
   const icon = location.art ? (ART_ICON[location.art] ?? "📍") : "📍";
 
   return (
@@ -129,6 +138,21 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
             </div>
             <div className="px-4 py-4">
               <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)" }}>{location.wissenswertes}</p>
+            </div>
+          </div>
+        )}
+
+        {showPrivate && location.privateNotizen && (
+          <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+            <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
+              <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FCA5A5" }}>
+                🔒 Private Notizen
+              </h2>
+            </div>
+            <div className="px-4 py-4">
+              <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+                {location.privateNotizen}
+              </p>
             </div>
           </div>
         )}

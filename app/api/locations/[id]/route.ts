@@ -28,7 +28,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const existing = await prisma.location.findFirst({ where: { id, kampagneId: ctx.kampagneId } });
     if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
 
-    const { name, art, land, region, population, klima, floraFauna, wissenswertes, npcIds = [], orgIds = [], charakterIds = [] } = await req.json();
+    const { name, art, land, region, population, klima, floraFauna, wissenswertes, sichtbarkeit, privateNotizen, npcIds = [], orgIds = [], charakterIds = [] } = await req.json();
 
     if (!name?.trim()) {
       return NextResponse.json({ error: "Name ist erforderlich." }, { status: 400 });
@@ -46,6 +46,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         klima: klima || null,
         floraFauna: floraFauna || null,
         wissenswertes: wissenswertes || null,
+        sichtbarkeit: sichtbarkeit || "public",
+        privateNotizen: privateNotizen || null,
         npcs: { set: (npcIds as string[]).map((npcId) => ({ id: npcId })) },
         organisationen: { set: (orgIds as string[]).map((orgId) => ({ id: orgId })) },
         charaktere: { set: (charakterIds as string[]).map((cId) => ({ id: cId })) },

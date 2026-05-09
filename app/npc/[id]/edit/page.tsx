@@ -48,6 +48,7 @@ export default async function EditNPC({ params }: { params: Promise<{ id: string
             beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
             alter: npc.alter ?? "", rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
             aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
+            sichtbarkeit: npc.sichtbarkeit ?? "public", privateNotizen: npc.privateNotizen ?? "",
           }}
         />
       </div>

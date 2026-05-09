@@ -15,6 +15,7 @@ type Props = {
     name: string; image: string; status: string; beziehung: string;
     geschlecht: string; region: string; alter: string; rasse: string;
     herkunft: string; aktuellePosition: string; notizen: string;
+    sichtbarkeit?: string; privateNotizen?: string;
   };
 };
 

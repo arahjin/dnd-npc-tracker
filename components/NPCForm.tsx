@@ -19,6 +19,8 @@ type NPCData = {
   aktuellePosition: string;
   gottheit: string;
   notizen: string;
+  sichtbarkeit: string;
+  privateNotizen: string;
 };
 
 type OrgMembership = { organisationId: string; rolle: string };
@@ -36,6 +38,7 @@ const EMPTY: NPCData = {
   name: "", image: "", status: "Unbekannt", beziehung: "Unbekannt",
   geschlecht: "", region: "",
   alter: "", rasse: "", herkunft: "", aktuellePosition: "", gottheit: "", notizen: "",
+  sichtbarkeit: "public", privateNotizen: "",
 };
 
 export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess }: Props) {
@@ -103,6 +106,8 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       aktuellePosition: form.aktuellePosition.trim() || null,
       gottheit: form.gottheit.trim() || null,
       notizen: form.notizen.trim() || null,
+      sichtbarkeit: form.sichtbarkeit,
+      privateNotizen: form.privateNotizen.trim() || null,
       organisationen: selectedOrgs.filter((o) => o.organisationId),
     };
 
@@ -370,6 +375,27 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
         <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
           placeholder={"Hintergrundgeschichte, Quests, wichtige Infos...\n\n@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
           rows={6} className={inputClass + " resize-none"} style={inputStyle} />
+      </div>
+
+      {/* Sichtbarkeit */}
+      <div>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Sichtbarkeit</label>
+        <select value={form.sichtbarkeit} onChange={(e) => setForm(f => ({ ...f, sichtbarkeit: e.target.value }))}
+          className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
+          <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
+          <option value="privat">Privat – nur Ersteller &amp; DM/Admin</option>
+        </select>
+      </div>
+
+      {/* Private Notizen */}
+      <div>
+        <label className={labelStyle} style={{ color: "#FCA5A5" }}>
+          Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
+        </label>
+        <textarea value={form.privateNotizen} onChange={(e) => setForm(f => ({ ...f, privateNotizen: e.target.value }))}
+          placeholder="Geheime Infos, DM-Notizen..." rows={4}
+          className={inputClass + " resize-none"}
+          style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
       </div>
 
       {/* Divider */}

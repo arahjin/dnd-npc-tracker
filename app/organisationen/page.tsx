@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { visibilityWhere } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
 
 export const dynamic = "force-dynamic";
@@ -21,7 +22,7 @@ export default async function OrganisationenPage() {
   const ctx = await requireKampagne();
 
   const orgs = await prisma.organisation.findMany({
-    where: { kampagneId: ctx.kampagneId },
+    where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
     orderBy: { name: "asc" },
     include: { mitglieder: true },
   });
