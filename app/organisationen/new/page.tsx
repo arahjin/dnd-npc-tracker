@@ -1,15 +1,13 @@
-import Link from "next/link";
 import OrgForm from "@/components/OrgForm";
+import { requireKampagne } from "@/lib/kampagne";
+import SiteHeader from "@/components/SiteHeader";
 
-export default function NewOrganisation() {
+export default async function NewOrganisation() {
+  await requireKampagne();
+
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
-      <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
-        <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
-        <div className="mx-auto max-w-2xl px-6 py-4">
-          <Link href="/organisationen" className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-text-muted)" }}>← Zurück</Link>
-        </div>
-      </header>
+      <SiteHeader active="organisationen" />
       <div className="mx-auto max-w-2xl px-6 py-10">
         <div className="mb-8">
           <h1 className="font-cinzel text-3xl font-bold" style={{ color: "var(--dnd-heading)" }}>Neue Organisation</h1>

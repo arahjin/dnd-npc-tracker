@@ -42,9 +42,20 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
   });
   if (!org) notFound();
 
+  const cookieStore = await import("next/headers").then((m) => m.cookies());
+  const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
+
   const [alleNPCs, alleCharaktere] = await Promise.all([
-    prisma.nPC.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.charakter.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, user: { select: { id: true, name: true } } } }),
+    prisma.nPC.findMany({
+      where: kampagneId ? { kampagneId } : {},
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.charakter.findMany({
+      where: kampagneId ? { kampagneId } : {},
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, user: { select: { id: true, name: true } } },
+    }),
   ]);
   const alignColors = org.alignment ? (ALIGNMENT_COLORS[org.alignment] ?? ALIGNMENT_COLORS["Wahrhaft Neutral"]) : null;
 

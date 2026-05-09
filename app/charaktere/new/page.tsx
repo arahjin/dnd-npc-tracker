@@ -1,11 +1,15 @@
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { requireKampagne } from "@/lib/kampagne";
 import SiteHeader from "@/components/SiteHeader";
 import CharakterForm from "@/components/CharakterForm";
 
 export default async function NewCharakterPage() {
-  await auth(); // ensure logged in (middleware handles redirect)
-  const orgs = await prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } });
+  const ctx = await requireKampagne();
+  const orgs = await prisma.organisation.findMany({
+    where: { kampagneId: ctx.kampagneId },
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>

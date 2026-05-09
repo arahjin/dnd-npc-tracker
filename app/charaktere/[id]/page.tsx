@@ -26,6 +26,9 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
   const userId = session!.user!.id as string;
   const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
 
+  const cookieStore = await import("next/headers").then((m) => m.cookies());
+  const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
+
   const [charakter, orgs] = await Promise.all([
     prisma.charakter.findUnique({
       where: { id },
@@ -34,7 +37,11 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
         organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } },
       },
     }),
-    prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({
+      where: kampagneId ? { kampagneId } : {},
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
   ]);
   if (!charakter) notFound();
 
