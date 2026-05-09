@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -22,7 +22,7 @@ type Props = {
 };
 
 const inputStyle: React.CSSProperties = {
-  background: "#FFFFFF", border: "1px solid #C8C4BC",
+  background: "#0A0A0A", border: "1px solid #2A2A2A",
   color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif",
 };
 const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
@@ -73,8 +73,8 @@ function MultiSelect({
         onClick={() => { setOpen((o) => !o); }}
         style={{
           cursor: "pointer",
-          border: "1px solid #C8C4BC",
-          background: "#FFFFFF",
+          border: "1px solid #2A2A2A",
+          background: "#0A0A0A",
           minHeight: "42px",
           padding: "6px 10px",
           display: "flex",
@@ -138,8 +138,8 @@ function MultiSelect({
             left: 0,
             right: 0,
             zIndex: 100,
-            background: "#F3F0E8",
-            border: "1px solid #C8C4BC",
+            background: "#0E0E0E",
+            border: "1px solid #2A2A2A",
             boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
             maxHeight: "220px",
             display: "flex",
@@ -158,7 +158,7 @@ function MultiSelect({
             style={{
               ...inputStyle,
               border: "none",
-              borderBottom: "1px solid #C8C4BC",
+              borderBottom: "1px solid #2A2A2A",
               padding: "8px 12px",
               flexShrink: 0,
             }}

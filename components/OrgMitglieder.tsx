@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -40,7 +40,7 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
     router.refresh();
   }
 
-  const inputStyle = { background: "#FFFFFF", border: "1px solid #C8C4BC", color: "var(--dnd-text)" };
+  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)" };
 
   return (
     <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
@@ -51,7 +51,7 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
       </div>
 
       {/* Mitgliederliste */}
-      <div className="divide-y" style={{ borderColor: "#E0DDD6" }}>
+      <div className="divide-y" style={{ borderColor: "#1E1E1E" }}>
         {mitglieder.length === 0 && (
           <p className="px-4 py-4 text-sm" style={{ color: "var(--dnd-text-muted)" }}>Noch keine Mitglieder erfasst.</p>
         )}
@@ -61,7 +61,7 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
               {m.image ? (
                 <Image src={m.image} alt={m.name} fill className="object-cover" />
               ) : (
-                <div className="flex h-full items-center justify-center text-lg" style={{ background: "#FFFFFF" }}>👤</div>
+                <div className="flex h-full items-center justify-center text-lg" style={{ background: "#0A0A0A" }}>👤</div>
               )}
             </div>
             <div className="flex-1 min-w-0">
@@ -80,7 +80,7 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
 
       {/* Mitglied hinzufügen */}
       {verfuegbareNPCs.length > 0 && (
-        <div className="px-4 py-4 flex flex-wrap gap-2 items-end" style={{ borderTop: "1px solid #E0DDD6" }}>
+        <div className="px-4 py-4 flex flex-wrap gap-2 items-end" style={{ borderTop: "1px solid #1E1E1E" }}>
           <div className="flex-1 min-w-36">
             <p className="font-cinzel text-xs tracking-widest mb-1.5" style={{ color: "var(--dnd-label)" }}>NPC</p>
             <select value={selectedNPC} onChange={(e) => setSelectedNPC(e.target.value)}
@@ -96,7 +96,7 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
           </div>
           <button onClick={handleAdd} disabled={!selectedNPC || adding}
             className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all disabled:opacity-40"
-            style={{ background: "var(--dnd-red)", color: "#FFFFFF", border: "1px solid var(--dnd-red-dark)" }}>
+            style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
             {adding ? "..." : "+ HINZUFÜGEN"}
           </button>
         </div>

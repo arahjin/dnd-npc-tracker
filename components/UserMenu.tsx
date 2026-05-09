@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
@@ -24,21 +24,21 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
 
   const menuItem = (href: string, label: string) => (
     <a href={href} className="block px-4 py-2 font-cinzel text-xs transition-colors"
-      style={{ color: "#5A5850" }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
-      onMouseLeave={(e) => (e.currentTarget.style.color = "#5A5850")}>
+      style={{ color: "#C8B8A8" }}
+      onMouseEnter={(e) => (e.currentTarget.style.color = "#F5EDD6")}
+      onMouseLeave={(e) => (e.currentTarget.style.color = "#C8B8A8")}>
       {label}
     </a>
   );
 
-  const divider = <div style={{ height: "1px", background: "#FFFFFF" }} />;
+  const divider = <div style={{ height: "1px", background: "#1A1A1A" }} />;
 
   return (
     <div style={{ position: "relative" }}>
       <button
         onClick={() => setOpen((p) => !p)}
         className="font-cinzel text-xs tracking-wide flex items-center gap-2 px-3 py-1.5 transition-all"
-        style={{ border: "1px solid #333", color: "#5A5850", background: "#FFFFFF" }}
+        style={{ border: "1px solid #333", color: "#C8B8A8", background: "#1A1A1A" }}
       >
         <span style={{ color: "var(--dnd-gold)" }}>{ROLE_ICON[role] ?? "🎲"}</span>
         {name}
@@ -49,10 +49,10 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div className="absolute right-0 mt-1 z-50 min-w-48"
-            style={{ background: "#F8F5EF", border: "1px solid #C8C4BC" }}>
+            style={{ background: "#111", border: "1px solid #2A2A2A" }}>
 
             {/* User info */}
-            <div className="px-4 py-2" style={{ borderBottom: "1px solid #FFFFFF" }}>
+            <div className="px-4 py-2" style={{ borderBottom: "1px solid #1A1A1A" }}>
               <p className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
                 {ROLE_LABEL[role] ?? role}
               </p>

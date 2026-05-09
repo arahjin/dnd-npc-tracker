@@ -25,7 +25,7 @@ const ALIGNMENT_COLORS: Record<string, { bg: string; text: string; border: strin
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
-    <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #E0DDD6" }}>
+    <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #1E1E1E" }}>
       <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-label)" }}>{label}</span>
       <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)" }}>{value}</span>
     </div>
@@ -66,7 +66,7 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
-      <header style={{ background: "#FFFFFF", borderBottom: "1px solid #D4D0C8" }}>
+      <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
         <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
         <div className="mx-auto max-w-5xl px-4 md:px-6 py-4 flex items-center justify-between">
           <Link href="/organisationen" className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-text-muted)" }}>← Zurück</Link>

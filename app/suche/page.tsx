@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
@@ -157,7 +157,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
               {npcs.map((npc) => (
                 <Link key={npc.id} href={`/npc/${npc.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
-                  <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#FFFFFF" }}>
+                  <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#0A0A0A" }}>
                     {npc.image ? <Image src={npc.image} alt={npc.name} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><Image src="/wildgipfel_logo.png" alt="" width={32} height={14} className="object-contain opacity-20" /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -165,7 +165,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                     <div className="flex flex-wrap gap-1 mt-1">
                       {npc.rasse && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>{npc.rasse}</span>}
                       {npc.organisationen.map((m) => (
-                        <span key={m.id} className="font-cinzel text-xs px-1.5 py-0.5" style={{ background: "#F8F5EF", border: "1px solid #C8C4BC", color: "var(--dnd-text-muted)" }}>🏛 {m.organisation.name}</span>
+                        <span key={m.id} className="font-cinzel text-xs px-1.5 py-0.5" style={{ background: "#111", border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>🏛 {m.organisation.name}</span>
                       ))}
                     </div>
                   </div>
@@ -183,7 +183,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
               {orgs.map((org) => (
                 <Link key={org.id} href={`/organisationen/${org.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
-                  <div className="flex items-center justify-center w-10 h-10 shrink-0 text-xl" style={{ background: "#FFFFFF" }}>🏛</div>
+                  <div className="flex items-center justify-center w-10 h-10 shrink-0 text-xl" style={{ background: "#0A0A0A" }}>🏛</div>
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{org.name}</p>
                     {(org.typ || org.region) && <p className="text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>{[org.typ, org.region].filter(Boolean).join(" · ")}</p>}
@@ -202,7 +202,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
               {chars.map((c) => (
                 <Link key={c.id} href={`/charaktere/${c.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
-                  <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#FFFFFF" }}>
+                  <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#0A0A0A" }}>
                     {c.image ? <Image src={c.image} alt={c.name} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><Image src="/wildgipfel_logo.png" alt="" width={32} height={14} className="object-contain opacity-20" /></div>}
                   </div>
                   <div className="flex-1 min-w-0">

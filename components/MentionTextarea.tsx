@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { MENTION_ICON, MENTION_REGEX, type MentionOption } from "@/lib/mentions";
@@ -26,7 +26,7 @@ function mkChip(label: string, typ: string, id: string): HTMLSpanElement {
   s.contentEditable = "false";
   s.textContent     = `${MENTION_ICON[typ] ?? ""}${label}`;
   s.style.cssText   =
-    "background:#1A0A0A;border:1px solid #284D12;color:#FCA5A5;" +
+    "background:#1A0A0A;border:1px solid #7F1D1D;color:#FCA5A5;" +
     "padding:1px 6px;border-radius:2px;font-size:0.82em;" +
     "font-family:'Cinzel',serif;cursor:default;user-select:none;white-space:nowrap;";
   return s;
@@ -273,7 +273,7 @@ export default function MentionTextarea({
       {!value && placeholder && (
         <div
           className="absolute top-0 left-0 pointer-events-none px-4 py-2.5 text-base"
-          style={{ color: "#9A9890", fontFamily: "'Roboto', sans-serif" }}
+          style={{ color: "#4A4540", fontFamily: "'Roboto', sans-serif" }}
         >
           {placeholder}
         </div>
@@ -294,9 +294,9 @@ export default function MentionTextarea({
       {query !== null && filtered.length > 0 && (
         <div
           className="absolute left-0 right-0 z-30 shadow-xl"
-          style={{ top: "100%", background: "#F3F0E8", border: "1px solid #C8C4BC", maxHeight: "220px", overflowY: "auto" }}
+          style={{ top: "100%", background: "#0E0E0E", border: "1px solid #2A2A2A", maxHeight: "220px", overflowY: "auto" }}
         >
-          <div className="px-3 py-1.5" style={{ borderBottom: "1px solid #FFFFFF" }}>
+          <div className="px-3 py-1.5" style={{ borderBottom: "1px solid #1A1A1A" }}>
             <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
               @ Erwähnung einfügen
             </span>
@@ -308,9 +308,9 @@ export default function MentionTextarea({
               onMouseDown={(e) => { e.preventDefault(); insertMention(opt); }}
               className="w-full text-left px-4 py-2 font-cinzel text-xs flex items-center gap-2 transition-colors"
               style={{
-                background: i === activeIdx ? "#FFFFFF" : "transparent",
+                background: i === activeIdx ? "#1A1A1A" : "transparent",
                 color: "var(--dnd-text)",
-                borderBottom: "1px solid #F3F0E8",
+                borderBottom: "1px solid #141414",
               }}
               onMouseEnter={() => setActiveIdx(i)}
             >

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -44,9 +44,9 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
             className="absolute right-0 top-full mt-1 z-50 min-w-48"
-            style={{ background: "#F8F5EF", border: "1px solid var(--dnd-border)", boxShadow: "0 8px 24px rgba(0,0,0,0.6)" }}
+            style={{ background: "#111", border: "1px solid var(--dnd-border)", boxShadow: "0 8px 24px rgba(0,0,0,0.6)" }}
           >
-            <div className="px-3 py-2" style={{ borderBottom: "1px solid #FFFFFF" }}>
+            <div className="px-3 py-2" style={{ borderBottom: "1px solid #1A1A1A" }}>
               <span className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-text-muted)" }}>
                 Kampagne wechseln
               </span>
@@ -60,9 +60,9 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
                 style={{
                   color: k.id === aktiveId ? "var(--dnd-gold)" : "var(--dnd-text)",
                   background: k.id === aktiveId ? "#1A0A0A" : "transparent",
-                  borderBottom: "1px solid #F3F0E8",
+                  borderBottom: "1px solid #141414",
                 }}
-                onMouseEnter={(e) => { if (k.id !== aktiveId) (e.currentTarget.style.background = "#FFFFFF"); }}
+                onMouseEnter={(e) => { if (k.id !== aktiveId) (e.currentTarget.style.background = "#1A1A1A"); }}
                 onMouseLeave={(e) => { if (k.id !== aktiveId) (e.currentTarget.style.background = "transparent"); }}
               >
                 {k.id === aktiveId && <span>✦</span>}
@@ -73,8 +73,8 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
               href="/kampagnen/neu"
               onClick={() => setOpen(false)}
               className="block px-4 py-2.5 font-cinzel text-xs transition-colors"
-              style={{ color: "var(--dnd-text-muted)", borderTop: "1px solid #FFFFFF" }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "#FFFFFF")}
+              style={{ color: "var(--dnd-text-muted)", borderTop: "1px solid #1A1A1A" }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "#1A1A1A")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
             >
               + Neue Kampagne

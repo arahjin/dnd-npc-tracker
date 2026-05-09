@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -134,11 +134,11 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
               <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
 
               {/* Image */}
-              <div className="relative h-52 w-full overflow-hidden" style={{ background: "#FFFFFF" }}>
+              <div className="relative h-52 w-full overflow-hidden" style={{ background: "#0A0A0A" }}>
                 {npc.image ? (
                   <Image src={npc.image} alt={npc.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
-                  <div className="flex h-full items-center justify-center" style={{ background: "#FFFFFF" }}>
+                  <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
                     <Image src="/wildgipfel_logo.png" alt="Kein Bild" width={80} height={36} className="object-contain opacity-20" />
                   </div>
                 )}

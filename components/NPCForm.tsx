@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -125,8 +125,8 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
 
   const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";
   const inputStyle = {
-    background: "#FFFFFF",
-    border: "1px solid #C8C4BC",
+    background: "#0A0A0A",
+    border: "1px solid #2A2A2A",
     color: "var(--dnd-text)",
     fontFamily: "'Roboto', sans-serif",
   };
@@ -149,9 +149,9 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       </div>
 
       {/* Bild + Generator */}
-      <div style={{ border: "1px solid #C8C4BC", background: "#FAFAF8" }}>
+      <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
         {/* Section Header */}
-        <div className="px-4 py-2 flex items-center gap-2" style={{ borderBottom: "1px solid #C8C4BC", background: "var(--dnd-red-dark)" }}>
+        <div className="px-4 py-2 flex items-center gap-2" style={{ borderBottom: "1px solid #2A2A2A", background: "var(--dnd-red-dark)" }}>
           <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-heading)" }}>
             Charakterbild
           </span>
@@ -174,9 +174,9 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
 
           {/* Divider */}
           <div className="flex items-center gap-3">
-            <div className="h-px flex-1" style={{ background: "#C8C4BC" }} />
+            <div className="h-px flex-1" style={{ background: "#2A2A2A" }} />
             <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>oder mit KI generieren</span>
-            <div className="h-px flex-1" style={{ background: "#C8C4BC" }} />
+            <div className="h-px flex-1" style={{ background: "#2A2A2A" }} />
           </div>
 
           {/* AI Generator */}
@@ -197,7 +197,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
                 onClick={handleGenerate}
                 disabled={generating || !imagePrompt.trim()}
                 className="font-cinzel text-xs tracking-widest px-4 py-2.5 transition-all disabled:opacity-40 shrink-0"
-                style={{ background: "var(--dnd-gold)", color: "#FFFFFF", border: "1px solid #A07830" }}
+                style={{ background: "var(--dnd-gold)", color: "#0A0A0A", border: "1px solid #A07830" }}
               >
                 {generating ? "..." : "GENERIEREN"}
               </button>
@@ -221,12 +221,12 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
               <div className="flex gap-2">
                 <button type="button" onClick={acceptGeneratedImage}
                   className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
-                  style={{ background: "var(--dnd-red)", color: "#FFFFFF", border: "1px solid var(--dnd-red-dark)" }}>
+                  style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
                   ✓ ÜBERNEHMEN
                 </button>
                 <button type="button" onClick={handleGenerate}
                   className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
-                  style={{ border: "1px solid #C8C4BC", color: "var(--dnd-text-muted)" }}>
+                  style={{ border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>
                   ↺ NEU GENERIEREN
                 </button>
               </div>
@@ -316,8 +316,8 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       </div>
 
       {availableOrgs.length > 0 && (
-        <div style={{ border: "1px solid #C8C4BC", background: "#FAFAF8" }}>
-          <div className="px-4 py-2" style={{ borderBottom: "1px solid #C8C4BC", background: "var(--dnd-red-dark)" }}>
+        <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
+          <div className="px-4 py-2" style={{ borderBottom: "1px solid #2A2A2A", background: "var(--dnd-red-dark)" }}>
             <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-heading)" }}>
               Organisationen
             </span>
@@ -352,7 +352,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
                         prev.map((o) => o.organisationId === org.id ? { ...o, rolle: e.target.value } : o)
                       )}
                       className="flex-1 px-3 py-1.5 text-sm outline-none"
-                      style={{ background: "#FFFFFF", border: "1px solid #C8C4BC", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}
+                      style={{ background: "#0A0A0A", border: "1px solid #3A2A2A", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}
                     />
                   )}
                 </div>
@@ -382,7 +382,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       <div className="flex gap-3">
         <button type="submit" disabled={saving}
           className="font-cinzel text-sm tracking-widest px-8 py-3 transition-all disabled:opacity-50"
-          style={{ background: "var(--dnd-red)", color: "#FFFFFF", border: "1px solid var(--dnd-red-dark)" }}>
+          style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
           {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "NPC ERSTELLEN"}
         </button>
         <button type="button" onClick={() => router.back()}

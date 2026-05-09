@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -52,7 +52,7 @@ export default function OrgForm({ initial, id, availableLocations = [] }: { init
   }
 
   const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";
-  const inputStyle = { background: "#FFFFFF", border: "1px solid #C8C4BC", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" };
+  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" };
   const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
   return (
@@ -117,7 +117,7 @@ export default function OrgForm({ initial, id, availableLocations = [] }: { init
 
       <div className="flex gap-3">
         <button type="submit" disabled={saving} className="font-cinzel text-sm tracking-widest px-8 py-3 transition-all disabled:opacity-50"
-          style={{ background: "var(--dnd-red)", color: "#FFFFFF", border: "1px solid var(--dnd-red-dark)" }}>
+          style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
           {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "ORGANISATION ERSTELLEN"}
         </button>
         <button type="button" onClick={() => router.back()} className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"

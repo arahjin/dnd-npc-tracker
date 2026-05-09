@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -89,13 +89,13 @@ export default function KampagnenPage() {
   }
 
   const inputStyle = {
-    background: "#FFFFFF", border: "1px solid #C8C4BC",
+    background: "#0A0A0A", border: "1px solid #2A2A2A",
     color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif",
   };
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
-      <header style={{ background: "#F8F5EF", borderBottom: "1px solid #D4D0C8" }}>
+      <header style={{ background: "#111111", borderBottom: "1px solid #252525" }}>
         <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
         <div className="mx-auto max-w-2xl px-4 md:px-6" style={{ height: "60px", display: "flex", alignItems: "center" }}>
           <h1 className="font-cinzel text-lg font-bold tracking-widest" style={{ color: "var(--dnd-heading)" }}>
