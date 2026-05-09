@@ -80,7 +80,6 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
               { name: { contains: query, mode: "insensitive" } },
               { wissenswertes: { contains: query, mode: "insensitive" } },
               { floraFauna: { contains: query, mode: "insensitive" } },
-              { beschreibung: { contains: query, mode: "insensitive" } },
             ],
           },
           orderBy: { name: "asc" },
