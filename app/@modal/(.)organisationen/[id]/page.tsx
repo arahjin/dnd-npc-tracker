@@ -24,7 +24,7 @@ const ALIGNMENT_COLORS: Record<string, { bg: string; text: string; border: strin
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
-    <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #1E1E1E" }}>
+    <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #E0DDD6" }}>
       <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-label)" }}>{label}</span>
       <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)" }}>{value}</span>
     </div>
@@ -54,7 +54,7 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
   return (
     <DetailModal>
       {/* Header */}
-      <div style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
+      <div style={{ background: "#FFFFFF", borderBottom: "1px solid #D4D0C8" }}>
         <div className="mx-auto max-w-5xl px-4 md:px-6" style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ModalCloseButton />
           <div className="flex gap-2">

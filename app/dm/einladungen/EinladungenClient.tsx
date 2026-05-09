@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 
@@ -68,7 +68,7 @@ export default function EinladungenClient() {
           value={newRole}
           onChange={(e) => setNewRole(e.target.value as "SPIELER" | "DUNGEON_MASTER")}
           className="font-cinzel text-xs px-3 py-2 flex-1 outline-none"
-          style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)" }}
+          style={{ background: "#FFFFFF", border: "1px solid #C8C4BC", color: "var(--dnd-text)" }}
         >
           <option value="SPIELER">Spieler</option>
           <option value="DUNGEON_MASTER">Dungeon Master</option>
@@ -121,7 +121,7 @@ export default function EinladungenClient() {
                             Code für bestehende Nutzer
                           </p>
                           <code className="block text-sm px-3 py-1.5 truncate"
-                            style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-gold)", fontFamily: "monospace", letterSpacing: "0.05em" }}>
+                            style={{ background: "#FFFFFF", border: "1px solid #C8C4BC", color: "var(--dnd-gold)", fontFamily: "monospace", letterSpacing: "0.05em" }}>
                             {inv.token}
                           </code>
                         </div>
@@ -140,7 +140,7 @@ export default function EinladungenClient() {
                             Registrierungslink für neue Nutzer
                           </p>
                           <code className="block text-xs px-3 py-1.5 truncate"
-                            style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)", fontFamily: "monospace" }}>
+                            style={{ background: "#FFFFFF", border: "1px solid #C8C4BC", color: "var(--dnd-text-muted)", fontFamily: "monospace" }}>
                             {registrierUrl(inv.token)}
                           </code>
                         </div>

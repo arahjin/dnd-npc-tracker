@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -26,10 +26,10 @@ export default function NavSearch({ compact }: { compact?: boolean }) {
         placeholder={compact ? "Suchen..." : "Suchen..."}
         className="font-cinzel"
         style={{
-          background: "#1A1A1A",
+          background: "#FFFFFF",
           border: "1px solid #333",
           borderRadius: "2px",
-          color: "#D8D0C8",
+          color: "#1C1C1C",
           fontSize: "0.7rem",
           letterSpacing: "0.06em",
           padding: compact ? "6px 10px" : "6px 12px",

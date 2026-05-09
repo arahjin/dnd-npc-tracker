@@ -15,7 +15,7 @@ const ART_ICON: Record<string, string> = {
 function Field({ label, value }: { label: string; value?: string | number | null }) {
   if (!value && value !== 0) return null;
   return (
-    <div className="flex gap-2 py-2.5" style={{ borderBottom: "1px solid #1A1A1A" }}>
+    <div className="flex gap-2 py-2.5" style={{ borderBottom: "1px solid #FFFFFF" }}>
       <span className="font-cinzel text-xs tracking-wide shrink-0 w-32" style={{ color: "var(--dnd-label)" }}>{label}</span>
       <span className="text-sm" style={{ color: "var(--dnd-text)" }}>{value}</span>
     </div>
@@ -42,7 +42,7 @@ function LinkedList({ items, baseHref }: { items: { id: string; name: string }[]
       {items.map((item) => (
         <Link key={item.id} href={`${baseHref}/${item.id}`}
           className="flex items-center gap-2 py-2 transition-colors"
-          style={{ borderBottom: "1px solid #1A1A1A", color: "var(--dnd-text)" }}>
+          style={{ borderBottom: "1px solid #FFFFFF", color: "var(--dnd-text)" }}>
           <span className="font-cinzel text-sm" style={{ color: "var(--dnd-heading)" }}>{item.name}</span>
           <span className="text-xs ml-auto" style={{ color: "var(--dnd-text-muted)" }}>→</span>
         </Link>
@@ -69,7 +69,7 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
   return (
     <DetailModal>
       {/* Header */}
-      <div style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
+      <div style={{ background: "#FFFFFF", borderBottom: "1px solid #D4D0C8" }}>
         <div className="mx-auto max-w-5xl px-4 md:px-6" style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ModalCloseButton />
           <div className="flex gap-2">

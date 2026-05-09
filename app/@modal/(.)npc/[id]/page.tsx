@@ -35,7 +35,7 @@ function Badge({ label, colors }: { label: string; colors: { bg: string; text: s
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
-    <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #1E1E1E" }}>
+    <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #E0DDD6" }}>
       <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-label)" }}>{label}</span>
       <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{value}</span>
     </div>
@@ -58,7 +58,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
   return (
     <DetailModal>
       {/* Header */}
-      <div style={{ background: "#111111", borderBottom: "1px solid #252525" }}>
+      <div style={{ background: "#F8F5EF", borderBottom: "1px solid #D4D0C8" }}>
         <div className="mx-auto max-w-5xl px-4 md:px-6" style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ModalCloseButton />
           <div className="flex gap-2">
@@ -81,7 +81,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {/* Portrait */}
           <div className="md:col-span-1">
-            <div className="relative overflow-hidden" style={{ aspectRatio: "2/3", border: "1px solid var(--dnd-border)", background: "#0A0A0A" }}>
+            <div className="relative overflow-hidden" style={{ aspectRatio: "2/3", border: "1px solid var(--dnd-border)", background: "#FFFFFF" }}>
               <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
               <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
               <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
@@ -90,7 +90,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
                 ? <Image src={npc.image} alt={npc.name} fill className="object-cover" />
                 : <div className="flex h-full items-center justify-center"><Image src="/wildgipfel_logo.png" alt="" width={120} height={54} className="object-contain opacity-20" /></div>
               }
-              <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)" }} />
+              <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.35) 0%, transparent 60%)" }} />
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <Badge label={npc.status} colors={STATUS_COLORS[npc.status] ?? STATUS_COLORS["Unbekannt"]} />
@@ -128,7 +128,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
                 <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
                   <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Organisationen</h2>
                 </div>
-                <div className="divide-y" style={{ borderColor: "#1E1E1E" }}>
+                <div className="divide-y" style={{ borderColor: "#E0DDD6" }}>
                   {npc.organisationen.map((m) => (
                     <div key={m.id} className="px-4 py-3 flex items-center justify-between gap-4">
                       <Link href={`/organisationen/${m.organisationId}`} className="font-cinzel text-sm font-semibold hover:underline" style={{ color: "var(--dnd-heading)" }}>

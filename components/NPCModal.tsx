@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import NPCForm from "./NPCForm";
@@ -43,7 +43,7 @@ export default function NPCModal({ isOpen, onClose, title, id, availableOrgs, in
       <div className="relative mx-auto my-10 w-full max-w-2xl px-4 pb-10">
         <div style={{ background: "var(--dnd-bg)", border: "1px solid var(--dnd-border)" }}>
           {/* Modal header */}
-          <div style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
+          <div style={{ background: "#FFFFFF", borderBottom: "1px solid #D4D0C8" }}>
             <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
             <div className="px-6 py-4 flex items-center justify-between">
               <h2 className="font-cinzel text-xl font-bold" style={{ color: "var(--dnd-heading)" }}>{title}</h2>

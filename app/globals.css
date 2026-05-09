@@ -2,19 +2,19 @@
 @import "tailwindcss";
 
 :root {
-  --dnd-red: #A32020;
-  --dnd-red-dark: #6B1111;
-  --dnd-red-light: #C84040;
-  --dnd-gold: #C9A84C;
-  --dnd-gold-light: #E8C97A;
-  --dnd-heading: #FFFFFF;
-  --dnd-label: #B8A090;
-  --dnd-bg: #0E0E0E;
-  --dnd-bg-card: #1A1A1A;
-  --dnd-bg-card2: #141414;
-  --dnd-border: #2A2A2A;
-  --dnd-text: #D8D0C8;
-  --dnd-text-muted: #7A6A5A;
+  --dnd-red: #3A6B1A;
+  --dnd-red-dark: #284D12;
+  --dnd-red-light: #56902B;
+  --dnd-gold: #8B7040;
+  --dnd-gold-light: #A8905A;
+  --dnd-heading: #141414;
+  --dnd-label: #5A5850;
+  --dnd-bg: #F3F0E8;
+  --dnd-bg-card: #FFFFFF;
+  --dnd-bg-card2: #EDEAE3;
+  --dnd-border: #D4D0C8;
+  --dnd-text: #1C1C1C;
+  --dnd-text-muted: #7A7870;
 }
 
 body {
@@ -40,18 +40,18 @@ body {
   opacity: 0.5;
 }
 
-/* Red glow on hover */
+/* Green glow on hover */
 .card-hover:hover {
-  box-shadow: 0 0 20px rgba(197, 49, 49, 0.15), 0 0 40px rgba(197, 49, 49, 0.05);
+  box-shadow: 0 0 20px rgba(58, 107, 26, 0.10), 0 0 40px rgba(58, 107, 26, 0.04);
 }
 
-/* DnD Beyond-style nav links */
+/* Nav links */
 .ddb-nav-link {
   font-family: 'Oswald', sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #9A8A78;
+  color: #7A7870;
   padding: 0 16px;
   height: 60px;
   display: flex;
@@ -64,16 +64,16 @@ body {
 }
 
 .ddb-nav-link:hover {
-  color: #F5EDD6;
+  color: #141414;
   border-bottom-color: var(--dnd-red);
 }
 
 .ddb-nav-active {
-  color: #F5EDD6 !important;
+  color: #141414 !important;
   border-bottom-color: var(--dnd-red) !important;
 }
 
-/* DnD Beyond-style CTA button */
+/* CTA button */
 .ddb-cta {
   font-family: 'Oswald', sans-serif;
   font-size: 0.75rem;
@@ -82,7 +82,7 @@ body {
   text-transform: uppercase;
   padding: 9px 20px;
   background: var(--dnd-red);
-  color: #F5EDD6;
+  color: #FFFFFF;
   border: 2px solid var(--dnd-red);
   cursor: pointer;
   transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
@@ -92,15 +92,10 @@ body {
 }
 
 .ddb-cta:hover {
-  background: #BF2A2A;
-  border-color: #BF2A2A;
-  box-shadow: 0 0 18px rgba(163, 32, 32, 0.55);
+  background: var(--dnd-red-light);
+  border-color: var(--dnd-red-light);
+  box-shadow: 0 0 18px rgba(58, 107, 26, 0.4);
   color: #fff;
-}
-
-/* Gold glow */
-.gold-glow {
-  box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
 }
 
 /* Hero banner — responsive height */

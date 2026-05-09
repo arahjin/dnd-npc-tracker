@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import MentionTextarea from "./MentionTextarea";
@@ -106,7 +106,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
     ? entries.filter((e) => e.tags.some((t) => t.referenzId === filterTag.id))
     : entries;
 
-  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "#D8D0C8", fontFamily: "'Roboto', sans-serif" };
+  const inputStyle = { background: "#FFFFFF", border: "1px solid #C8C4BC", color: "#1C1C1C", fontFamily: "'Roboto', sans-serif" };
   const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
   return (
@@ -128,13 +128,13 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                 className="w-full px-3 py-1.5 text-sm outline-none" style={inputStyle} />
               {filterSearch && filterTagOptions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 z-20"
-                  style={{ background: "#111", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
+                  style={{ background: "#F8F5EF", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
                   {filterTagOptions.slice(0, 8).map((t) => (
                     <button key={t.id} type="button"
                       onClick={() => { setFilterTag(t); setFilterSearch(""); }}
                       className="w-full text-left px-4 py-2 font-cinzel text-xs"
-                      style={{ color: "var(--dnd-text)", borderBottom: "1px solid #1A1A1A" }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = "#1A1A1A")}
+                      style={{ color: "var(--dnd-text)", borderBottom: "1px solid #FFFFFF" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = "#FFFFFF")}
                       onMouseLeave={(e) => (e.currentTarget.style.background = "")}>
                       {MENTION_ICON[t.typ]} {t.label}
                     </button>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
@@ -69,7 +69,7 @@ function CharCard({ c }: { c: { id: string; name: string; image: string | null; 
       className="group card-hover transition-all duration-300 block"
       style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
       <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
-      <div className="relative h-52 w-full overflow-hidden" style={{ background: "#0A0A0A" }}>
+      <div className="relative h-52 w-full overflow-hidden" style={{ background: "#FFFFFF" }}>
         {c.image
           ? <Image src={c.image} alt={c.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
           : <div className="flex h-full items-center justify-center"><Image src="/wildgipfel_logo.png" alt="" width={80} height={36} className="object-contain opacity-20" /></div>
