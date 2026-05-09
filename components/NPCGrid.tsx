@@ -146,14 +146,14 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
                 <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)" }} />
               </div>
 
-              {/* Info */}
-              <div className="p-4">
-                <h2 className="font-cinzel font-semibold text-base leading-tight group-hover:transition-colors"
-                  style={{ color: "var(--dnd-heading)" }}>
+              {/* Info — dark green body */}
+              <div className="p-4" style={{ background: "var(--dnd-red-dark)" }}>
+                <h2 className="font-cinzel font-semibold text-base leading-tight transition-colors group-hover:text-[#A8905A]"
+                  style={{ color: "#FFFFFF" }}>
                   {npc.name}
                 </h2>
                 {npc.rasse && (
-                  <p className="font-cinzel text-xs mt-1 tracking-wider" style={{ color: "var(--dnd-text-muted)" }}>
+                  <p className="font-cinzel text-xs mt-1 tracking-wider" style={{ color: "rgba(255,255,255,0.55)" }}>
                     {npc.rasse}
                   </p>
                 )}
@@ -164,14 +164,14 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
                 </div>
 
                 {npc.aktuellePosition && (
-                  <p className="mt-3 text-xs" style={{ color: "var(--dnd-text-muted)" }}>
+                  <p className="mt-3 text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>
                     📍 {npc.aktuellePosition}
                   </p>
                 )}
               </div>
 
               {/* Bottom accent */}
-              <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--dnd-border), transparent)" }} />
+              <div style={{ height: "2px", background: "linear-gradient(90deg, transparent, rgba(139,112,64,0.5), transparent)" }} />
             </Link>
           ))}
         </div>
