@@ -8,6 +8,12 @@ export default async function EditOrganisation({ params }: { params: Promise<{ i
   const org = await prisma.organisation.findUnique({ where: { id } });
   if (!org) notFound();
 
+  const locations = await prisma.location.findMany({
+    where: org.kampagneId ? { kampagneId: org.kampagneId } : {},
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
+
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
@@ -24,7 +30,7 @@ export default async function EditOrganisation({ params }: { params: Promise<{ i
             <span style={{ color: "var(--dnd-red)" }}>✦</span>
           </div>
         </div>
-        <OrgForm id={id} initial={{
+        <OrgForm id={id} availableLocations={locations} initial={{
           name: org.name, beschreibung: org.beschreibung ?? "", typ: org.typ ?? "",
           region: org.region ?? "", alignment: org.alignment ?? "", beziehungZurGruppe: org.beziehungZurGruppe ?? "",
         }} />

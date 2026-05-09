@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import DetailModal from "@/components/DetailModal";
 import ModalCloseButton from "@/components/ModalCloseButton";
@@ -27,7 +28,10 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
   const userId = session!.user!.id as string;
   const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
 
-  const [charakter, orgs] = await Promise.all([
+  const cookieStore = await cookies();
+  const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
+
+  const [charakter, orgs, locations] = await Promise.all([
     prisma.charakter.findUnique({
       where: { id },
       include: {
@@ -36,6 +40,11 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
       },
     }),
     prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({
+      where: kampagneId ? { kampagneId } : {},
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
   ]);
   if (!charakter) notFound();
 
@@ -50,7 +59,7 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
           {canEdit && (
             <div className="flex gap-2">
               <CharakterEditButton
-                id={id} name={charakter.name} availableOrgs={orgs}
+                id={id} name={charakter.name} availableOrgs={orgs} availableLocations={locations}
                 initialOrgs={charakter.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
                 initial={{
                   name: charakter.name, image: charakter.image ?? "", status: charakter.status,

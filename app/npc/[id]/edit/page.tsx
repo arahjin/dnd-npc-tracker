@@ -11,6 +11,12 @@ export default async function EditNPC({ params }: { params: Promise<{ id: string
   ]);
   if (!npc) notFound();
 
+  const locations = await prisma.location.findMany({
+    where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {},
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
+
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <header style={{ background: "#111111", borderBottom: "1px solid #252525" }}>
@@ -36,6 +42,7 @@ export default async function EditNPC({ params }: { params: Promise<{ id: string
           id={id}
           availableOrgs={orgs}
           initialOrgs={npc.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
+          availableLocations={locations}
           initial={{
             name: npc.name, image: npc.image ?? "", status: npc.status,
             beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",

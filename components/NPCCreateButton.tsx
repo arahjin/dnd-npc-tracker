@@ -5,9 +5,10 @@ import NPCModal from "./NPCModal";
 
 type Props = {
   availableOrgs: { id: string; name: string }[];
+  availableLocations?: { id: string; name: string }[];
 };
 
-export default function NPCCreateButton({ availableOrgs }: Props) {
+export default function NPCCreateButton({ availableOrgs, availableLocations = [] }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -24,6 +25,7 @@ export default function NPCCreateButton({ availableOrgs }: Props) {
         onClose={() => setOpen(false)}
         title="Neuen NPC erstellen"
         availableOrgs={availableOrgs}
+        availableLocations={availableLocations}
       />
     </>
   );

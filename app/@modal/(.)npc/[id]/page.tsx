@@ -53,6 +53,12 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
   ]);
   if (!npc) notFound();
 
+  const locations = await prisma.location.findMany({
+    where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {},
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
+
   return (
     <DetailModal>
       {/* Header */}
@@ -61,7 +67,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
           <ModalCloseButton />
           <div className="flex gap-2">
             <NPCEditButton
-              id={id} name={npc.name} availableOrgs={orgs}
+              id={id} name={npc.name} availableOrgs={orgs} availableLocations={locations}
               initialOrgs={npc.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
               initial={{
                 name: npc.name, image: npc.image ?? "", status: npc.status,

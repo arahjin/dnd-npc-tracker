@@ -5,11 +5,10 @@ import { requireKampagne } from "@/lib/kampagne";
 
 export default async function NewNPC() {
   const ctx = await requireKampagne();
-  const orgs = await prisma.organisation.findMany({
-    where: { kampagneId: ctx.kampagneId },
-    orderBy: { name: "asc" },
-    select: { id: true, name: true },
-  });
+  const [orgs, locations] = await Promise.all([
+    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+  ]);
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
@@ -32,7 +31,7 @@ export default async function NewNPC() {
             <span style={{ color: "var(--dnd-red)" }}>✦</span>
           </div>
         </div>
-        <NPCForm availableOrgs={orgs} />
+        <NPCForm availableOrgs={orgs} availableLocations={locations} />
       </div>
     </main>
   );

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { REGION_OPTIONS, ALIGNMENT_OPTIONS, ORGANISATION_TYP_OPTIONS } from "@/lib/constants";
+import { ALIGNMENT_OPTIONS, ORGANISATION_TYP_OPTIONS } from "@/lib/constants";
 
 type OrgData = {
   name: string;
@@ -18,7 +18,7 @@ const EMPTY: OrgData = {
   name: "", beschreibung: "", typ: "", region: "", alignment: "", beziehungZurGruppe: "", gottheit: "",
 };
 
-export default function OrgForm({ initial, id }: { initial?: Partial<OrgData>; id?: string }) {
+export default function OrgForm({ initial, id, availableLocations = [] }: { initial?: Partial<OrgData>; id?: string; availableLocations?: { id: string; name: string }[] }) {
   const router = useRouter();
   const [form, setForm] = useState<OrgData>({ ...EMPTY, ...initial });
   const [saving, setSaving] = useState(false);
@@ -76,7 +76,7 @@ export default function OrgForm({ initial, id }: { initial?: Partial<OrgData>; i
           <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Region</label>
           <select value={form.region} onChange={(e) => set("region", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             <option value="">— Wählen —</option>
-            {REGION_OPTIONS.map((r) => <option key={r}>{r}</option>)}
+            {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
       </div>

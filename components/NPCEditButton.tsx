@@ -10,6 +10,7 @@ type Props = {
   name: string;
   availableOrgs: { id: string; name: string }[];
   initialOrgs: OrgMembership[];
+  availableLocations?: { id: string; name: string }[];
   initial: {
     name: string; image: string; status: string; beziehung: string;
     geschlecht: string; region: string; alter: string; rasse: string;
@@ -17,7 +18,7 @@ type Props = {
   };
 };
 
-export default function NPCEditButton({ id, name, availableOrgs, initialOrgs, initial }: Props) {
+export default function NPCEditButton({ id, name, availableOrgs, initialOrgs, availableLocations = [], initial }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -37,6 +38,7 @@ export default function NPCEditButton({ id, name, availableOrgs, initialOrgs, in
         id={id}
         availableOrgs={availableOrgs}
         initialOrgs={initialOrgs}
+        availableLocations={availableLocations}
         initial={initial}
       />
     </>

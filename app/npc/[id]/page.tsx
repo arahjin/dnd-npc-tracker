@@ -58,6 +58,12 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
   ]);
   if (!npc) notFound();
 
+  const locations = await prisma.location.findMany({
+    where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {},
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
+
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       {/* Header */}
@@ -73,6 +79,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
               name={npc.name}
               availableOrgs={orgs}
               initialOrgs={npc.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
+              availableLocations={locations}
               initial={{
                 name: npc.name, image: npc.image ?? "", status: npc.status,
                 beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",

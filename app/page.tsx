@@ -9,13 +9,18 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const ctx = await requireKampagne();
 
-  const [npcs, orgs] = await Promise.all([
+  const [npcs, orgs, locations] = await Promise.all([
     prisma.nPC.findMany({
       where: { kampagneId: ctx.kampagneId },
       orderBy: { name: "asc" },
       include: { organisationen: { include: { organisation: { select: { id: true, name: true } } } } },
     }),
     prisma.organisation.findMany({
+      where: { kampagneId: ctx.kampagneId },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+    prisma.location.findMany({
       where: { kampagneId: ctx.kampagneId },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
@@ -30,7 +35,7 @@ export default async function Home() {
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
             {npcs.length} {npcs.length === 1 ? "NPC" : "NPCs"}
           </p>
-          <NPCCreateButton availableOrgs={orgs} />
+          <NPCCreateButton availableOrgs={orgs} availableLocations={locations} />
         </div>
         <NPCGrid npcs={npcs} availableOrgs={orgs} />
       </div>

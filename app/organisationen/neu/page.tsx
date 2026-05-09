@@ -2,10 +2,16 @@ export const dynamic = "force-dynamic";
 
 import OrgForm from "@/components/OrgForm";
 import { requireKampagne } from "@/lib/kampagne";
+import { prisma } from "@/lib/prisma";
 import SiteHeader from "@/components/SiteHeader";
 
 export default async function NewOrganisation() {
-  await requireKampagne();
+  const ctx = await requireKampagne();
+  const locations = await prisma.location.findMany({
+    where: { kampagneId: ctx.kampagneId },
+    orderBy: { name: "asc" },
+    select: { id: true, name: true },
+  });
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -18,7 +24,7 @@ export default async function NewOrganisation() {
             <span style={{ color: "var(--dnd-red)" }}>✦</span>
           </div>
         </div>
-        <OrgForm />
+        <OrgForm availableLocations={locations} />
       </div>
     </main>
   );

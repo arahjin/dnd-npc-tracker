@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS, REGION_OPTIONS } from "@/lib/constants";
+import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS } from "@/lib/constants";
 import MentionTextarea from "./MentionTextarea";
 
 type NPCData = {
@@ -28,6 +28,7 @@ type Props = {
   id?: string;
   availableOrgs?: { id: string; name: string }[];
   initialOrgs?: OrgMembership[];
+  availableLocations?: { id: string; name: string }[];
   onSuccess?: () => void;
 };
 
@@ -37,7 +38,7 @@ const EMPTY: NPCData = {
   alter: "", rasse: "", herkunft: "", aktuellePosition: "", gottheit: "", notizen: "",
 };
 
-export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], onSuccess }: Props) {
+export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<NPCData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
@@ -265,7 +266,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
           <select value={form.region} onChange={(e) => set("region", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             <option value="">— Wählen —</option>
-            {REGION_OPTIONS.map((r) => <option key={r}>{r}</option>)}
+            {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
       </div>
