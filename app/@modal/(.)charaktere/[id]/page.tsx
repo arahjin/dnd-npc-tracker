@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 import DetailModal from "@/components/DetailModal";
 import ModalCloseButton from "@/components/ModalCloseButton";
 import CharakterEditButton from "@/components/CharakterEditButton";
@@ -26,7 +27,9 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
   const { id } = await params;
   const session = await auth();
   const userId = session!.user!.id as string;
-  const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
+  const role = (session!.user! as { role: string }).role;
+  const isDM = role === "DUNGEON_MASTER";
+  const isAdmin = role === "ADMIN";
 
   const cookieStore = await cookies();
   const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
@@ -48,7 +51,8 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
   ]);
   if (!charakter) notFound();
 
-  const canEdit = isDM || charakter.userId === userId;
+  const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, charakter.userId);
+  const canEdit = isDM || isAdmin || charakter.userId === userId;
 
   return (
     <DetailModal>
@@ -61,12 +65,15 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
               <CharakterEditButton
                 id={id} name={charakter.name} availableOrgs={orgs} availableLocations={locations}
                 initialOrgs={charakter.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
+                canSeePrivate={showPrivate}
                 initial={{
                   name: charakter.name, image: charakter.image ?? "", status: charakter.status,
                   beziehung: charakter.beziehung, geschlecht: charakter.geschlecht ?? "",
                   region: charakter.region ?? "", alter: charakter.alter ?? "", rasse: charakter.rasse ?? "",
                   herkunft: charakter.herkunft ?? "", aktuellePosition: charakter.aktuellePosition ?? "",
                   gottheit: charakter.gottheit ?? "", notizen: charakter.notizen ?? "",
+                  sichtbarkeit: charakter.sichtbarkeit ?? "public",
+                  ...(showPrivate && { privateNotizen: charakter.privateNotizen ?? "" }),
                 }}
               />
               <CharakterDeleteButton id={id} />

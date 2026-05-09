@@ -76,12 +76,14 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
             <NPCEditButton
               id={id} name={npc.name} availableOrgs={orgs} availableLocations={locations}
               initialOrgs={npc.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
+              canSeePrivate={showPrivate}
               initial={{
                 name: npc.name, image: npc.image ?? "", status: npc.status,
                 beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
                 alter: npc.alter ?? "", rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
                 aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
-                sichtbarkeit: npc.sichtbarkeit ?? "public", privateNotizen: npc.privateNotizen ?? "",
+                sichtbarkeit: npc.sichtbarkeit ?? "public",
+                ...(showPrivate && { privateNotizen: npc.privateNotizen ?? "" }),
               }}
             />
             <DeleteButton id={id} />
