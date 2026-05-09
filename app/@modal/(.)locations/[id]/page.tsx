@@ -6,6 +6,7 @@ import { canSeePrivate } from "@/lib/visibility";
 import DetailModal from "@/components/DetailModal";
 import ModalCloseButton from "@/components/ModalCloseButton";
 import LocationDeleteButton from "@/components/LocationDeleteButton";
+import RenderMentions from "@/components/RenderMentions";
 
 export const dynamic = "force-dynamic";
 
@@ -125,7 +126,7 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
                 <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Flora & Fauna</h2>
               </div>
               <div className="px-4 py-4">
-                <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)" }}>{location.floraFauna}</p>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--dnd-text)" }}><RenderMentions text={location.floraFauna} /></p>
               </div>
             </div>
           )}
@@ -137,7 +138,7 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
               <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Wissenswertes</h2>
             </div>
             <div className="px-4 py-4">
-              <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)" }}>{location.wissenswertes}</p>
+              <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)" }}><RenderMentions text={location.wissenswertes} /></p>
             </div>
           </div>
         )}
