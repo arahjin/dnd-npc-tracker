@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { Suspense } from "react";
+import { PASSWORD_HINT } from "@/lib/password";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
@@ -42,16 +43,17 @@ function RegisterForm() {
     if (!res.ok) { setError(data.error ?? "Fehler bei der Registrierung."); setLoading(false); return; }
 
     // Sign in
+    // Sign in (will have emailVerified: false in JWT)
     await signIn("credentials", { email, password, redirect: false });
 
-    // If the invite linked us to a campaign, activate it immediately
+    // If the invite linked us to a campaign, store it for after verification
     if (data.kampagneId) {
-      await fetch(`/api/kampagnen/${data.kampagneId}/aktiv`, { method: "POST" });
-      router.push("/");
-    } else {
-      // No campaign yet — go to campaign selection/creation
-      router.push("/kampagnen");
+      // Store pending campaign in sessionStorage — activated after email verification
+      sessionStorage.setItem("pendingKampagneId", data.kampagneId);
     }
+
+    // Always go to email verification waiting page first
+    router.push("/email-bestaetigen/warten");
     router.refresh();
   }
 
@@ -110,7 +112,8 @@ function RegisterForm() {
         <div>
           <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Passwort</label>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
-            placeholder="Mindestens 8 Zeichen" className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
+            className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
+          <p className="mt-1 text-xs" style={{ color: "var(--dnd-text-muted)" }}>{PASSWORD_HINT}</p>
         </div>
         <div>
           <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Passwort wiederholen</label>

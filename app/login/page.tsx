@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { Suspense } from "react";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const verified = searchParams.get("verified") === "1";
+  const reset = searchParams.get("reset") === "1";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -54,6 +58,18 @@ export default function LoginPage() {
             </h1>
           </div>
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
+            {verified && (
+              <div className="font-cinzel text-xs px-4 py-3"
+                style={{ background: "#0A1A0A", border: "1px solid #1E3A1E", color: "#4ADE80" }}>
+                ✓ E-Mail bestätigt! Du kannst dich jetzt anmelden.
+              </div>
+            )}
+            {reset && (
+              <div className="font-cinzel text-xs px-4 py-3"
+                style={{ background: "#0A1A0A", border: "1px solid #1E3A1E", color: "#4ADE80" }}>
+                ✓ Passwort geändert! Bitte anmelden.
+              </div>
+            )}
             {error && (
               <div className="font-cinzel text-xs px-4 py-3 tracking-wide"
                 style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
@@ -74,9 +90,15 @@ export default function LoginPage() {
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
                 className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
             </div>
-            <button type="submit" disabled={loading} className="ddb-cta w-full justify-center py-3">
-              {loading ? "ANMELDEN..." : "ANMELDEN"}
-            </button>
+            <div className="flex items-center justify-between">
+              <button type="submit" disabled={loading} className="ddb-cta py-3 px-8">
+                {loading ? "ANMELDEN..." : "ANMELDEN"}
+              </button>
+              <a href="/passwort-vergessen" className="font-cinzel text-xs"
+                style={{ color: "var(--dnd-text-muted)" }}>
+                Passwort vergessen?
+              </a>
+            </div>
           </form>
         </div>
         <p className="mt-4 text-center font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
@@ -85,5 +107,13 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }

@@ -30,15 +30,19 @@ enum TagTyp {
 // ─── Auth ────────────────────────────────────────────────
 
 model User {
-  id           String             @id @default(cuid())
-  email        String             @unique
-  name         String
-  passwordHash String
-  role         Role               @default(SPIELER)
-  createdAt    DateTime           @default(now())
-  charaktere   Charakter[]
-  eintraege    JournalEntry[]
-  kampagnen    KampagneMitglied[]
+  id                 String             @id @default(cuid())
+  email              String             @unique
+  name               String
+  passwordHash       String
+  role               Role               @default(SPIELER)
+  emailVerified      Boolean            @default(true)  // true = no verification needed (existing/setup users)
+  emailVerifyToken   String?            @unique
+  resetToken         String?            @unique
+  resetTokenExpiry   DateTime?
+  createdAt          DateTime           @default(now())
+  charaktere         Charakter[]
+  eintraege          JournalEntry[]
+  kampagnen          KampagneMitglied[]
 }
 
 model Invite {
