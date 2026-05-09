@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
@@ -8,19 +7,10 @@ import NavSearch from "./NavSearch";
 import UserMenu from "./UserMenu";
 import KampagneSelector from "./KampagneSelector";
 
-const CTA_MAP: Record<string, { href: string; label: string } | null> = {
-  npcs:           { href: "/npc/neu",            label: "+ NPC" },
-  organisationen: { href: "/organisationen/neu", label: "+ Organisation" },
-  charaktere:     { href: "/charaktere/neu",     label: "+ Charakter" },
-  geschichte:     null,
-  tagebuch:       null,
-};
-
-export default async function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch"; actionSlot?: React.ReactNode }) {
+export default async function SiteHeader({ active }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch" }) {
   const session = await auth();
   const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
 
-  // Load active campaign for selector + determine DM status
   let kampagneSelector: React.ReactNode = null;
   let isDMofActive = false;
   if (user?.id) {
@@ -80,15 +70,10 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
             <Link href="/tagebuch" className={`ddb-nav-link${active === "tagebuch" ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
           </nav>
 
-          {/* Right: Campaign + Search + CTA + User */}
+          {/* Right: Search + Campaign + User */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {kampagneSelector}
             <NavSearch />
-            {actionSlot ?? (CTA_MAP[active] && (
-              <a href={CTA_MAP[active]!.href} className="ddb-cta">
-                {CTA_MAP[active]!.label}
-              </a>
-            ))}
+            {kampagneSelector}
             {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} isDM={isDMofActive} />}
           </div>
 

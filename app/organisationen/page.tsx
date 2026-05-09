@@ -30,9 +30,12 @@ export default async function OrganisationenPage() {
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <SiteHeader active="organisationen" />
       <div className="mx-auto max-w-7xl px-6 py-8">
-        <p className="font-cinzel text-xs tracking-widest mb-6" style={{ color: "var(--dnd-text-muted)" }}>
-          {orgs.length} {orgs.length === 1 ? "ORGANISATION" : "ORGANISATIONEN"}
-        </p>
+        <div className="flex items-center justify-between mb-6">
+          <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
+            {orgs.length} {orgs.length === 1 ? "Organisation" : "Organisationen"}
+          </p>
+          <a href="/organisationen/neu" className="ddb-cta">+ Organisation</a>
+        </div>
         {orgs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32">
             <p className="text-5xl mb-4">🏛️</p>

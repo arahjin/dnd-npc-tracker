@@ -24,8 +24,14 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
-      <SiteHeader active="npcs" actionSlot={<NPCCreateButton availableOrgs={orgs} />} />
+      <SiteHeader active="npcs" />
       <div className="mx-auto max-w-7xl px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
+            {npcs.length} {npcs.length === 1 ? "NPC" : "NPCs"}
+          </p>
+          <NPCCreateButton availableOrgs={orgs} />
+        </div>
         <NPCGrid npcs={npcs} availableOrgs={orgs} />
       </div>
       <footer className="mt-auto py-6 text-center">

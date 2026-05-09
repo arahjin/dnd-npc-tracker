@@ -26,6 +26,12 @@ export default async function CharakterePage() {
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <SiteHeader active="charaktere" />
       <div className="mx-auto max-w-7xl px-6 py-8">
+        <div className="flex items-center justify-between mb-6">
+          <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
+            {charaktere.length} {charaktere.length === 1 ? "Charakter" : "Charaktere"}
+          </p>
+          <a href="/charaktere/neu" className="ddb-cta">+ Charakter</a>
+        </div>
         <section className="mb-10">
           <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
             style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
