@@ -127,8 +127,21 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
     : [[], [], []];
 
   const npcs = [...directNpcs, ...linkedNpcs];
-  const orgs = [...directOrgs, ...linkedOrgs];
   const chars = [...directChars, ...linkedChars];
+
+  // Surface Organisations linked to matched NPCs/Chars via membership
+  const existingOrgIdsAfterLoc = new Set([...directOrgs.map((o) => o.id), ...linkedOrgs.map((o) => o.id)]);
+  const orgIdsFromNpcs = npcs.flatMap((n) => n.organisationen.map((m) => m.organisationId)).filter((id) => !existingOrgIdsAfterLoc.has(id));
+  const orgIdsFromChars = chars.flatMap((c) => c.organisationen.map((m) => m.organisationId)).filter((id) => !existingOrgIdsAfterLoc.has(id));
+  const orgIdsToFetch = [...new Set([...orgIdsFromNpcs, ...orgIdsFromChars])];
+  const linkedOrgsFromMembers = orgIdsToFetch.length > 0
+    ? await prisma.organisation.findMany({
+        where: { id: { in: orgIdsToFetch } },
+        orderBy: { name: "asc" },
+      })
+    : [];
+
+  const orgs = [...directOrgs, ...linkedOrgs, ...linkedOrgsFromMembers];
 
   // Also surface Locations linked to any matched NPC/Org/Char
   const allObjectIds = [...npcs.map((n) => n.id), ...orgs.map((o) => o.id), ...chars.map((c) => c.id)];
