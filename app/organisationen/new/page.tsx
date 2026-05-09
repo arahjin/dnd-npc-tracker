@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import OrgForm from "@/components/OrgForm";
 import { requireKampagne } from "@/lib/kampagne";
 import SiteHeader from "@/components/SiteHeader";

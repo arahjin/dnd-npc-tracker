@@ -1,6 +1,9 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import OrgDeleteButton from "@/components/OrgDeleteButton";
 import OrgMitglieder from "@/components/OrgMitglieder";
@@ -42,7 +45,7 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
   });
   if (!org) notFound();
 
-  const cookieStore = await import("next/headers").then((m) => m.cookies());
+  const cookieStore = await cookies();
   const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
 
   const [alleNPCs, alleCharaktere] = await Promise.all([

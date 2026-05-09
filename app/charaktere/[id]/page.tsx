@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import SiteHeader from "@/components/SiteHeader";
 import CharakterEditButton from "@/components/CharakterEditButton";
@@ -26,7 +27,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
   const userId = session!.user!.id as string;
   const isDM = ["DUNGEON_MASTER", "ADMIN"].includes((session!.user! as { role: string }).role);
 
-  const cookieStore = await import("next/headers").then((m) => m.cookies());
+  const cookieStore = await cookies();
   const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
 
   const [charakter, orgs] = await Promise.all([
