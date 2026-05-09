@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
@@ -51,23 +51,32 @@ export default async function SiteHeader({ active }: {
 
   return (
     <header>
-      {/* ── Top accent line ── */}
-      <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
-
-      {/* ── Top bar: Logo + Search + User ── */}
+      {/* ── Top Nav Bar ── */}
       <div style={{ background: "#F8F5EF", borderBottom: "1px solid #D4D0C8", position: "relative", zIndex: 10 }}>
+        <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
+
         <div className="mx-auto max-w-7xl px-4 md:px-6"
-          style={{ display: "flex", alignItems: "center", height: "64px", gap: "12px" }}>
+          style={{ display: "flex", alignItems: "stretch", height: "60px" }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "16px", flexShrink: 0 }}>
             <Image
               src="/lorehub_logo.png" alt="Lorehub"
               width={140} height={63}
               className="object-contain"
-              style={{ width: "clamp(90px, 18vw, 140px)", height: "auto", filter: "drop-shadow(0 1px 4px rgba(0,0,0,0.15))" }}
+              style={{ width: "clamp(90px, 18vw, 140px)", height: "auto", filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.9))" }}
             />
           </Link>
+
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex" style={{ alignItems: "stretch" }}>
+            <Link href="/" className={`ddb-nav-link${active === "npcs" ? " ddb-nav-active" : ""}`}>NPCs</Link>
+            <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen" ? " ddb-nav-active" : ""}`}>Organisationen</Link>
+            <Link href="/locations" className={`ddb-nav-link${active === "locations" ? " ddb-nav-active" : ""}`}>Locations</Link>
+            <Link href="/charaktere" className={`ddb-nav-link${active === "charaktere" ? " ddb-nav-active" : ""}`}>Charaktere</Link>
+            <Link href="/geschichte" className={`ddb-nav-link${active === "geschichte" ? " ddb-nav-active" : ""}`}>Geschichte</Link>
+            <Link href="/tagebuch" className={`ddb-nav-link${active === "tagebuch" ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
+          </nav>
 
           {/* Spacer */}
           <div style={{ flex: 1 }} />
@@ -90,26 +99,15 @@ export default async function SiteHeader({ active }: {
               kampagneData={kampagneNavData}
             />
           </div>
-        </div>
-      </div>
 
-      {/* ── Dark green nav bar ── */}
-      <div className="hidden md:block" style={{ background: "var(--dnd-red-dark)", position: "relative", zIndex: 9 }}>
-        <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ display: "flex", alignItems: "stretch" }}>
-          <Link href="/"               className={`ddb-nav-link${active === "npcs"           ? " ddb-nav-active" : ""}`}>NPCs</Link>
-          <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen"  ? " ddb-nav-active" : ""}`}>Organisationen</Link>
-          <Link href="/locations"      className={`ddb-nav-link${active === "locations"       ? " ddb-nav-active" : ""}`}>Locations</Link>
-          <Link href="/charaktere"     className={`ddb-nav-link${active === "charaktere"      ? " ddb-nav-active" : ""}`}>Charaktere</Link>
-          <Link href="/geschichte"     className={`ddb-nav-link${active === "geschichte"      ? " ddb-nav-active" : ""}`}>Geschichte</Link>
-          <Link href="/tagebuch"       className={`ddb-nav-link${active === "tagebuch"        ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
         </div>
       </div>
 
       {/* ── Hero Banner ── */}
       <div className="hero-banner" style={{ position: "relative", overflow: "hidden" }}>
         <Image src="/lorehub_header.png" alt="Lorehub" fill className="object-cover object-top" priority style={{ zIndex: 0 }} />
-        <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(17,17,17,0.15) 0%, rgba(14,14,14,0.55) 100%)" }} />
-        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "2px", zIndex: 2, background: "linear-gradient(90deg, transparent, var(--dnd-gold), transparent)" }} />
+        <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(17,17,17,0.25) 0%, rgba(14,14,14,0.65) 100%)" }} />
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "2px", zIndex: 2, background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
       </div>
     </header>
   );

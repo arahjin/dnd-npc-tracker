@@ -48,11 +48,11 @@ export default async function OrganisationenPage() {
               return (
                 <Link key={org.id} href={`/organisationen/${org.id}`}
                   className="group card-hover transition-all duration-300 block"
-                  style={{ background: "var(--dnd-red-dark)", border: "1px solid rgba(40,77,18,0.6)" }}>
-                  <div style={{ height: "2px", background: "linear-gradient(90deg, transparent, var(--dnd-gold), transparent)" }} />
+                  style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
+                  <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-3 mb-3">
-                      <h2 className="font-cinzel font-semibold text-lg leading-tight transition-colors group-hover:text-[#A8905A]" style={{ color: "#FFFFFF" }}>{org.name}</h2>
+                      <h2 className="font-cinzel font-semibold text-lg leading-tight" style={{ color: "var(--dnd-heading)" }}>{org.name}</h2>
                       {org.alignment && (
                         <span className="font-cinzel text-xs px-2 py-0.5 shrink-0" style={{ background: alignColors.bg, color: alignColors.text, border: `1px solid ${alignColors.border}` }}>
                           {org.alignment}
@@ -60,17 +60,17 @@ export default async function OrganisationenPage() {
                       )}
                     </div>
                     <div className="flex gap-3 mb-3">
-                      {org.typ && <span className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>🏛 {org.typ}</span>}
-                      {org.region && <span className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>📍 {org.region}</span>}
+                      {org.typ && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>🏛 {org.typ}</span>}
+                      {org.region && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>📍 {org.region}</span>}
                     </div>
                     {org.beschreibung && (
-                      <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.7)" }}>{org.beschreibung}</p>
+                      <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)" }}>{org.beschreibung}</p>
                     )}
-                    <p className="mt-3 font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-gold-light)" }}>
+                    <p className="mt-3 font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-red-light)" }}>
                       {org.mitglieder.length} {org.mitglieder.length === 1 ? "Mitglied" : "Mitglieder"}
                     </p>
                   </div>
-                  <div style={{ height: "2px", background: "linear-gradient(90deg, transparent, rgba(139,112,64,0.5), transparent)" }} />
+                  <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--dnd-border), transparent)" }} />
                 </Link>
               );
             })}

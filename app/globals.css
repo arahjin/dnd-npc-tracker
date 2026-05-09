@@ -42,20 +42,18 @@ body {
 
 /* Green glow on hover */
 .card-hover:hover {
-  box-shadow: 0 0 24px rgba(40, 77, 18, 0.22), 0 0 48px rgba(40, 77, 18, 0.08);
-  transform: translateY(-1px);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  box-shadow: 0 0 20px rgba(58, 107, 26, 0.10), 0 0 40px rgba(58, 107, 26, 0.04);
 }
 
-/* Nav links — on the dark-green navbar */
+/* Nav links */
 .ddb-nav-link {
   font-family: 'Oswald', sans-serif;
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.65);
+  color: #7A7870;
   padding: 0 16px;
-  height: 46px;
+  height: 60px;
   display: flex;
   align-items: center;
   border-bottom: 3px solid transparent;
@@ -66,16 +64,16 @@ body {
 }
 
 .ddb-nav-link:hover {
-  color: var(--dnd-gold-light);
-  border-bottom-color: var(--dnd-gold);
+  color: #141414;
+  border-bottom-color: var(--dnd-red);
 }
 
 .ddb-nav-active {
-  color: #FFFFFF !important;
-  border-bottom-color: var(--dnd-gold) !important;
+  color: #141414 !important;
+  border-bottom-color: var(--dnd-red) !important;
 }
 
-/* CTA button — white with dark green text, hover inverts */
+/* CTA button */
 .ddb-cta {
   font-family: 'Oswald', sans-serif;
   font-size: 0.75rem;
@@ -83,27 +81,27 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 9px 20px;
-  background: #FFFFFF;
-  color: var(--dnd-red-dark);
-  border: 2px solid var(--dnd-red-dark);
+  background: var(--dnd-red);
+  color: #FFFFFF;
+  border: 2px solid var(--dnd-red);
   cursor: pointer;
-  transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s ease, box-shadow 0.15s ease, color 0.15s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
 }
 
 .ddb-cta:hover {
-  background: var(--dnd-red-dark);
-  border-color: var(--dnd-red-dark);
-  color: #FFFFFF;
-  box-shadow: 0 0 18px rgba(40, 77, 18, 0.4);
+  background: var(--dnd-red-light);
+  border-color: var(--dnd-red-light);
+  box-shadow: 0 0 18px rgba(58, 107, 26, 0.4);
+  color: #fff;
 }
 
-/* Hero banner — taller */
-.hero-banner { height: 160px; }
+/* Hero banner — responsive height */
+.hero-banner { height: 80px; }
 @media (min-width: 768px) {
-  .hero-banner { height: 280px; }
+  .hero-banner { height: 140px; }
 }
 
 /* Mobile touch targets */

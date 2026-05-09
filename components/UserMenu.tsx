@@ -25,7 +25,7 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
   const menuItem = (href: string, label: string) => (
     <a href={href} className="block px-4 py-2 font-cinzel text-xs transition-colors"
       style={{ color: "#5A5850" }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = "#3A6B1A")}
+      onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
       onMouseLeave={(e) => (e.currentTarget.style.color = "#5A5850")}>
       {label}
     </a>
@@ -38,7 +38,7 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
       <button
         onClick={() => setOpen((p) => !p)}
         className="font-cinzel text-xs tracking-wide flex items-center gap-2 px-3 py-1.5 transition-all"
-        style={{ border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-dark)", background: "#FFFFFF" }}
+        style={{ border: "1px solid #333", color: "#5A5850", background: "#FFFFFF" }}
       >
         <span style={{ color: "var(--dnd-gold)" }}>{ROLE_ICON[role] ?? "🎲"}</span>
         {name}

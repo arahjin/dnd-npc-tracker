@@ -76,14 +76,14 @@ function CharCard({ c }: { c: { id: string; name: string; image: string | null; 
         }
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)" }} />
       </div>
-      <div className="p-4" style={{ background: "var(--dnd-red-dark)" }}>
-        <p className="font-cinzel text-xs mb-1" style={{ color: "rgba(255,255,255,0.45)" }}>{c.user.name}</p>
-        <h2 className="font-cinzel font-semibold text-base leading-tight transition-colors group-hover:text-[#A8905A]" style={{ color: "#FFFFFF" }}>{c.name}</h2>
-        {c.rasse && <p className="font-cinzel text-xs mt-1" style={{ color: "rgba(255,255,255,0.55)" }}>{c.rasse}</p>}
+      <div className="p-4">
+        <p className="font-cinzel text-xs mb-1" style={{ color: "var(--dnd-text-muted)" }}>{c.user.name}</p>
+        <h2 className="font-cinzel font-semibold text-base leading-tight" style={{ color: "var(--dnd-heading)" }}>{c.name}</h2>
+        {c.rasse && <p className="font-cinzel text-xs mt-1" style={{ color: "var(--dnd-text-muted)" }}>{c.rasse}</p>}
         <p className="mt-2 text-xs font-cinzel" style={{ color: STATUS_COLORS[c.status] ?? "#9CA3AF" }}>{c.status}</p>
-        {c.aktuellePosition && <p className="mt-1 text-xs" style={{ color: "rgba(255,255,255,0.45)" }}>📍 {c.aktuellePosition}</p>}
+        {c.aktuellePosition && <p className="mt-1 text-xs" style={{ color: "var(--dnd-text-muted)" }}>📍 {c.aktuellePosition}</p>}
       </div>
-      <div style={{ height: "2px", background: "linear-gradient(90deg, transparent, rgba(139,112,64,0.5), transparent)" }} />
+      <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--dnd-border), transparent)" }} />
     </Link>
   );
 }

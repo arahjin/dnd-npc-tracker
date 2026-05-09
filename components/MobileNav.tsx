@@ -76,29 +76,29 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
           <div
             style={{
               position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 51,
-              width: "min(300px, 88vw)", background: "var(--dnd-red-dark)",
-              borderLeft: "1px solid rgba(139,112,64,0.3)", display: "flex", flexDirection: "column",
+              width: "min(300px, 88vw)", background: "#F3F0E8",
+              borderLeft: "1px solid #C8C4BC", display: "flex", flexDirection: "column",
               overflowY: "auto",
             }}
           >
             {/* Drawer header */}
             <div style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.12)", flexShrink: 0,
+              padding: "16px 20px", borderBottom: "1px solid #FFFFFF", flexShrink: 0,
             }}>
               <span className="font-cinzel" style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--dnd-gold)" }}>
                 Navigation
               </span>
               <button
                 onClick={() => setOpen(false)}
-                style={{ color: "rgba(255,255,255,0.6)", fontSize: "1.1rem", lineHeight: 1, background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+                style={{ color: "#7A7870", fontSize: "1.1rem", lineHeight: 1, background: "none", border: "none", cursor: "pointer", padding: "4px" }}
               >
                 ✕
               </button>
             </div>
 
             {/* Nav links */}
-            <nav style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+            <nav style={{ borderBottom: "1px solid #FFFFFF" }}>
               {NAV.map((item) => (
                 <a
                   key={item.key}
@@ -110,9 +110,9 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
                     padding: "14px 20px",
                     fontSize: "0.75rem", letterSpacing: "0.14em", textTransform: "uppercase",
                     textDecoration: "none",
-                    color: active === item.key ? "#FFFFFF" : "rgba(255,255,255,0.6)",
-                    borderLeft: active === item.key ? `3px solid var(--dnd-gold)` : "3px solid transparent",
-                    background: active === item.key ? "rgba(255,255,255,0.08)" : "transparent",
+                    color: active === item.key ? "#FFFFFF" : "#7A7870",
+                    borderLeft: active === item.key ? "3px solid var(--dnd-red)" : "3px solid transparent",
+                    background: active === item.key ? "rgba(163,32,32,0.1)" : "transparent",
                   }}
                 >
                   {item.label}
@@ -122,9 +122,9 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
 
             {/* Campaign switcher */}
             {kampagneData && kampagneData.kampagnen.length > 0 && (
-              <div style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+              <div style={{ borderBottom: "1px solid #FFFFFF" }}>
                 <div style={{ padding: "12px 20px 8px" }}>
-                  <p className="font-cinzel" style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", marginBottom: "8px" }}>
+                  <p className="font-cinzel" style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--dnd-text-muted)", marginBottom: "8px" }}>
                     Kampagne
                   </p>
                   {kampagneData.kampagnen.map((k) => (
@@ -136,7 +136,7 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
                       style={{
                         width: "100%", textAlign: "left", display: "flex", alignItems: "center", gap: 8,
                         padding: "10px 0", fontSize: "0.8rem", background: "none", border: "none", cursor: "pointer",
-                        color: k.id === kampagneData.aktiveId ? "var(--dnd-gold)" : "rgba(255,255,255,0.55)",
+                        color: k.id === kampagneData.aktiveId ? "var(--dnd-gold)" : "#7A7870",
                         opacity: switching ? 0.5 : 1,
                       }}
                     >
@@ -150,7 +150,7 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
                     className="font-cinzel"
                     style={{
                       display: "flex", alignItems: "center", padding: "10px 0",
-                      fontSize: "0.7rem", color: "rgba(255,255,255,0.45)", textDecoration: "none",
+                      fontSize: "0.7rem", color: "var(--dnd-text-muted)", textDecoration: "none",
                     }}
                   >
                     + Neue Kampagne
@@ -162,7 +162,7 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
             {/* User section - pushed to bottom */}
             {userName && (
               <div style={{ marginTop: "auto" }}>
-                <div style={{ padding: "12px 20px", borderTop: "1px solid rgba(255,255,255,0.12)", borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+                <div style={{ padding: "12px 20px", borderTop: "1px solid #FFFFFF", borderBottom: "1px solid #FFFFFF" }}>
                   <p className="font-cinzel" style={{ fontSize: "0.75rem", color: "var(--dnd-gold)" }}>
                     {ROLE_ICON[userRole ?? "SPIELER"]} {userName}
                   </p>
@@ -180,14 +180,14 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
                     className="font-cinzel"
                     style={{
                       display: "flex", alignItems: "center", padding: "12px 20px",
-                      fontSize: "0.7rem", color: "rgba(255,255,255,0.6)", textDecoration: "none",
+                      fontSize: "0.7rem", color: "#5A5850", textDecoration: "none",
                     }}
                   >
                     {item.label}
                   </a>
                 ))}
 
-                <div style={{ height: 1, background: "rgba(255,255,255,0.12)" }} />
+                <div style={{ height: 1, background: "#FFFFFF" }} />
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
                   className="font-cinzel"
