@@ -61,7 +61,7 @@ export default async function SiteHeader({ active }: {
         style={{ zIndex: 0 }}
       />
 
-      {/* ── Gradient overlay: dark at top for nav legibility, fades to transparent ── */}
+      {/* ── Gradient overlay ── */}
       <div style={{
         position: "absolute", inset: 0, zIndex: 1,
         background: "linear-gradient(to bottom, rgba(10,10,10,0.72) 0%, rgba(10,10,10,0.45) 55%, transparent 100%)",
@@ -73,23 +73,31 @@ export default async function SiteHeader({ active }: {
         background: "linear-gradient(90deg, transparent, var(--dnd-gold) 40%, var(--dnd-gold) 60%, transparent)",
       }} />
 
-      {/* ── All nav content — positioned over the image ── */}
+      {/* ── Single nav row: Logo | Nav links | Search + User ── */}
       <div style={{ position: "relative", zIndex: 2 }}>
-
-        {/* Top row: Logo + Search + User */}
         <div className="mx-auto max-w-7xl px-4 md:px-6"
-          style={{ display: "flex", alignItems: "center", height: "68px", gap: "12px" }}>
+          style={{ display: "flex", alignItems: "stretch", height: "68px" }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "8px", flexShrink: 0 }}>
             <Image
               src="/lorehub_logo.png"
               alt="Lorehub"
               width={140} height={63}
               className="object-contain"
-              style={{ width: "clamp(90px, 18vw, 140px)", height: "auto", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}
+              style={{ width: "clamp(80px, 14vw, 130px)", height: "auto", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}
             />
           </Link>
+
+          {/* Desktop nav links — same row as logo */}
+          <nav className="hidden md:flex" style={{ alignItems: "stretch" }}>
+            <Link href="/"               className={`ddb-nav-link${active === "npcs"           ? " ddb-nav-active" : ""}`}>NPCs</Link>
+            <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen"  ? " ddb-nav-active" : ""}`}>Organisationen</Link>
+            <Link href="/locations"      className={`ddb-nav-link${active === "locations"       ? " ddb-nav-active" : ""}`}>Locations</Link>
+            <Link href="/charaktere"     className={`ddb-nav-link${active === "charaktere"      ? " ddb-nav-active" : ""}`}>Charaktere</Link>
+            <Link href="/geschichte"     className={`ddb-nav-link${active === "geschichte"      ? " ddb-nav-active" : ""}`}>Geschichte</Link>
+            <Link href="/tagebuch"       className={`ddb-nav-link${active === "tagebuch"        ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
+          </nav>
 
           <div style={{ flex: 1 }} />
 
@@ -112,19 +120,6 @@ export default async function SiteHeader({ active }: {
             />
           </div>
         </div>
-
-        {/* Nav links row — desktop only, sits on the image */}
-        <div className="hidden md:block">
-          <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ display: "flex", alignItems: "stretch" }}>
-            <Link href="/"               className={`ddb-nav-link${active === "npcs"           ? " ddb-nav-active" : ""}`}>NPCs</Link>
-            <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen"  ? " ddb-nav-active" : ""}`}>Organisationen</Link>
-            <Link href="/locations"      className={`ddb-nav-link${active === "locations"       ? " ddb-nav-active" : ""}`}>Locations</Link>
-            <Link href="/charaktere"     className={`ddb-nav-link${active === "charaktere"      ? " ddb-nav-active" : ""}`}>Charaktere</Link>
-            <Link href="/geschichte"     className={`ddb-nav-link${active === "geschichte"      ? " ddb-nav-active" : ""}`}>Geschichte</Link>
-            <Link href="/tagebuch"       className={`ddb-nav-link${active === "tagebuch"        ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
-          </div>
-        </div>
-
       </div>
 
       {/* ── Bottom gold accent ── */}
