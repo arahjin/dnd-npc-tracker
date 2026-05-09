@@ -16,6 +16,7 @@ export default async function SiteSettingsPage() {
   const initial = {
     copyrightText: raw?.copyrightText ?? "© Lorehub. Alle Rechte vorbehalten.",
     kontaktEmail: raw?.kontaktEmail ?? "",
+    discordUrl: raw?.discordUrl ?? "",
     impressumContent: raw?.impressumContent ?? "",
     datenschutzContent: raw?.datenschutzContent ?? "",
   };

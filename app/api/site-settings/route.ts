@@ -9,6 +9,7 @@ export async function GET() {
       id: "singleton",
       copyrightText: "© Lorehub. Alle Rechte vorbehalten.",
       kontaktEmail: "",
+      discordUrl: "",
       impressumContent: "",
       datenschutzContent: "",
     });
@@ -26,7 +27,7 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { copyrightText, kontaktEmail, impressumContent, datenschutzContent } = body;
+    const { copyrightText, kontaktEmail, discordUrl, impressumContent, datenschutzContent } = body;
 
     const settings = await prisma.siteSettings.upsert({
       where: { id: "singleton" },
@@ -34,12 +35,14 @@ export async function PATCH(req: NextRequest) {
         id: "singleton",
         copyrightText: copyrightText ?? "",
         kontaktEmail: kontaktEmail ?? "",
+        discordUrl: discordUrl ?? "",
         impressumContent: impressumContent ?? "",
         datenschutzContent: datenschutzContent ?? "",
       },
       update: {
         ...(copyrightText !== undefined && { copyrightText }),
         ...(kontaktEmail !== undefined && { kontaktEmail }),
+        ...(discordUrl !== undefined && { discordUrl }),
         ...(impressumContent !== undefined && { impressumContent }),
         ...(datenschutzContent !== undefined && { datenschutzContent }),
       },

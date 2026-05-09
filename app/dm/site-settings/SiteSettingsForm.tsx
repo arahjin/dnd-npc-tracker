@@ -5,6 +5,7 @@ import { useState } from "react";
 type Settings = {
   copyrightText: string;
   kontaktEmail: string;
+  discordUrl: string;
   impressumContent: string;
   datenschutzContent: string;
 };
@@ -122,6 +123,17 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
                   style={inputStyle}
                 />
                 <Hint>Wird als mailto-Link im Footer angezeigt. Leer lassen = kein Kontakt-Link.</Hint>
+              </div>
+              <div>
+                <Label>Discord-Link</Label>
+                <input
+                  type="url"
+                  value={form.discordUrl}
+                  onChange={(e) => set("discordUrl", e.target.value)}
+                  placeholder="https://discord.gg/einladungslink"
+                  style={inputStyle}
+                />
+                <Hint>Wird als Discord-Icon im Footer angezeigt. Leer lassen = kein Discord-Link.</Hint>
               </div>
             </div>
           </div>
