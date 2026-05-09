@@ -1,8 +1,14 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM = process.env.RESEND_FROM ?? "noreply@resend.dev";
-const BASE_URL = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+// Lazily initialized so the build doesn't fail when env vars are absent
+let _resend: Resend | null = null;
+function getResend() {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
+  return _resend;
+}
+
+const FROM = () => process.env.RESEND_FROM ?? "noreply@resend.dev";
+const BASE_URL = () => process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
 function layout(content: string) {
   return `<!DOCTYPE html>
@@ -38,9 +44,9 @@ function heading(text: string) {
 // ── Email Verification ─────────────────────────────────────
 
 export async function sendVerificationEmail(to: string, token: string) {
-  const link = `${BASE_URL}/api/auth/email-bestaetigen?token=${token}`;
-  await resend.emails.send({
-    from: FROM,
+  const link = `${BASE_URL()}/api/auth/email-bestaetigen?token=${token}`;
+  await getResend().emails.send({
+    from: FROM(),
     to,
     subject: "E-Mail-Adresse bestätigen",
     html: layout(`
@@ -61,9 +67,9 @@ export async function sendVerificationEmail(to: string, token: string) {
 // ── Password Reset ─────────────────────────────────────────
 
 export async function sendPasswordResetEmail(to: string, token: string) {
-  const link = `${BASE_URL}/passwort-zuruecksetzen?token=${token}`;
-  await resend.emails.send({
-    from: FROM,
+  const link = `${BASE_URL()}/passwort-zuruecksetzen?token=${token}`;
+  await getResend().emails.send({
+    from: FROM(),
     to,
     subject: "Passwort zurücksetzen",
     html: layout(`
