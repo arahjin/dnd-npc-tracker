@@ -11,10 +11,11 @@ type Props = {
   availableOrgs?: { id: string; name: string }[];
   initialOrgs?: OrgMembership[];
   availableLocations?: { id: string; name: string }[];
+  canSeePrivate?: boolean;
   initial?: Record<string, string>;
 };
 
-export default function CharakterModal({ isOpen, onClose, title, id, availableOrgs, initialOrgs, availableLocations, initial }: Props) {
+export default function CharakterModal({ isOpen, onClose, title, id, availableOrgs, initialOrgs, availableLocations, initial, canSeePrivate }: Props) {
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
@@ -39,7 +40,7 @@ export default function CharakterModal({ isOpen, onClose, title, id, availableOr
             </div>
           </div>
           <div className="px-6 py-8">
-            <CharakterForm id={id} availableOrgs={availableOrgs} initialOrgs={initialOrgs} availableLocations={availableLocations} initial={initial} onSuccess={onClose} />
+            <CharakterForm id={id} availableOrgs={availableOrgs} initialOrgs={initialOrgs} availableLocations={availableLocations} initial={initial} onSuccess={onClose} canSeePrivate={canSeePrivate} />
           </div>
         </div>
       </div>

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -9,8 +11,24 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
   const { id } = await params;
-  const { organisationen, erstellerId: _eid, ...data } = await req.json();
+  const userId = session.user!.id as string;
+  const role = (session.user! as { role: string }).role;
+  const isDM = role === "DUNGEON_MASTER";
+  const isAdmin = role === "ADMIN";
+
+  const existing = await prisma.nPC.findUnique({ where: { id }, select: { erstellerId: true } });
+  if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+
+  const { organisationen, erstellerId: _eid, privateNotizen, ...rest } = await req.json();
+
+  // Only include privateNotizen in update if user is authorized and field was explicitly sent
+  const allowPrivate = canSeePrivate({ userId, isDM, isAdmin }, existing.erstellerId);
+  const data = (allowPrivate && privateNotizen !== undefined)
+    ? { ...rest, privateNotizen: privateNotizen || null }
+    : rest;
 
   const npc = await prisma.$transaction(async (tx) => {
     await tx.nPCOrganisation.deleteMany({ where: { npcId: id } });

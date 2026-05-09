@@ -20,6 +20,7 @@ type Props = {
   availableNpcs?: LinkedItem[];
   availableOrgs?: LinkedItem[];
   availableChars?: LinkedItem[];
+  canSeePrivate?: boolean;
 };
 
 const inputStyle: React.CSSProperties = {
@@ -240,6 +241,7 @@ export default function LocationForm({
   availableNpcs = [],
   availableOrgs = [],
   availableChars = [],
+  canSeePrivate = true,
 }: Props) {
   const router = useRouter();
   const [name, setName] = useState(initial.name ?? "");
@@ -279,7 +281,7 @@ export default function LocationForm({
       population: population !== "" ? Number(population) : null,
       klima, floraFauna, wissenswertes,
       sichtbarkeit,
-      privateNotizen: privateNotizen.trim() || null,
+      ...(canSeePrivate && { privateNotizen: privateNotizen.trim() || null }),
       npcIds: [...npcIds],
       orgIds: [...orgIds],
       charakterIds: [...charIds],
@@ -415,15 +417,17 @@ export default function LocationForm({
       </div>
 
       {/* Private Notizen */}
-      <div>
-        <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-          Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
-        </label>
-        <textarea value={privateNotizen} onChange={(e) => setPrivateNotizen(e.target.value)}
-          placeholder="Geheime Infos, DM-Notizen..." rows={4}
-          className="w-full px-4 py-2.5 text-sm outline-none resize-none"
-          style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
-      </div>
+      {canSeePrivate && (
+        <div>
+          <label className={labelStyle} style={{ color: "#FCA5A5" }}>
+            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
+          </label>
+          <textarea value={privateNotizen} onChange={(e) => setPrivateNotizen(e.target.value)}
+            placeholder="Geheime Infos, DM-Notizen..." rows={4}
+            className="w-full px-4 py-2.5 text-sm outline-none resize-none"
+            style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
+        </div>
+      )}
 
       {/* Divider */}
       <div className="flex items-center gap-3 pt-2">

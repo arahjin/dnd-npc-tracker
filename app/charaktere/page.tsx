@@ -73,7 +73,7 @@ function CharCard({ c }: { c: { id: string; name: string; image: string | null; 
       <div className="relative h-52 w-full overflow-hidden" style={{ background: "#0A0A0A" }}>
         {c.image
           ? <Image src={c.image} alt={c.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
-          : <div className="flex h-full items-center justify-center"><Image src="/wildgipfel_logo.png" alt="" width={80} height={36} className="object-contain opacity-20" /></div>
+          : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={80} height={36} className="object-contain opacity-20" /></div>
         }
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)" }} />
       </div>

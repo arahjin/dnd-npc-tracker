@@ -22,6 +22,7 @@ type Props = {
   initialOrgs?: OrgMembership[];
   availableLocations?: { id: string; name: string }[];
   onSuccess?: () => void;
+  canSeePrivate?: boolean;
 };
 
 const EMPTY: CharData = {
@@ -31,7 +32,7 @@ const EMPTY: CharData = {
   sichtbarkeit: "public", privateNotizen: "",
 };
 
-export default function CharakterForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess }: Props) {
+export default function CharakterForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, canSeePrivate = true }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<CharData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
@@ -58,7 +59,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
       gottheit: form.gottheit.trim() || null,
       notizen: form.notizen.trim() || null,
       sichtbarkeit: form.sichtbarkeit,
-      privateNotizen: form.privateNotizen.trim() || null,
+      ...(canSeePrivate && { privateNotizen: form.privateNotizen.trim() || null }),
       organisationen: selectedOrgs.filter((o) => o.organisationId),
     };
 
@@ -217,15 +218,17 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
       </div>
 
       {/* Private Notizen */}
-      <div>
-        <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-          Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
-        </label>
-        <textarea value={form.privateNotizen} onChange={(e) => setForm(f => ({ ...f, privateNotizen: e.target.value }))}
-          placeholder="Geheime Infos, DM-Notizen..." rows={4}
-          className={inputClass + " resize-none"}
-          style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
-      </div>
+      {canSeePrivate && (
+        <div>
+          <label className={labelStyle} style={{ color: "#FCA5A5" }}>
+            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
+          </label>
+          <textarea value={form.privateNotizen} onChange={(e) => setForm(f => ({ ...f, privateNotizen: e.target.value }))}
+            placeholder="Geheime Infos, DM-Notizen..." rows={4}
+            className={inputClass + " resize-none"}
+            style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
+        </div>
+      )}
 
       <div className="flex items-center gap-3">
         <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red-dark), transparent)" }} />

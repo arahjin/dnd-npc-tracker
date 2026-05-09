@@ -139,7 +139,7 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
                   <Image src={npc.image} alt={npc.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
                   <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
-                    <Image src="/wildgipfel_logo.png" alt="Kein Bild" width={80} height={36} className="object-contain opacity-20" />
+                    <Image src="/lorehub_icon.png" alt="Kein Bild" width={80} height={36} className="object-contain opacity-20" />
                   </div>
                 )}
                 {/* Gradient overlay */}

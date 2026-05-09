@@ -72,13 +72,15 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
               <CharakterEditButton
                 id={id} name={charakter.name} availableOrgs={orgs} availableLocations={locations}
                 initialOrgs={charakter.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
+                canSeePrivate={showPrivate}
                 initial={{
                   name: charakter.name, image: charakter.image ?? "", status: charakter.status,
                   beziehung: charakter.beziehung, geschlecht: charakter.geschlecht ?? "",
                   region: charakter.region ?? "", alter: charakter.alter ?? "", rasse: charakter.rasse ?? "",
                   herkunft: charakter.herkunft ?? "", aktuellePosition: charakter.aktuellePosition ?? "",
                   gottheit: charakter.gottheit ?? "", notizen: charakter.notizen ?? "",
-                  sichtbarkeit: charakter.sichtbarkeit ?? "public", privateNotizen: charakter.privateNotizen ?? "",
+                  sichtbarkeit: charakter.sichtbarkeit ?? "public",
+                  ...(showPrivate && { privateNotizen: charakter.privateNotizen ?? "" }),
                 }}
               />
               <CharakterDeleteButton id={id} />
@@ -97,7 +99,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
               <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
               {charakter.image
                 ? <Image src={charakter.image} alt={charakter.name} fill className="object-cover" />
-                : <div className="flex h-full items-center justify-center"><Image src="/wildgipfel_logo.png" alt="" width={120} height={54} className="object-contain opacity-20" /></div>
+                : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={120} height={54} className="object-contain opacity-20" /></div>
               }
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)" }} />
             </div>

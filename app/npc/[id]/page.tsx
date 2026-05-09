@@ -91,12 +91,14 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
               availableOrgs={orgs}
               initialOrgs={npc.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
               availableLocations={locations}
+              canSeePrivate={showPrivate}
               initial={{
                 name: npc.name, image: npc.image ?? "", status: npc.status,
                 beziehung: npc.beziehung, geschlecht: npc.geschlecht ?? "", region: npc.region ?? "",
                 alter: npc.alter ?? "", rasse: npc.rasse ?? "", herkunft: npc.herkunft ?? "",
                 aktuellePosition: npc.aktuellePosition ?? "", notizen: npc.notizen ?? "",
-                sichtbarkeit: npc.sichtbarkeit ?? "public", privateNotizen: npc.privateNotizen ?? "",
+                sichtbarkeit: npc.sichtbarkeit ?? "public",
+                ...(showPrivate && { privateNotizen: npc.privateNotizen ?? "" }),
               }}
             />
             <DeleteButton id={id} />
@@ -125,7 +127,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                 <Image src={npc.image} alt={npc.name} fill className="object-cover" />
               ) : (
                 <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
-                  <Image src="/wildgipfel_logo.png" alt="Kein Bild" width={120} height={54} className="object-contain opacity-20" />
+                  <Image src="/lorehub_icon.png" alt="Kein Bild" width={120} height={54} className="object-contain opacity-20" />
                 </div>
               )}
 

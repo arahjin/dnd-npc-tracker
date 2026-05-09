@@ -13,6 +13,7 @@ type Props = {
   availableOrgs?: { id: string; name: string }[];
   initialOrgs?: OrgMembership[];
   availableLocations?: { id: string; name: string }[];
+  canSeePrivate?: boolean;
   initial?: {
     name?: string; image?: string; status?: string; beziehung?: string;
     geschlecht?: string; region?: string; alter?: string; rasse?: string;
@@ -21,7 +22,7 @@ type Props = {
   };
 };
 
-export default function NPCModal({ isOpen, onClose, title, id, availableOrgs, initialOrgs, availableLocations, initial }: Props) {
+export default function NPCModal({ isOpen, onClose, title, id, availableOrgs, initialOrgs, availableLocations, initial, canSeePrivate }: Props) {
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
@@ -67,6 +68,7 @@ export default function NPCModal({ isOpen, onClose, title, id, availableOrgs, in
               availableLocations={availableLocations}
               initial={initial}
               onSuccess={onClose}
+              canSeePrivate={canSeePrivate}
             />
           </div>
         </div>

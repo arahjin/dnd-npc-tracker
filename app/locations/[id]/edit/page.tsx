@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { canSeePrivate } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
 import LocationForm from "@/components/LocationForm";
 
@@ -26,6 +27,8 @@ export default async function EditLocationPage({ params }: { params: Promise<{ i
 
   if (!location) notFound();
 
+  const showPrivate = canSeePrivate({ userId: ctx.userId, isDM: ctx.isDM, isAdmin: ctx.isAdmin }, location.erstellerId);
+
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <SiteHeader active="locations" />
@@ -45,6 +48,7 @@ export default async function EditLocationPage({ params }: { params: Promise<{ i
         </div>
         <LocationForm
           id={id}
+          canSeePrivate={showPrivate}
           initial={{
             name: location.name,
             art: location.art ?? "",
@@ -55,7 +59,7 @@ export default async function EditLocationPage({ params }: { params: Promise<{ i
             floraFauna: location.floraFauna ?? "",
             wissenswertes: location.wissenswertes ?? "",
             sichtbarkeit: location.sichtbarkeit ?? "public",
-            privateNotizen: location.privateNotizen ?? "",
+            ...(showPrivate && { privateNotizen: location.privateNotizen ?? "" }),
           }}
           initialNpcIds={location.npcs.map((n) => n.id)}
           initialOrgIds={location.organisationen.map((o) => o.id)}

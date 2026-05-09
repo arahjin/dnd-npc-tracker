@@ -1,11 +1,21 @@
 import { notFound } from "next/navigation";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 import OrgForm from "@/components/OrgForm";
 
 export default async function EditOrganisation({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const session = await auth();
+  const userId = session!.user!.id as string;
+  const role = (session!.user! as { role: string }).role;
+  const isDM = role === "DUNGEON_MASTER";
+  const isAdmin = role === "ADMIN";
+
   const org = await prisma.organisation.findUnique({ where: { id } });
   if (!org) notFound();
+
+  const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId);
 
   const locations = await prisma.location.findMany({
     where: org.kampagneId ? { kampagneId: org.kampagneId } : {},
@@ -29,10 +39,11 @@ export default async function EditOrganisation({ params }: { params: Promise<{ i
             <span style={{ color: "var(--dnd-red)" }}>✦</span>
           </div>
         </div>
-        <OrgForm id={id} availableLocations={locations} initial={{
+        <OrgForm id={id} availableLocations={locations} canSeePrivate={showPrivate} initial={{
           name: org.name, beschreibung: org.beschreibung ?? "", typ: org.typ ?? "",
           region: org.region ?? "", alignment: org.alignment ?? "", beziehungZurGruppe: org.beziehungZurGruppe ?? "",
-          gottheit: org.gottheit ?? "", sichtbarkeit: org.sichtbarkeit ?? "public", privateNotizen: org.privateNotizen ?? "",
+          gottheit: org.gottheit ?? "", sichtbarkeit: org.sichtbarkeit ?? "public",
+          ...(showPrivate && { privateNotizen: org.privateNotizen ?? "" }),
         }} />
       </div>
     </main>

@@ -100,7 +100,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
               <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
               {npc.image
                 ? <Image src={npc.image} alt={npc.name} fill className="object-cover" />
-                : <div className="flex h-full items-center justify-center"><Image src="/wildgipfel_logo.png" alt="" width={120} height={54} className="object-contain opacity-20" /></div>
+                : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={120} height={54} className="object-contain opacity-20" /></div>
               }
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)" }} />
             </div>

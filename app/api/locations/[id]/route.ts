@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { canSeePrivate } from "@/lib/visibility";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -34,6 +35,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: "Name ist erforderlich." }, { status: 400 });
     }
 
+    const allowPrivate = canSeePrivate({ userId: ctx.userId, isDM: ctx.isDM, isAdmin: ctx.isAdmin }, existing.erstellerId);
+
     // Disconnect all existing, then reconnect selected
     const location = await prisma.location.update({
       where: { id },
@@ -47,7 +50,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         floraFauna: floraFauna || null,
         wissenswertes: wissenswertes || null,
         sichtbarkeit: sichtbarkeit || "public",
-        privateNotizen: privateNotizen || null,
+        ...(allowPrivate && privateNotizen !== undefined && { privateNotizen: privateNotizen || null }),
         npcs: { set: (npcIds as string[]).map((npcId) => ({ id: npcId })) },
         organisationen: { set: (orgIds as string[]).map((orgId) => ({ id: orgId })) },
         charaktere: { set: (charakterIds as string[]).map((cId) => ({ id: cId })) },
