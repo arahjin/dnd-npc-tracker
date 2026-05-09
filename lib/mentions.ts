@@ -1,5 +1,5 @@
-// Mention format: @[Name](PERSON|ORGANISATION|CHARAKTER:id)
-export const MENTION_REGEX = /@\[([^\]]+)\]\((PERSON|ORGANISATION|CHARAKTER):([^)]+)\)/g;
+// Mention format: @[Name](PERSON|ORGANISATION|CHARAKTER|LOCATION:id)
+export const MENTION_REGEX = /@\[([^\]]+)\]\((PERSON|ORGANISATION|CHARAKTER|LOCATION):([^)]+)\)/g;
 
 export type MentionOption = { id: string; label: string; typ: string };
 
@@ -7,12 +7,14 @@ export const MENTION_HREF: Record<string, string> = {
   PERSON: "/npc",
   ORGANISATION: "/organisationen",
   CHARAKTER: "/charaktere",
+  LOCATION: "/locations",
 };
 
 export const MENTION_ICON: Record<string, string> = {
   PERSON: "👤",
   ORGANISATION: "🏛",
   CHARAKTER: "⚔",
+  LOCATION: "📍",
 };
 
 /** Extract unique tags from @mention syntax in a text string */

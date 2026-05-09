@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MENTION_ICON, type MentionOption } from "@/lib/mentions";
+import { MENTION_ICON, MENTION_REGEX, type MentionOption } from "@/lib/mentions";
 
 interface Props {
   value: string;
@@ -63,7 +63,7 @@ function serialize(el: HTMLElement): string {
 
 // ── Hydrate storage string → DOM ─────────────────────────────────────────────
 
-const MENTION_RE = /@\[([^\]]+)\]\((PERSON|ORGANISATION|CHARAKTER):([^)]+)\)/g;
+const MENTION_RE = new RegExp(MENTION_REGEX.source, "g");
 
 function hydrate(el: HTMLElement, text: string) {
   el.innerHTML = "";

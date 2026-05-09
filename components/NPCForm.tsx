@@ -285,18 +285,24 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
         </div>
       </div>
 
-      {/* Herkunft */}
-      <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Herkunft</label>
-        <input type="text" value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)}
-          placeholder="Geburtsort oder Heimat" className={inputClass} style={inputStyle} />
-      </div>
-
-      {/* Aktuelle Position */}
-      <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Aktuelle Position</label>
-        <input type="text" value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
-          placeholder="Wo hält sich der NPC auf?" className={inputClass} style={inputStyle} />
+      {/* Herkunft + Aktuelle Position */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Herkunft</label>
+          <select value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)}
+            className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
+            <option value="">— Wählen —</option>
+            {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Aktuelle Position</label>
+          <select value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
+            className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
+            <option value="">— Wählen —</option>
+            {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
+          </select>
+        </div>
       </div>
 
       {/* Organisationen */}

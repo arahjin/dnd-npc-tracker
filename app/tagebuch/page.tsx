@@ -8,16 +8,18 @@ export const dynamic = "force-dynamic";
 export default async function TagebuchPage() {
   const ctx = await requireKampagne();
 
-  const [npcs, orgs, chars] = await Promise.all([
+  const [npcs, orgs, chars, locations] = await Promise.all([
     prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
     prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
     prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
 
   const tagOptions = [
     ...npcs.map((n) => ({ id: n.id, label: n.name, typ: "PERSON" })),
     ...orgs.map((o) => ({ id: o.id, label: o.name, typ: "ORGANISATION" })),
     ...chars.map((c) => ({ id: c.id, label: c.name, typ: "CHARAKTER" })),
+    ...locations.map((l) => ({ id: l.id, label: l.name, typ: "LOCATION" })),
   ];
 
   return (

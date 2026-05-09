@@ -138,14 +138,23 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
         </div>
       </div>
 
-      <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Herkunft</label>
-        <input type="text" value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)} className={inputClass} style={inputStyle} />
-      </div>
-
-      <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Aktuelle Position</label>
-        <input type="text" value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)} className={inputClass} style={inputStyle} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Herkunft</label>
+          <select value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)}
+            className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
+            <option value="">— Wählen —</option>
+            {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Aktuelle Position</label>
+          <select value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
+            className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
+            <option value="">— Wählen —</option>
+            {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
+          </select>
+        </div>
       </div>
 
       <div>

@@ -5,6 +5,7 @@ import ModalCloseButton from "@/components/ModalCloseButton";
 import OrgDeleteButton from "@/components/OrgDeleteButton";
 import OrgMitglieder from "@/components/OrgMitglieder";
 import CharakterMitglieder from "@/components/CharakterMitglieder";
+import RenderMentions from "@/components/RenderMentions";
 
 export const dynamic = "force-dynamic";
 
@@ -104,7 +105,7 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
                 <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Beschreibung</h2>
               </div>
               <div className="px-4 py-4">
-                <p className="text-base leading-relaxed whitespace-pre-wrap" style={{ color: "var(--dnd-text)" }}>{org.beschreibung}</p>
+                <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)" }}><RenderMentions text={org.beschreibung ?? ""} /></p>
               </div>
             </div>
           )}

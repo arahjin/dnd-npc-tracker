@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ALIGNMENT_OPTIONS, ORGANISATION_TYP_OPTIONS } from "@/lib/constants";
+import MentionTextarea from "./MentionTextarea";
 
 type OrgData = {
   name: string;
@@ -101,9 +102,12 @@ export default function OrgForm({ initial, id, availableLocations = [] }: { init
       </div>
 
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Beschreibung</label>
-        <textarea value={form.beschreibung} onChange={(e) => set("beschreibung", e.target.value)}
-          placeholder="Geschichte, Ziele, Aktivitäten..." rows={5} className={inputClass + " resize-none"} style={inputStyle} />
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
+          Beschreibung <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+        </label>
+        <MentionTextarea value={form.beschreibung} onChange={(v) => set("beschreibung", v)}
+          placeholder={"Geschichte, Ziele, Aktivitäten...\n\n@ tippen um NPCs, Orgs, Chars oder Locations zu verknüpfen"}
+          rows={5} className={inputClass + " resize-none"} style={inputStyle} />
       </div>
 
       <div className="flex items-center gap-3">
