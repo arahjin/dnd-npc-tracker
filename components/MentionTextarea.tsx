@@ -1,7 +1,27 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { MENTION_ICON, MENTION_REGEX, type MentionOption } from "@/lib/mentions";
+import { MENTION_REGEX, type MentionOption } from "@/lib/mentions";
+import { IconPerson, IconOrganisation, IconSword, IconPin } from "@/components/Icons";
+
+// Short text prefix for DOM-based chips (SVG can't be used in textContent)
+const CHIP_PREFIX: Record<string, string> = {
+  NPC:          "NPC · ",
+  Organisation: "Org · ",
+  Charakter:    "Chr · ",
+  Location:     "Loc · ",
+};
+
+function MentionIcon({ typ }: { typ: string }) {
+  const p = { size: 12 } as const;
+  switch (typ) {
+    case "NPC":          return <IconPerson {...p} />;
+    case "Organisation": return <IconOrganisation {...p} />;
+    case "Charakter":    return <IconSword {...p} />;
+    case "Location":     return <IconPin {...p} />;
+    default:             return null;
+  }
+}
 
 interface Props {
   value: string;
@@ -24,7 +44,7 @@ function mkChip(label: string, typ: string, id: string): HTMLSpanElement {
   s.dataset.typ     = typ;
   s.dataset.id      = id;
   s.contentEditable = "false";
-  s.textContent     = `${MENTION_ICON[typ] ?? ""}${label}`;
+  s.textContent     = `${CHIP_PREFIX[typ] ?? ""}${label}`;
   s.style.cssText   =
     "background:#1A0A0A;border:1px solid #7F1D1D;color:#FCA5A5;" +
     "padding:1px 6px;border-radius:2px;font-size:0.82em;" +
@@ -314,7 +334,7 @@ export default function MentionTextarea({
               }}
               onMouseEnter={() => setActiveIdx(i)}
             >
-              <span style={{ color: "var(--dnd-text-muted)" }}>{MENTION_ICON[opt.typ]}</span>
+              <span style={{ color: "var(--dnd-text-muted)" }}><MentionIcon typ={opt.typ} /></span>
               {opt.label}
               <span className="ml-auto font-cinzel text-xs opacity-40">{opt.typ}</span>
             </button>
