@@ -250,5 +250,8 @@ model SiteSettings {
   discordUrl         String   @default("")
   impressumContent   String   @default("")
   datenschutzContent String   @default("")
+  landingTitle       String   @default("Lorehub")
+  landingSubtitle    String   @default("Dein digitales Kampagnen-Archiv")
+  landingBody        String   @default("")
   updatedAt          DateTime @updatedAt
 }

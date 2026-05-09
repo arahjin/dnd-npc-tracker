@@ -12,6 +12,9 @@ export async function GET() {
       discordUrl: "",
       impressumContent: "",
       datenschutzContent: "",
+      landingTitle: "Lorehub",
+      landingSubtitle: "Dein digitales Kampagnen-Archiv",
+      landingBody: "",
     });
   } catch {
     return NextResponse.json({ error: "Fehler beim Laden" }, { status: 500 });
@@ -27,7 +30,7 @@ export async function PATCH(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { copyrightText, kontaktEmail, discordUrl, impressumContent, datenschutzContent } = body;
+    const { copyrightText, kontaktEmail, discordUrl, impressumContent, datenschutzContent, landingTitle, landingSubtitle, landingBody } = body;
 
     const settings = await prisma.siteSettings.upsert({
       where: { id: "singleton" },
@@ -38,6 +41,9 @@ export async function PATCH(req: NextRequest) {
         discordUrl: discordUrl ?? "",
         impressumContent: impressumContent ?? "",
         datenschutzContent: datenschutzContent ?? "",
+        landingTitle: landingTitle ?? "Lorehub",
+        landingSubtitle: landingSubtitle ?? "Dein digitales Kampagnen-Archiv",
+        landingBody: landingBody ?? "",
       },
       update: {
         ...(copyrightText !== undefined && { copyrightText }),
@@ -45,6 +51,9 @@ export async function PATCH(req: NextRequest) {
         ...(discordUrl !== undefined && { discordUrl }),
         ...(impressumContent !== undefined && { impressumContent }),
         ...(datenschutzContent !== undefined && { datenschutzContent }),
+        ...(landingTitle !== undefined && { landingTitle }),
+        ...(landingSubtitle !== undefined && { landingSubtitle }),
+        ...(landingBody !== undefined && { landingBody }),
       },
     });
     return NextResponse.json(settings);

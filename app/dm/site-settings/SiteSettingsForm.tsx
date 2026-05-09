@@ -8,6 +8,9 @@ type Settings = {
   discordUrl: string;
   impressumContent: string;
   datenschutzContent: string;
+  landingTitle: string;
+  landingSubtitle: string;
+  landingBody: string;
 };
 
 const inputStyle: React.CSSProperties = {
@@ -45,7 +48,7 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
-  const [activeTab, setActiveTab] = useState<"allgemein" | "impressum" | "datenschutz">("allgemein");
+  const [activeTab, setActiveTab] = useState<"allgemein" | "startseite" | "impressum" | "datenschutz">("allgemein");
 
   function set(key: keyof Settings, val: string) {
     setForm((f) => ({ ...f, [key]: val }));
@@ -75,7 +78,7 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
     fontFamily: "'Oswald', sans-serif",
     fontSize: "0.7rem",
     letterSpacing: "0.14em",
-    textTransform: "uppercase",
+    textTransform: "uppercase" as const,
     padding: "10px 20px",
     cursor: "pointer",
     border: "none",
@@ -90,6 +93,7 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
       {/* Tabs */}
       <div style={{ borderBottom: "1px solid var(--dnd-border)", display: "flex", gap: 0, marginBottom: "24px" }}>
         <button style={tabStyle("allgemein")} onClick={() => setActiveTab("allgemein")}>Allgemein</button>
+        <button style={tabStyle("startseite")} onClick={() => setActiveTab("startseite")}>Startseite</button>
         <button style={tabStyle("impressum")} onClick={() => setActiveTab("impressum")}>Impressum</button>
         <button style={tabStyle("datenschutz")} onClick={() => setActiveTab("datenschutz")}>Datenschutz</button>
       </div>
@@ -135,6 +139,49 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
                 />
                 <Hint>Wird als Discord-Icon im Footer angezeigt. Leer lassen = kein Discord-Link.</Hint>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tab: Startseite */}
+      {activeTab === "startseite" && (
+        <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+          <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+            <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>Startseiten-Inhalt</h2>
+          </div>
+          <div className="px-5 py-5 space-y-5">
+            <div>
+              <Label>Titel</Label>
+              <input
+                type="text"
+                value={form.landingTitle}
+                onChange={(e) => set("landingTitle", e.target.value)}
+                placeholder="Lorehub"
+                style={inputStyle}
+              />
+              <Hint>Großer Headline-Text auf der Startseite.</Hint>
+            </div>
+            <div>
+              <Label>Untertitel</Label>
+              <input
+                type="text"
+                value={form.landingSubtitle}
+                onChange={(e) => set("landingSubtitle", e.target.value)}
+                placeholder="Dein digitales Kampagnen-Archiv"
+                style={inputStyle}
+              />
+              <Hint>Kurzer Satz unter dem Titel.</Hint>
+            </div>
+            <div>
+              <Label>Beschreibungstext</Label>
+              <textarea
+                value={form.landingBody}
+                onChange={(e) => set("landingBody", e.target.value)}
+                placeholder={"Beschreibe hier deine App, ihre Features und was Spieler und Dungeon Master damit machen können.\n\nLeerzeile = neuer Absatz."}
+                style={textareaStyle}
+              />
+              <Hint>Leerzeile = neuer Absatz. Wird unter dem Untertitel angezeigt.</Hint>
             </div>
           </div>
         </div>

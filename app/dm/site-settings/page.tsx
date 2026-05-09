@@ -19,6 +19,9 @@ export default async function SiteSettingsPage() {
     discordUrl: raw?.discordUrl ?? "",
     impressumContent: raw?.impressumContent ?? "",
     datenschutzContent: raw?.datenschutzContent ?? "",
+    landingTitle: raw?.landingTitle ?? "Lorehub",
+    landingSubtitle: raw?.landingSubtitle ?? "Dein digitales Kampagnen-Archiv",
+    landingBody: raw?.landingBody ?? "",
   };
 
   return (
@@ -48,8 +51,11 @@ export default async function SiteSettingsPage() {
         <SiteSettingsForm initial={initial} />
 
         {/* Preview links */}
-        <div className="mt-8 pt-6 flex gap-4" style={{ borderTop: "1px solid var(--dnd-border)" }}>
+        <div className="mt-8 pt-6 flex flex-wrap gap-4" style={{ borderTop: "1px solid var(--dnd-border)" }}>
           <span className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-label)" }}>Vorschau:</span>
+          <a href="/start" target="_blank" className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-red-light)" }}>
+            Startseite ↗
+          </a>
           <a href="/impressum" target="_blank" className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-red-light)" }}>
             Impressum ↗
           </a>

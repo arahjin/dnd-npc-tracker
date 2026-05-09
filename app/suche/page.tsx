@@ -29,7 +29,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
     ? { kampagneId }
     : { kampagneId, OR: [{ typ: "GESCHICHTE" as const }, { AND: [{ typ: "TAGEBUCH" as const }, { userId }] }] };
 
-  const [npcs, orgs, chars, textEntries] = query
+  const [npcs, orgs, chars, locs, textEntries] = query
     ? await Promise.all([
         prisma.nPC.findMany({
           where: {
@@ -73,6 +73,19 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
             organisationen: { include: { organisation: { select: { id: true, name: true } } } },
           },
         }),
+        prisma.location.findMany({
+          where: {
+            kampagneId,
+            OR: [
+              { name: { contains: query, mode: "insensitive" } },
+              { wissenswertes: { contains: query, mode: "insensitive" } },
+              { floraFauna: { contains: query, mode: "insensitive" } },
+              { beschreibung: { contains: query, mode: "insensitive" } },
+            ],
+          },
+          orderBy: { name: "asc" },
+          select: { id: true, name: true, art: true },
+        }),
         prisma.journalEntry.findMany({
           where: {
             AND: [
@@ -84,7 +97,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
           include: { user: { select: { id: true, name: true } }, tags: true },
         }),
       ])
-    : [[], [], [], []];
+    : [[], [], [], [], []];
 
   const foundIds = [...npcs.map((n) => n.id), ...orgs.map((o) => o.id), ...chars.map((c) => c.id)];
   const taggedEntries = foundIds.length > 0
@@ -120,7 +133,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
     for (const c of extraChars) nameMap.set(c.id, { name: c.name, typ: "CHARAKTER" });
   }
 
-  const total = npcs.length + orgs.length + chars.length + entries.length;
+  const total = npcs.length + orgs.length + chars.length + locs.length + entries.length;
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -211,6 +224,24 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                       <span className="text-xs" style={{ color: "var(--dnd-gold)" }}>🎲 {c.user.name}</span>
                       {c.rasse && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>· {c.rasse}</span>}
                     </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {locs.length > 0 && (
+          <section className="mb-10">
+            <SectionHeader label="Locations" count={locs.length} />
+            <div className="space-y-2">
+              {locs.map((loc) => (
+                <Link key={loc.id} href={`/locations/${loc.id}`} className="flex items-center gap-4 p-3 transition-all group"
+                  style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
+                  <div className="flex items-center justify-center w-10 h-10 shrink-0 text-xl" style={{ background: "#0A0A0A" }}>📍</div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{loc.name}</p>
+                    {loc.art && <p className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>{loc.art}</p>}
                   </div>
                 </Link>
               ))}

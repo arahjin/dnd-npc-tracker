@@ -79,7 +79,7 @@ export default async function SiteHeader({ active }: {
           style={{ display: "flex", alignItems: "stretch", height: "68px" }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "8px", flexShrink: 0 }}>
+          <Link href="/start" style={{ display: "flex", alignItems: "center", marginRight: "8px", flexShrink: 0 }}>
             <Image
               src="/lorehub_logo.png"
               alt="Lorehub"

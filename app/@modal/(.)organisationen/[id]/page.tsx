@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -49,6 +50,7 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
         include: { charakter: { include: { user: { select: { id: true, name: true } } } } },
         orderBy: { createdAt: "asc" },
       },
+      locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
     },
   });
   if (!org) notFound();
@@ -133,6 +135,26 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
               <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
                 {org.privateNotizen}
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Locations */}
+        {org.locations.length > 0 && (
+          <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+            <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+              <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Locations</h2>
+            </div>
+            <div className="divide-y" style={{ borderColor: "#1E1E1E" }}>
+              {org.locations.map((loc) => (
+                <Link key={loc.id} href={`/locations/${loc.id}`} className="px-4 py-3 flex items-center justify-between gap-4 block"
+                  style={{ textDecoration: "none" }}>
+                  <span className="font-cinzel text-sm font-semibold hover:underline" style={{ color: "var(--dnd-heading)" }}>
+                    {loc.name}
+                  </span>
+                  {loc.art && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>{loc.art}</span>}
+                </Link>
+              ))}
             </div>
           </div>
         )}
