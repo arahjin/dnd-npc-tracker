@@ -41,6 +41,7 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
         include: { charakter: { include: { user: { select: { id: true, name: true } } } } },
         orderBy: { createdAt: "asc" },
       },
+      locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
     },
   });
   if (!org) notFound();
@@ -118,6 +119,26 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
             </div>
           )}
         </div>
+
+        {/* Locations */}
+        {org.locations.length > 0 && (
+          <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+            <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+              <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>
+                Locations
+              </h2>
+            </div>
+            <div className="px-4 py-2 flex flex-wrap gap-2">
+              {org.locations.map((loc) => (
+                <Link key={loc.id} href={`/locations/${loc.id}`}
+                  className="font-cinzel text-xs px-3 py-1.5 transition-all"
+                  style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text)", background: "var(--dnd-bg)", textDecoration: "none" }}>
+                  {loc.name}{loc.art ? ` · ${loc.art}` : ""}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Mitglieder */}
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

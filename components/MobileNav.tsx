@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 type Kampagne = { id: string; name: string };
 
 type Props = {
-  active: string;
+  active: "npcs" | "organisationen" | "locations" | "charaktere" | "geschichte" | "tagebuch";
   userName?: string;
   userRole?: string;
   isDM?: boolean;
@@ -17,6 +17,7 @@ type Props = {
 const NAV = [
   { href: "/",               label: "NPCs",           key: "npcs" },
   { href: "/organisationen", label: "Organisationen", key: "organisationen" },
+  { href: "/locations",      label: "Locations",      key: "locations" },
   { href: "/charaktere",     label: "Charaktere",     key: "charaktere" },
   { href: "/geschichte",     label: "Geschichte",     key: "geschichte" },
   { href: "/tagebuch",       label: "Tagebuch",       key: "tagebuch" },

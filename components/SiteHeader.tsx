@@ -9,7 +9,7 @@ import KampagneSelector from "./KampagneSelector";
 import MobileNav from "./MobileNav";
 
 export default async function SiteHeader({ active }: {
-  active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch";
+  active: "npcs" | "organisationen" | "locations" | "charaktere" | "geschichte" | "tagebuch";
 }) {
   const session = await auth();
   const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
@@ -72,6 +72,7 @@ export default async function SiteHeader({ active }: {
           <nav className="hidden md:flex" style={{ alignItems: "stretch" }}>
             <Link href="/" className={`ddb-nav-link${active === "npcs" ? " ddb-nav-active" : ""}`}>NPCs</Link>
             <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen" ? " ddb-nav-active" : ""}`}>Organisationen</Link>
+            <Link href="/locations" className={`ddb-nav-link${active === "locations" ? " ddb-nav-active" : ""}`}>Locations</Link>
             <Link href="/charaktere" className={`ddb-nav-link${active === "charaktere" ? " ddb-nav-active" : ""}`}>Charaktere</Link>
             <Link href="/geschichte" className={`ddb-nav-link${active === "geschichte" ? " ddb-nav-active" : ""}`}>Geschichte</Link>
             <Link href="/tagebuch" className={`ddb-nav-link${active === "tagebuch" ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
