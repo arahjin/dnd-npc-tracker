@@ -51,9 +51,9 @@ body {
   font-size: 0.7rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #9A8A78;
+  color: rgba(255,255,255,0.65);
   padding: 0 16px;
-  height: 60px;
+  height: 46px;
   display: flex;
   align-items: center;
   border-bottom: 3px solid transparent;
@@ -64,13 +64,13 @@ body {
 }
 
 .ddb-nav-link:hover {
-  color: #F5EDD6;
-  border-bottom-color: var(--dnd-red);
+  color: #FFFFFF;
+  border-bottom-color: var(--dnd-gold);
 }
 
 .ddb-nav-active {
-  color: #F5EDD6 !important;
-  border-bottom-color: var(--dnd-red) !important;
+  color: #FFFFFF !important;
+  border-bottom-color: var(--dnd-gold) !important;
 }
 
 /* DnD Beyond-style CTA button */
@@ -103,10 +103,10 @@ body {
   box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
 }
 
-/* Hero banner — responsive height */
-.hero-banner { height: 80px; }
+/* Site header — hero image with nav overlay */
+.site-header { height: 200px; }
 @media (min-width: 768px) {
-  .hero-banner { height: 140px; }
+  .site-header { height: 340px; }
 }
 
 /* Mobile touch targets */
