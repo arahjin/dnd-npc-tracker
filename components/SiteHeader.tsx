@@ -1,4 +1,3 @@
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
@@ -8,7 +7,15 @@ import NavSearch from "./NavSearch";
 import UserMenu from "./UserMenu";
 import KampagneSelector from "./KampagneSelector";
 
-export default async function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch"; actionSlot?: React.ReactNode }) {
+const CTA_MAP: Record<string, { href: string; label: string } | null> = {
+  npcs:           { href: "/npc/neu",            label: "+ NPC" },
+  organisationen: { href: "/organisationen/neu", label: "+ Organisation" },
+  charaktere:     { href: "/charaktere/neu",     label: "+ Charakter" },
+  geschichte:     null,
+  tagebuch:       null,
+};
+
+export default async function SiteHeader({ active }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch" }) {
   const session = await auth();
   const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
 
@@ -76,10 +83,10 @@ export default async function SiteHeader({ active, actionSlot }: { active: "npcs
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             {kampagneSelector}
             <NavSearch />
-            {actionSlot ?? (
-              <Link href={active === "organisationen" ? "/organisationen/neu" : "/npc/neu"} className="ddb-cta">
-                {active === "organisationen" ? "+ Organisation" : "+ NPC"}
-              </Link>
+            {CTA_MAP[active] && (
+              <a href={CTA_MAP[active]!.href} className="ddb-cta">
+                {CTA_MAP[active]!.label}
+              </a>
             )}
             {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} isDM={isDMofActive} />}
           </div>

@@ -24,9 +24,7 @@ export default async function CharakterePage() {
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
-      <SiteHeader active="charaktere" actionSlot={
-        <Link href="/charaktere/neu" className="ddb-cta">+ Charakter</Link>
-      } />
+      <SiteHeader active="charaktere" />
       <div className="mx-auto max-w-7xl px-6 py-8">
         <section className="mb-10">
           <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
@@ -35,7 +33,7 @@ export default async function CharakterePage() {
           </h2>
           {own.length === 0 ? (
             <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-              Du hast noch keinen Charakter. <Link href="/charaktere/neu" style={{ color: "var(--dnd-red-light)" }}>Erstelle einen.</Link>
+              Du hast noch keinen Charakter. <a href="/charaktere/neu" style={{ color: "var(--dnd-red-light)" }}>Erstelle einen.</a>
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
