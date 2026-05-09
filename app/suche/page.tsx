@@ -130,7 +130,27 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
   const orgs = [...directOrgs, ...linkedOrgs];
   const chars = [...directChars, ...linkedChars];
 
-  const foundIds = [...npcs.map((n) => n.id), ...orgs.map((o) => o.id), ...chars.map((c) => c.id)];
+  // Also surface Locations linked to any matched NPC/Org/Char
+  const allObjectIds = [...npcs.map((n) => n.id), ...orgs.map((o) => o.id), ...chars.map((c) => c.id)];
+  const existingLocIds = new Set(locs.map((l) => l.id));
+  const linkedLocs = allObjectIds.length > 0
+    ? await prisma.location.findMany({
+        where: {
+          kampagneId,
+          id: { notIn: [...existingLocIds] },
+          OR: [
+            { npcs: { some: { id: { in: allObjectIds } } } },
+            { organisationen: { some: { id: { in: allObjectIds } } } },
+            { charaktere: { some: { id: { in: allObjectIds } } } },
+          ],
+        },
+        orderBy: { name: "asc" },
+        select: { id: true, name: true, art: true },
+      })
+    : [];
+  const allLocs = [...locs, ...linkedLocs];
+
+  const foundIds = allObjectIds;
   const taggedEntries = foundIds.length > 0
     ? await prisma.journalEntry.findMany({
         where: { AND: [journalWhere, { tags: { some: { referenzId: { in: foundIds } } } }] },
@@ -164,7 +184,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
     for (const c of extraChars) nameMap.set(c.id, { name: c.name, typ: "CHARAKTER" });
   }
 
-  const total = npcs.length + orgs.length + chars.length + locs.length + entries.length;
+  const total = npcs.length + orgs.length + chars.length + allLocs.length + entries.length;
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -262,11 +282,11 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
           </section>
         )}
 
-        {locs.length > 0 && (
+        {allLocs.length > 0 && (
           <section className="mb-10">
-            <SectionHeader label="Locations" count={locs.length} />
+            <SectionHeader label="Locations" count={allLocs.length} />
             <div className="space-y-2">
-              {locs.map((loc) => (
+              {allLocs.map((loc) => (
                 <Link key={loc.id} href={`/locations/${loc.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                   <div className="flex items-center justify-center w-10 h-10 shrink-0 text-xl" style={{ background: "#0A0A0A" }}>📍</div>
