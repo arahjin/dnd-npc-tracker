@@ -45,7 +45,7 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
     <DetailModal>
       {/* Header */}
       <div style={{ background: "#111111", borderBottom: "1px solid #252525" }}>
-        <div className="mx-auto max-w-5xl px-6" style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="mx-auto max-w-5xl px-4 md:px-6" style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ModalCloseButton />
           {canEdit && (
             <div className="flex gap-2">
@@ -66,7 +66,7 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-6 py-10">
+      <div className="mx-auto max-w-5xl px-4 md:px-6 py-10">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           {/* Portrait */}
           <div className="md:col-span-1">

@@ -125,7 +125,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <SiteHeader active="npcs" />
-      <div className="mx-auto max-w-4xl px-6 py-10">
+      <div className="mx-auto max-w-4xl px-4 md:px-6 py-10">
         <div className="mb-8">
           <h1 className="font-cinzel text-2xl font-bold" style={{ color: "var(--dnd-heading)" }}>
             {query ? `Suchergebnisse für „${query}"` : "Suche"}

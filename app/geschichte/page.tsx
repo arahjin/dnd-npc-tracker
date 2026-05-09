@@ -23,7 +23,7 @@ export default async function GeschichtePage() {
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <SiteHeader active="geschichte" />
-      <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="mx-auto max-w-3xl px-4 md:px-6 py-8 md:py-10">
         <div className="mb-8">
           <h1 className="font-cinzel text-2xl font-bold" style={{ color: "var(--dnd-heading)" }}>Geschichte</h1>
           <div className="mt-3 flex items-center gap-3">

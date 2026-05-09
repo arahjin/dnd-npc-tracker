@@ -103,6 +103,18 @@ body {
   box-shadow: 0 0 15px rgba(201, 168, 76, 0.2);
 }
 
+/* Hero banner — responsive height */
+.hero-banner { height: 80px; }
+@media (min-width: 768px) {
+  .hero-banner { height: 140px; }
+}
+
+/* Mobile touch targets */
+@media (max-width: 767px) {
+  .ddb-cta { min-height: 44px; padding: 10px 18px; }
+  button, a { -webkit-tap-highlight-color: transparent; }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--dnd-bg); }

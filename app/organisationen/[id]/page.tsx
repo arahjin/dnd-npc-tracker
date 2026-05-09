@@ -66,7 +66,7 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
         <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
-        <div className="mx-auto max-w-5xl px-6 py-4 flex items-center justify-between">
+        <div className="mx-auto max-w-5xl px-4 md:px-6 py-4 flex items-center justify-between">
           <Link href="/organisationen" className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-text-muted)" }}>← Zurück</Link>
           <div className="flex gap-2">
             <Link href={`/organisationen/${id}/edit`} className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
@@ -76,7 +76,7 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
         </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-6 py-10 space-y-8">
+      <div className="mx-auto max-w-5xl px-4 md:px-6 py-10 space-y-8">
         {/* Header */}
         <div>
           <div className="flex flex-wrap items-start gap-4 mb-2">

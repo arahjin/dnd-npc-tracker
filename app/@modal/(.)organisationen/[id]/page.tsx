@@ -55,7 +55,7 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
     <DetailModal>
       {/* Header */}
       <div style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
-        <div className="mx-auto max-w-5xl px-6" style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="mx-auto max-w-5xl px-4 md:px-6" style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ModalCloseButton />
           <div className="flex gap-2">
             <Link href={`/organisationen/${id}/edit`}
@@ -68,7 +68,7 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
         </div>
       </div>
 
-      <div className="mx-auto max-w-5xl px-6 py-10 space-y-8">
+      <div className="mx-auto max-w-5xl px-4 md:px-6 py-10 space-y-8">
         {/* Name + alignment */}
         <div>
           <div className="flex flex-wrap items-start gap-4 mb-2">

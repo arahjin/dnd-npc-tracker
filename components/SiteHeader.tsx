@@ -6,13 +6,18 @@ import { prisma } from "@/lib/prisma";
 import NavSearch from "./NavSearch";
 import UserMenu from "./UserMenu";
 import KampagneSelector from "./KampagneSelector";
+import MobileNav from "./MobileNav";
 
-export default async function SiteHeader({ active }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch" }) {
+export default async function SiteHeader({ active }: {
+  active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch";
+}) {
   const session = await auth();
   const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
 
   let kampagneSelector: React.ReactNode = null;
   let isDMofActive = false;
+  let kampagneNavData: { aktiveId: string; aktiveKampagne: string; kampagnen: { id: string; name: string }[] } | undefined;
+
   if (user?.id) {
     const cookieStore = await cookies();
     const aktiveId = cookieStore.get("aktiveKampagne")?.value ?? null;
@@ -37,12 +42,9 @@ export default async function SiteHeader({ active }: { active: "npcs" | "organis
       isDMofActive = isAdmin || mitglied?.isDM === true;
       if (aktive) {
         kampagneSelector = (
-          <KampagneSelector
-            aktiveId={aktiveId}
-            aktiveKampagne={aktive.name}
-            kampagnen={kampagnen}
-          />
+          <KampagneSelector aktiveId={aktiveId} aktiveKampagne={aktive.name} kampagnen={kampagnen} />
         );
+        kampagneNavData = { aktiveId, aktiveKampagne: aktive.name, kampagnen };
       }
     }
   }
@@ -53,16 +55,21 @@ export default async function SiteHeader({ active }: { active: "npcs" | "organis
       <div style={{ background: "#111111", borderBottom: "1px solid #252525", position: "relative", zIndex: 10 }}>
         <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
 
-        <div className="mx-auto max-w-7xl px-6" style={{ display: "flex", alignItems: "stretch", height: "60px" }}>
+        <div className="mx-auto max-w-7xl px-4 md:px-6"
+          style={{ display: "flex", alignItems: "stretch", height: "60px" }}>
 
           {/* Logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "24px", flexShrink: 0 }}>
-            <Image src="/wildgipfel_logo.png" alt="Wildgipfel" width={140} height={63} className="object-contain"
-              style={{ filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.9))" }} />
+          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "16px", flexShrink: 0 }}>
+            <Image
+              src="/wildgipfel_logo.png" alt="Wildgipfel"
+              width={140} height={63}
+              className="object-contain"
+              style={{ width: "clamp(90px, 18vw, 140px)", height: "auto", filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.9))" }}
+            />
           </Link>
 
-          {/* Nav Links */}
-          <nav style={{ display: "flex", alignItems: "stretch", flex: 1 }}>
+          {/* Desktop Nav Links */}
+          <nav className="hidden md:flex" style={{ alignItems: "stretch" }}>
             <Link href="/" className={`ddb-nav-link${active === "npcs" ? " ddb-nav-active" : ""}`}>NPCs</Link>
             <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen" ? " ddb-nav-active" : ""}`}>Organisationen</Link>
             <Link href="/charaktere" className={`ddb-nav-link${active === "charaktere" ? " ddb-nav-active" : ""}`}>Charaktere</Link>
@@ -70,18 +77,33 @@ export default async function SiteHeader({ active }: { active: "npcs" | "organis
             <Link href="/tagebuch" className={`ddb-nav-link${active === "tagebuch" ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
           </nav>
 
-          {/* Right: Search + Campaign + User */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {/* Spacer */}
+          <div style={{ flex: 1 }} />
+
+          {/* Desktop right side */}
+          <div className="hidden md:flex" style={{ alignItems: "center", gap: "10px" }}>
             <NavSearch />
             {kampagneSelector}
             {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} isDM={isDMofActive} />}
+          </div>
+
+          {/* Mobile right side */}
+          <div className="flex md:hidden" style={{ alignItems: "center", gap: "4px" }}>
+            <NavSearch compact />
+            <MobileNav
+              active={active}
+              userName={user?.name ?? undefined}
+              userRole={user?.role}
+              isDM={isDMofActive}
+              kampagneData={kampagneNavData}
+            />
           </div>
 
         </div>
       </div>
 
       {/* ── Hero Banner ── */}
-      <div style={{ position: "relative", height: "140px", overflow: "hidden" }}>
+      <div className="hero-banner" style={{ position: "relative", overflow: "hidden" }}>
         <Image src="/wildgipfel_header.png" alt="Wildgipfel" fill className="object-cover object-top" priority style={{ zIndex: 0 }} />
         <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(17,17,17,0.25) 0%, rgba(14,14,14,0.65) 100%)" }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "2px", zIndex: 2, background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />

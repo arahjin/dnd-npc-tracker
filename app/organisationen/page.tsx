@@ -29,7 +29,7 @@ export default async function OrganisationenPage() {
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <SiteHeader active="organisationen" />
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 py-6 md:py-8">
         <div className="flex items-center justify-between mb-6">
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
             {orgs.length} {orgs.length === 1 ? "Organisation" : "Organisationen"}
