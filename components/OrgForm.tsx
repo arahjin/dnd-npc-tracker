@@ -47,8 +47,7 @@ export default function OrgForm({ initial, id, availableLocations = [] }: { init
       : await fetch("/api/organisationen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     if (!res.ok) { setError("Fehler beim Speichern."); setSaving(false); return; }
     const org = await res.json();
-    router.push(`/organisationen/${org.id}`);
-    router.refresh();
+    window.location.href = `/organisationen/${org.id}`;
   }
 
   const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";
