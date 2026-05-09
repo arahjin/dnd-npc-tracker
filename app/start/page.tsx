@@ -1,11 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import SiteFooter from "@/components/SiteFooter";
 
 export const dynamic = "force-dynamic";
 
 export default async function StartPage() {
+  const session = await auth();
+  const isLoggedIn = !!session?.user;
+
   let settings = null;
   try {
     settings = await prisma.siteSettings.findUnique({ where: { id: "singleton" } });
@@ -13,7 +16,6 @@ export default async function StartPage() {
     // DB not reachable — use defaults
   }
 
-  const title = settings?.landingTitle || "Lorehub";
   const subtitle = settings?.landingSubtitle || "Dein digitales Kampagnen-Archiv";
   const bodyText = settings?.landingBody || "";
 
@@ -36,32 +38,34 @@ export default async function StartPage() {
               style={{ width: "clamp(80px, 14vw, 120px)", height: "auto", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}
             />
           </Link>
-          <Link href="/login" className="ddb-cta">
-            Anmelden
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/" className="ddb-cta">
+              Zur App
+            </Link>
+          ) : (
+            <Link href="/login" className="ddb-cta">
+              Anmelden
+            </Link>
+          )}
         </div>
       </header>
 
       {/* Hero */}
       <section style={{ flex: "1 0 auto", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 24px 60px" }}>
-        {/* Gold accent line */}
-        <div style={{ width: "60px", height: "2px", background: "var(--dnd-gold)", marginBottom: "32px", opacity: 0.7 }} />
-
-        <h1 className="font-cinzel text-center font-bold" style={{
-          color: "var(--dnd-heading)",
-          fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
-          lineHeight: 1.1,
-          letterSpacing: "0.02em",
-          maxWidth: "800px",
-        }}>
-          {title}
-        </h1>
+        {/* Logo */}
+        <Image
+          src="/lorehub_logo.png"
+          alt="Lorehub"
+          width={320} height={144}
+          className="object-contain"
+          style={{ width: "clamp(160px, 30vw, 300px)", height: "auto", filter: "drop-shadow(0 4px 24px rgba(0,0,0,0.7))", marginBottom: "32px" }}
+        />
 
         {subtitle && (
-          <p className="font-cinzel text-center mt-4" style={{
+          <p className="font-cinzel text-center" style={{
             color: "var(--dnd-gold)",
             fontSize: "clamp(1rem, 2.5vw, 1.4rem)",
-            letterSpacing: "0.08em",
+            letterSpacing: "0.1em",
             maxWidth: "600px",
           }}>
             {subtitle}
@@ -86,16 +90,19 @@ export default async function StartPage() {
           </div>
         )}
 
-        {/* CTA buttons */}
+        {/* CTA */}
         <div className="flex flex-wrap gap-4 justify-center mt-4">
-          <Link href="/login" className="ddb-cta" style={{ fontSize: "0.85rem", padding: "12px 32px" }}>
-            Jetzt anmelden
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/" className="ddb-cta" style={{ fontSize: "0.85rem", padding: "12px 32px" }}>
+              Zur App →
+            </Link>
+          ) : (
+            <Link href="/login" className="ddb-cta" style={{ fontSize: "0.85rem", padding: "12px 32px" }}>
+              Jetzt anmelden
+            </Link>
+          )}
         </div>
       </section>
-
-      {/* Footer */}
-      <SiteFooter />
     </div>
   );
 }

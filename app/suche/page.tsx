@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
 
 export const dynamic = "force-dynamic";
@@ -83,7 +84,12 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
             ],
           },
           orderBy: { name: "asc" },
-          select: { id: true, name: true, art: true },
+          select: {
+            id: true, name: true, art: true,
+            npcs: { select: { id: true, name: true, image: true, status: true, rasse: true, organisationen: { include: { organisation: { select: { id: true, name: true } } } } } },
+            organisationen: { select: { id: true, name: true, typ: true, region: true, alignment: true } },
+            charaktere: { select: { id: true, name: true, image: true, rasse: true, user: { select: { id: true, name: true } }, organisationen: { include: { organisation: { select: { id: true, name: true } } } } } },
+          },
         }),
         prisma.journalEntry.findMany({
           where: {
@@ -97,6 +103,16 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
         }),
       ])
     : [[], [], [], [], []];
+
+  // Merge NPCs/Orgs/Chars linked to matching locations into results (de-duplicated by id)
+  const seenNpcIds = new Set(npcs.map((n) => n.id));
+  const seenOrgIds = new Set(orgs.map((o) => o.id));
+  const seenCharIds = new Set(chars.map((c) => c.id));
+  for (const loc of locs) {
+    for (const n of loc.npcs) { if (!seenNpcIds.has(n.id)) { seenNpcIds.add(n.id); npcs.push(n as typeof npcs[0]); } }
+    for (const o of loc.organisationen) { if (!seenOrgIds.has(o.id)) { seenOrgIds.add(o.id); orgs.push(o as typeof orgs[0]); } }
+    for (const c of loc.charaktere) { if (!seenCharIds.has(c.id)) { seenCharIds.add(c.id); chars.push(c as typeof chars[0]); } }
+  }
 
   const foundIds = [...npcs.map((n) => n.id), ...orgs.map((o) => o.id), ...chars.map((c) => c.id)];
   const taggedEntries = foundIds.length > 0
@@ -265,7 +281,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                       {" · "}{new Date(entry.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" })}
                     </p>
                     {entry.titel && <p className="font-cinzel text-sm font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>{entry.titel}</p>}
-                    <p className="text-sm leading-relaxed line-clamp-3" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{entry.inhalt}</p>
+                    <p className="text-sm leading-relaxed line-clamp-3" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{stripMentions(entry.inhalt)}</p>
                     {entry.tags.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {entry.tags.map((tag) => {
