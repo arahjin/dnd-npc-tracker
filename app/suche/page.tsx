@@ -30,7 +30,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
     ? { kampagneId }
     : { kampagneId, OR: [{ typ: "GESCHICHTE" as const }, { AND: [{ typ: "TAGEBUCH" as const }, { userId }] }] };
 
-  const [npcs, orgs, chars, locs, textEntries] = query
+  const [directNpcs, directOrgs, directChars, locs, textEntries] = query
     ? await Promise.all([
         prisma.nPC.findMany({
           where: {
@@ -84,12 +84,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
             ],
           },
           orderBy: { name: "asc" },
-          select: {
-            id: true, name: true, art: true,
-            npcs: { select: { id: true, name: true, image: true, status: true, rasse: true, organisationen: { include: { organisation: { select: { id: true, name: true } } } } } },
-            organisationen: { select: { id: true, name: true, typ: true, region: true, alignment: true } },
-            charaktere: { select: { id: true, name: true, image: true, rasse: true, user: { select: { id: true, name: true } }, organisationen: { include: { organisation: { select: { id: true, name: true } } } } } },
-          },
+          select: { id: true, name: true, art: true },
         }),
         prisma.journalEntry.findMany({
           where: {
@@ -104,15 +99,36 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
       ])
     : [[], [], [], [], []];
 
-  // Merge NPCs/Orgs/Chars linked to matching locations into results (de-duplicated by id)
-  const seenNpcIds = new Set(npcs.map((n) => n.id));
-  const seenOrgIds = new Set(orgs.map((o) => o.id));
-  const seenCharIds = new Set(chars.map((c) => c.id));
-  for (const loc of locs) {
-    for (const n of loc.npcs) { if (!seenNpcIds.has(n.id)) { seenNpcIds.add(n.id); npcs.push(n as typeof npcs[0]); } }
-    for (const o of loc.organisationen) { if (!seenOrgIds.has(o.id)) { seenOrgIds.add(o.id); orgs.push(o as typeof orgs[0]); } }
-    for (const c of loc.charaktere) { if (!seenCharIds.has(c.id)) { seenCharIds.add(c.id); chars.push(c as typeof chars[0]); } }
-  }
+  // Merge NPCs/Orgs/Chars linked to matching Locations (via many-to-many relation)
+  const locIds = locs.map((l) => l.id);
+  const existingNpcIds = new Set(directNpcs.map((n) => n.id));
+  const existingOrgIds = new Set(directOrgs.map((o) => o.id));
+  const existingCharIds = new Set(directChars.map((c) => c.id));
+  const [linkedNpcs, linkedOrgs, linkedChars] = locIds.length > 0
+    ? await Promise.all([
+        prisma.nPC.findMany({
+          where: { locations: { some: { id: { in: locIds } } }, id: { notIn: [...existingNpcIds] } },
+          orderBy: { name: "asc" },
+          include: { organisationen: { include: { organisation: { select: { id: true, name: true } } } } },
+        }),
+        prisma.organisation.findMany({
+          where: { locations: { some: { id: { in: locIds } } }, id: { notIn: [...existingOrgIds] } },
+          orderBy: { name: "asc" },
+        }),
+        prisma.charakter.findMany({
+          where: { locations: { some: { id: { in: locIds } } }, id: { notIn: [...existingCharIds] } },
+          orderBy: { name: "asc" },
+          include: {
+            user: { select: { id: true, name: true } },
+            organisationen: { include: { organisation: { select: { id: true, name: true } } } },
+          },
+        }),
+      ])
+    : [[], [], []];
+
+  const npcs = [...directNpcs, ...linkedNpcs];
+  const orgs = [...directOrgs, ...linkedOrgs];
+  const chars = [...directChars, ...linkedChars];
 
   const foundIds = [...npcs.map((n) => n.id), ...orgs.map((o) => o.id), ...chars.map((c) => c.id)];
   const taggedEntries = foundIds.length > 0

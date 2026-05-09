@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
+import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
 
 export const dynamic = "force-dynamic";
@@ -65,7 +66,7 @@ export default async function OrganisationenPage() {
                       {org.region && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>📍 {org.region}</span>}
                     </div>
                     {org.beschreibung && (
-                      <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)" }}>{org.beschreibung}</p>
+                      <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)" }}>{stripMentions(org.beschreibung)}</p>
                     )}
                     <p className="mt-3 font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-red-light)" }}>
                       {org.mitglieder.length} {org.mitglieder.length === 1 ? "Mitglied" : "Mitglieder"}
