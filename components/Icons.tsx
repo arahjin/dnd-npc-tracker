@@ -210,3 +210,102 @@ export function LocationArtIcon({ art, size = 16, color }: { art?: string | null
     default:          return <IconPin {...p} />;
   }
 }
+
+/**
+ * Lorehub icon mark — pointy-top hexagon with mountain range + diamond.
+ * Use `size` for pixel width; height auto-scales (aspect ≈ 100:114).
+ * Pass `style` for responsive sizing (e.g. style={{ width:"100%", height:"auto" }}).
+ */
+export function LogoIcon({
+  size = 48,
+  color,
+  style,
+  className,
+}: {
+  size?: number;
+  color?: string;
+  style?: React.CSSProperties;
+  className?: string;
+}) {
+  const c = color ?? "currentColor";
+  return (
+    <svg
+      viewBox="0 0 100 114"
+      width={size}
+      height={Math.round(size * 1.14)}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={style}
+      className={className}
+    >
+      {/* Pointy-top hexagon outline */}
+      <polygon
+        points="50,5 95,31 95,83 50,109 5,83 5,31"
+        stroke={c}
+        strokeWidth="6"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      {/* Left mountain */}
+      <polygon points="30,36 14,70 47,70" fill={c} />
+      {/* Right mountain */}
+      <polygon points="70,36 53,70 86,70" fill={c} />
+      {/* Center mountain — tallest, drawn last to sit in front */}
+      <polygon points="50,20 31,70 69,70" fill={c} />
+      {/* Diamond / gem below mountains */}
+      <polygon points="50,73 64,84 50,97 36,84" fill={c} />
+    </svg>
+  );
+}
+
+/**
+ * Lorehub full logo — icon mark + "Lorehub" wordmark side by side.
+ * Control size via `style` (e.g. style={{ height:"50px", width:"auto" }}).
+ */
+export function LogoFull({
+  color,
+  style,
+  className,
+}: {
+  color?: string;
+  style?: React.CSSProperties;
+  className?: string;
+}) {
+  const c = color ?? "currentColor";
+  return (
+    <svg
+      viewBox="0 0 344 114"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ display: "block", ...style }}
+      className={className}
+    >
+      {/* ── Icon mark ── */}
+      <polygon
+        points="50,5 95,31 95,83 50,109 5,83 5,31"
+        stroke={c}
+        strokeWidth="6"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <polygon points="30,36 14,70 47,70" fill={c} />
+      <polygon points="70,36 53,70 86,70" fill={c} />
+      <polygon points="50,20 31,70 69,70" fill={c} />
+      <polygon points="50,73 64,84 50,97 36,84" fill={c} />
+
+      {/* ── Wordmark ── */}
+      <text
+        x="114"
+        y="78"
+        fontFamily="'Cinzel', Georgia, serif"
+        fontSize="55"
+        fill={c}
+        stroke="none"
+        fontWeight="400"
+        letterSpacing="1"
+      >
+        Lorehub
+      </text>
+    </svg>
+  );
+}

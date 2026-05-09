@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { Suspense } from "react";
 import { PASSWORD_HINT } from "@/lib/password";
+import { LogoFull } from "@/components/Icons";
 
 function RegisterForm() {
   const searchParams = useSearchParams();
@@ -133,8 +133,10 @@ export default function RegisterPage() {
     <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--dnd-bg)" }}>
       <div className="w-full max-w-md px-4">
         <div className="flex justify-center mb-8">
-          <Image src="/lorehub_logo.png" alt="Lorehub" width={200} height={90} className="object-contain"
-            style={{ filter: "drop-shadow(0 2px 12px rgba(0,0,0,0.9))" }} />
+          <LogoFull
+            color="var(--dnd-gold)"
+            style={{ height: "60px", width: "auto" }}
+          />
         </div>
         <Suspense fallback={<p className="font-cinzel text-sm text-center" style={{ color: "var(--dnd-text-muted)" }}>Laden...</p>}>
           <RegisterForm />

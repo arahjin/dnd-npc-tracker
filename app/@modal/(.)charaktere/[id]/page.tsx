@@ -10,7 +10,7 @@ import ModalCloseButton from "@/components/ModalCloseButton";
 import CharakterEditButton from "@/components/CharakterEditButton";
 import CharakterDeleteButton from "@/components/CharakterDeleteButton";
 import RenderMentions from "@/components/RenderMentions";
-import { IconLock } from "@/components/Icons";
+import { LogoIcon, IconLock } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -95,7 +95,7 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
               <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
               {charakter.image
                 ? <Image src={charakter.image} alt={charakter.name} fill className="object-cover" />
-                : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={120} height={54} className="object-contain opacity-20" /></div>
+                : <div className="flex h-full items-center justify-center"><LogoIcon size={180} color="var(--dnd-text-muted)" style={{ opacity: 0.15 }} /></div>
               }
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)" }} />
             </div>

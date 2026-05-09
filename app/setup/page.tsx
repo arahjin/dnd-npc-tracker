@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { signIn } from "next-auth/react";
+import { LogoFull } from "@/components/Icons";
 import { useRouter } from "next/navigation";
 
 export default function SetupPage() {
@@ -49,8 +49,10 @@ export default function SetupPage() {
     <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--dnd-bg)" }}>
       <div className="w-full max-w-md px-4">
         <div className="flex justify-center mb-8">
-          <Image src="/lorehub_logo.png" alt="Lorehub" width={200} height={90} className="object-contain"
-            style={{ filter: "drop-shadow(0 2px 12px rgba(0,0,0,0.9))" }} />
+          <LogoFull
+            color="var(--dnd-gold)"
+            style={{ height: "60px", width: "auto" }}
+          />
         </div>
 
         <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>

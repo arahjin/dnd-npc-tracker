@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { auth } from "@/auth";
+import { LogoFull } from "@/components/Icons";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -233,8 +234,10 @@ export default async function StartPage() {
       <header style={{ background: "rgba(10,10,10,0.95)", borderBottom: "1px solid #2A2A2A", position: "sticky", top: 0, zIndex: 50 }}>
         <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <Link href="/start">
-            <Image src="/lorehub_logo.png" alt="Lorehub" width={120} height={54} className="object-contain"
-              style={{ width: "clamp(80px, 12vw, 110px)", height: "auto", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }} />
+            <LogoFull
+              color="var(--dnd-gold)"
+              style={{ height: "44px", width: "auto", filter: "drop-shadow(0 2px 8px rgba(0,0,0,0.6))" }}
+            />
           </Link>
           <nav style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {isLoggedIn ? (
@@ -270,13 +273,9 @@ export default async function StartPage() {
 
         {/* Content — tight group, vertically centered */}
         <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", padding: "0 24px", gap: "16px" }}>
-          <Image
-            src="/lorehub_logo.png"
-            alt="Lorehub"
-            width={380} height={171}
-            className="object-contain"
-            style={{ width: "clamp(180px, 35vw, 320px)", height: "auto", filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.8))" }}
-            priority
+          <LogoFull
+            color="var(--dnd-gold)"
+            style={{ width: "clamp(260px, 48vw, 560px)", height: "auto", filter: "drop-shadow(0 8px 32px rgba(0,0,0,0.8))" }}
           />
 
           {subtitle && (
