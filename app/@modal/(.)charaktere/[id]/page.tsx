@@ -39,7 +39,7 @@ export default async function CharakterModal({ params }: { params: Promise<{ id:
         organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } },
       },
     }),
-    prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({ where: kampagneId ? { kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
     prisma.location.findMany({
       where: kampagneId ? { kampagneId } : {},
       orderBy: { name: "asc" },

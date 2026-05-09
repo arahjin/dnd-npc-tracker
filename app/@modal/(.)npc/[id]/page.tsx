@@ -44,20 +44,16 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function NPCModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [npc, orgs] = await Promise.all([
-    prisma.nPC.findUnique({
-      where: { id },
-      include: { organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } } },
-    }),
-    prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
-  ]);
+  const npc = await prisma.nPC.findUnique({
+    where: { id },
+    include: { organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } } },
+  });
   if (!npc) notFound();
 
-  const locations = await prisma.location.findMany({
-    where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {},
-    orderBy: { name: "asc" },
-    select: { id: true, name: true },
-  });
+  const [orgs, locations] = await Promise.all([
+    prisma.organisation.findMany({ where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+  ]);
 
   return (
     <DetailModal>

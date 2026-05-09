@@ -5,7 +5,6 @@ import ModalCloseButton from "@/components/ModalCloseButton";
 import OrgDeleteButton from "@/components/OrgDeleteButton";
 import OrgMitglieder from "@/components/OrgMitglieder";
 import CharakterMitglieder from "@/components/CharakterMitglieder";
-import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
@@ -46,8 +45,8 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
   if (!org) notFound();
 
   const [alleNPCs, alleCharaktere] = await Promise.all([
-    prisma.nPC.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.charakter.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true, user: { select: { id: true, name: true } } } }),
+    prisma.nPC.findMany({ where: org.kampagneId ? { kampagneId: org.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.charakter.findMany({ where: org.kampagneId ? { kampagneId: org.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true, user: { select: { id: true, name: true } } } }),
   ]);
   const alignColors = org.alignment ? (ALIGNMENT_COLORS[org.alignment] ?? ALIGNMENT_COLORS["Wahrhaft Neutral"]) : null;
 
@@ -58,11 +57,11 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
         <div className="mx-auto max-w-5xl px-4 md:px-6" style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <ModalCloseButton />
           <div className="flex gap-2">
-            <Link href={`/organisationen/${id}/edit`}
+            <a href={`/organisationen/${id}/edit`}
               className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
               style={{ border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>
               BEARBEITEN
-            </Link>
+            </a>
             <OrgDeleteButton id={id} />
           </div>
         </div>
