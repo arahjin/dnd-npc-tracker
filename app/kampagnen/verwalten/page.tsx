@@ -16,6 +16,7 @@ type Kampagne = {
   name: string;
   beschreibung: string | null;
   isDM: boolean;
+  isOwner: boolean;
   _count: { mitglieder: number };
 };
 
@@ -26,11 +27,11 @@ export default function KampagnenVerwaltenPage() {
   const [kampagnen, setKampagnen] = useState<KampagneDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [currentRole, setCurrentRole] = useState<string>("SPIELER");
 
-  // Per-campaign loading/confirm states
-  const [removing, setRemoving] = useState<string | null>(null);       // memberId being removed
-  const [deleting, setDeleting] = useState<string | null>(null);       // kampagneId being deleted
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null); // kampagneId awaiting confirm
+  const [removing, setRemoving] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -41,8 +42,8 @@ export default function KampagnenVerwaltenPage() {
     const kList: Kampagne[] = kampRes.ok ? await kampRes.json() : [];
     const session = sessionRes.ok ? await sessionRes.json() : null;
     setCurrentUserId(session?.user?.id ?? null);
+    setCurrentRole(session?.user?.role ?? "SPIELER");
 
-    // Load members for each campaign
     const details = await Promise.all(
       kList.map(async (k) => {
         const mRes = await fetch(`/api/kampagnen/${k.id}/mitglieder`);
@@ -68,15 +69,15 @@ export default function KampagnenVerwaltenPage() {
     const data = await res.json();
     if (!res.ok) { setError(data.error); setRemoving(null); return; }
 
-    // If leaving own campaign, clear cookie and go to /kampagnen
     if (userId === currentUserId) {
-      await clearActiveIfNeeded(kampagneId);
-      router.push("/kampagnen");
-      router.refresh();
-      return;
+      // Left a campaign — clear cookie and reload page
+      await clearCookieIfActive(kampagneId);
+      setRemoving(null);
+      load(); // reload management page (might now show fewer campaigns)
+    } else {
+      setRemoving(null);
+      load();
     }
-    setRemoving(null);
-    load();
   }
 
   async function deleteKampagne(kampagneId: string) {
@@ -85,21 +86,33 @@ export default function KampagnenVerwaltenPage() {
     const res = await fetch(`/api/kampagnen/${kampagneId}`, { method: "DELETE" });
     const data = await res.json();
     if (!res.ok) { setError(data.error); setDeleting(null); setConfirmDelete(null); return; }
-    await clearActiveIfNeeded(kampagneId);
-    router.push("/kampagnen");
-    router.refresh();
+    await clearCookieIfActive(kampagneId);
+    setDeleting(null);
+    setConfirmDelete(null);
+    load();
   }
 
-  async function clearActiveIfNeeded(kampagneId: string) {
-    // Clear the aktiveKampagne cookie if it matches the deleted/left campaign
-    const cookieRes = await fetch("/api/kampagnen/aktiv-loeschen", { method: "POST",
+  // Clear the aktiveKampagne cookie if it points to this campaign
+  async function clearCookieIfActive(kampagneId: string) {
+    await fetch("/api/kampagnen/aktiv-loeschen", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ kampagneId }),
     });
-    return cookieRes;
   }
 
-  const inputBase = "font-cinzel text-xs px-3 py-1.5 transition-colors";
+  const isAdmin = currentRole === "ADMIN";
+
+  // Can the current user remove a specific member from a campaign?
+  function canRemove(k: KampagneDetail, m: Member): boolean {
+    if (m.userId === currentUserId) return false; // can't remove yourself here (use "Verlassen")
+    if (m.isOwner && !isAdmin) return false;       // owners are protected
+    if (m.isDM && !k.isOwner && !isAdmin) return false; // only owner/admin can remove DMs
+    if (isAdmin) return true;
+    return k.isDM; // must be DM of the campaign to remove anyone
+  }
+
+  const btnBase = "font-cinzel text-xs px-3 py-1.5 transition-colors";
 
   if (loading) {
     return (
@@ -118,7 +131,7 @@ export default function KampagnenVerwaltenPage() {
         <div className="mx-auto max-w-2xl px-6" style={{ height: "60px", display: "flex", alignItems: "center", gap: "16px" }}>
           <button onClick={() => router.back()} className="font-cinzel text-xs tracking-widest uppercase"
             style={{ color: "var(--dnd-text-muted)" }}>← Zurück</button>
-          <h1 className="font-cinzel text-lg font-bold tracking-widest" style={{ color: "var(--dnd-heading)" }}>
+          <h1 className="font-cinzel text-lg font-bold" style={{ color: "var(--dnd-heading)" }}>
             Kampagnen verwalten
           </h1>
         </div>
@@ -133,13 +146,20 @@ export default function KampagnenVerwaltenPage() {
         )}
 
         {kampagnen.length === 0 && (
-          <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-            Du bist in keiner Kampagne.
-          </p>
+          <div className="flex flex-col items-center py-24 gap-4 text-center">
+            <p className="text-5xl">⚔</p>
+            <p className="font-cinzel text-lg" style={{ color: "var(--dnd-heading)" }}>Keine Kampagnen</p>
+            <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
+              Du bist in keiner Kampagne.
+            </p>
+            <a href="/kampagnen" className="ddb-cta mt-2">Kampagne beitreten oder erstellen</a>
+          </div>
         )}
 
         {kampagnen.map((k) => {
-          const isDM = k.isDM;
+          const isSelfDM = k.isDM;
+          const isSelfOwner = k.isOwner;
+
           return (
             <section key={k.id} style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
               <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
@@ -148,9 +168,13 @@ export default function KampagnenVerwaltenPage() {
                 {/* Campaign header */}
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h2 className="font-cinzel text-lg font-semibold" style={{ color: "var(--dnd-heading)" }}>{k.name}</h2>
-                      {isDM && (
+                      {isSelfOwner && (
+                        <span className="font-cinzel text-xs px-1.5 py-0.5"
+                          style={{ background: "#1A0800", border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>Ersteller</span>
+                      )}
+                      {!isSelfOwner && isSelfDM && (
                         <span className="font-cinzel text-xs px-1.5 py-0.5"
                           style={{ background: "#1A0800", border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>DM</span>
                       )}
@@ -160,58 +184,61 @@ export default function KampagnenVerwaltenPage() {
                     )}
                   </div>
 
-                  {/* DM: delete | Player: leave */}
-                  {isDM ? (
-                    confirmDelete === k.id ? (
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="font-cinzel text-xs" style={{ color: "#F87171" }}>Sicher?</span>
-                        <button
-                          onClick={() => deleteKampagne(k.id)}
-                          disabled={deleting === k.id}
-                          className={inputBase}
-                          style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
-                          {deleting === k.id ? "..." : "Ja, löschen"}
-                        </button>
-                        <button onClick={() => setConfirmDelete(null)}
-                          className={inputBase}
-                          style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-                          Abbrechen
-                        </button>
-                      </div>
-                    ) : (
+                  <div className="flex items-center gap-2 shrink-0">
+                    {/* Leave button (always available, not for owners unless they're the last DM) */}
+                    {!isSelfOwner && (
                       <button
-                        onClick={() => { setConfirmDelete(k.id); setError(null); }}
-                        className={inputBase + " shrink-0"}
-                        style={{ border: "1px solid #991B1B", color: "#F87171" }}>
-                        Kampagne löschen
+                        onClick={() => removeMember(k.id, currentUserId!)}
+                        disabled={removing === `${k.id}-${currentUserId}`}
+                        className={btnBase}
+                        style={{ border: "1px solid #374151", color: "var(--dnd-text-muted)" }}>
+                        {removing === `${k.id}-${currentUserId}` ? "..." : "Verlassen"}
                       </button>
-                    )
-                  ) : (
-                    <button
-                      onClick={() => removeMember(k.id, currentUserId!)}
-                      disabled={removing === `${k.id}-${currentUserId}`}
-                      className={inputBase + " shrink-0"}
-                      style={{ border: "1px solid #374151", color: "var(--dnd-text-muted)" }}>
-                      {removing === `${k.id}-${currentUserId}` ? "..." : "Verlassen"}
-                    </button>
-                  )}
+                    )}
+
+                    {/* Delete button (owner or admin only) */}
+                    {(isSelfOwner || isAdmin) && (
+                      confirmDelete === k.id ? (
+                        <>
+                          <span className="font-cinzel text-xs" style={{ color: "#F87171" }}>Sicher?</span>
+                          <button onClick={() => deleteKampagne(k.id)} disabled={deleting === k.id}
+                            className={btnBase}
+                            style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
+                            {deleting === k.id ? "..." : "Ja, löschen"}
+                          </button>
+                          <button onClick={() => setConfirmDelete(null)} className={btnBase}
+                            style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
+                            Abbrechen
+                          </button>
+                        </>
+                      ) : (
+                        <button onClick={() => { setConfirmDelete(k.id); setError(null); }}
+                          className={btnBase}
+                          style={{ border: "1px solid #991B1B", color: "#F87171" }}>
+                          Löschen
+                        </button>
+                      )
+                    )}
+                  </div>
                 </div>
 
-                {/* Member list (DM only) */}
-                {isDM && k.mitglieder.length > 0 && (
+                {/* Member list — shown to DMs and admins */}
+                {(isSelfDM || isAdmin) && k.mitglieder.length > 0 && (
                   <div>
                     <p className="font-cinzel text-xs tracking-widest uppercase mb-2"
                       style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)", paddingBottom: "6px" }}>
                       Mitglieder · {k.mitglieder.length}
                     </p>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       {k.mitglieder.map((m) => {
                         const isSelf = m.userId === currentUserId;
                         const removeKey = `${k.id}-${m.userId}`;
+                        const showRemove = canRemove(k, m);
+
                         return (
                           <div key={m.id} className="flex items-center gap-3 py-1.5 px-2"
                             style={{ borderBottom: "1px solid #1A1A1A" }}>
-                            <div className="flex-1 min-w-0 flex items-center gap-2">
+                            <div className="flex-1 min-w-0 flex items-center gap-2 flex-wrap">
                               <span className="font-cinzel text-sm" style={{ color: "var(--dnd-text)" }}>
                                 {m.user.name}
                                 {isSelf && <span className="ml-1" style={{ color: "var(--dnd-text-muted)", fontSize: "0.7rem" }}>(du)</span>}
@@ -229,7 +256,7 @@ export default function KampagnenVerwaltenPage() {
                                 <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>Spieler</span>
                               )}
                             </div>
-                            {!isSelf && !m.isOwner && (
+                            {showRemove && (
                               <button
                                 onClick={() => removeMember(k.id, m.userId)}
                                 disabled={removing === removeKey}

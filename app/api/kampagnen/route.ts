@@ -28,7 +28,7 @@ export async function GET() {
     },
     orderBy: { createdAt: "asc" },
   });
-  return NextResponse.json(mitglieder.map((m) => ({ ...m.kampagne, isDM: m.isDM })));
+  return NextResponse.json(mitglieder.map((m) => ({ ...m.kampagne, isDM: m.isDM, isOwner: m.isOwner })));
 }
 
 // POST — create a new campaign (DM or Admin only)
