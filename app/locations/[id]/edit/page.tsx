@@ -1,6 +1,5 @@
 export const dynamic = "force-dynamic";
 
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
@@ -32,10 +31,10 @@ export default async function EditLocationPage({ params }: { params: Promise<{ i
       <SiteHeader active="locations" />
       <div className="mx-auto max-w-2xl px-4 md:px-6 py-10">
         <div className="mb-8">
-          <Link href={`/locations/${id}`} className="font-cinzel text-xs tracking-widest uppercase"
+          <a href={`/locations/${id}`} className="font-cinzel text-xs tracking-widest uppercase"
             style={{ color: "var(--dnd-text-muted)" }}>
             ← Zurück zu {location.name}
-          </Link>
+          </a>
           <h1 className="font-cinzel text-3xl font-bold mt-4" style={{ color: "var(--dnd-heading)" }}>
             {location.name} bearbeiten
           </h1>

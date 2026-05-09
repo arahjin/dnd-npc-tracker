@@ -296,8 +296,7 @@ export default function LocationForm({
     }
 
     const result = await res.json();
-    router.push(`/locations/${id ?? result.id}`);
-    router.refresh();
+    window.location.href = `/locations/${id ?? result.id}`;
   }
 
   return (

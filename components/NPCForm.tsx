@@ -112,12 +112,14 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
 
     if (!res.ok) { setError("Fehler beim Speichern."); setSaving(false); return; }
     const npc = await res.json();
-    if (id && onSuccess) {
-      router.refresh();
-      onSuccess();
+    if (id) {
+      // Edit mode
+      if (onSuccess) { router.refresh(); onSuccess(); }
+      else { router.push(`/npc/${npc.id}`); router.refresh(); }
     } else {
-      router.push(`/npc/${npc.id}`);
-      router.refresh();
+      // Create mode — close the modal (if any) then full-navigate to the new NPC
+      if (onSuccess) onSuccess();
+      window.location.href = `/npc/${npc.id}`;
     }
   }
 
