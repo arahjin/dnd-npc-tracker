@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import KofiButton from "@/components/KofiButton";
 
 export default async function SiteFooter() {
   let settings = null;
@@ -14,6 +15,8 @@ export default async function SiteFooter() {
   const discordUrl = settings?.discordUrl || "";
 
   return (
+    <>
+    <KofiButton />
     <footer style={{
       background: "#1A1A1A",
       borderTop: "1px solid #2A2A2A",
@@ -80,5 +83,6 @@ export default async function SiteFooter() {
         </nav>
       </div>
     </footer>
+    </>
   );
 }
