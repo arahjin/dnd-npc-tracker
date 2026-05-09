@@ -1,3 +1,4 @@
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { cookies } from "next/headers";
@@ -15,7 +16,7 @@ const CTA_MAP: Record<string, { href: string; label: string } | null> = {
   tagebuch:       null,
 };
 
-export default async function SiteHeader({ active }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch" }) {
+export default async function SiteHeader({ active, actionSlot }: { active: "npcs" | "organisationen" | "charaktere" | "geschichte" | "tagebuch"; actionSlot?: React.ReactNode }) {
   const session = await auth();
   const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
 
@@ -83,11 +84,11 @@ export default async function SiteHeader({ active }: { active: "npcs" | "organis
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             {kampagneSelector}
             <NavSearch />
-            {CTA_MAP[active] && (
+            {actionSlot ?? (CTA_MAP[active] && (
               <a href={CTA_MAP[active]!.href} className="ddb-cta">
                 {CTA_MAP[active]!.label}
               </a>
-            )}
+            ))}
             {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} isDM={isDMofActive} />}
           </div>
 
