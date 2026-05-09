@@ -4,7 +4,7 @@ import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
-import { LocationArtIcon, IconPin, IconMap } from "@/components/Icons";
+import { LocationArtIcon, IconPin, IconMap, IconGlobe, IconPeople } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +46,7 @@ export default async function LocationsPage() {
                   <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
                   <div className="p-5">
                     <div className="flex items-start gap-3 mb-3">
-                      <span className="text-2xl shrink-0 mt-0.5"><LocationArtIcon art={loc.art} size={20} color="var(--dnd-text-muted)" /></span>
+                      <span className="shrink-0 flex items-center mt-0.5"><LocationArtIcon art={loc.art} size={20} color="var(--dnd-text-muted)" /></span>
                       <div className="flex-1 min-w-0">
                         <h2 className="font-cinzel font-semibold text-lg leading-tight" style={{ color: "var(--dnd-heading)" }}>
                           {loc.name}
@@ -58,11 +58,19 @@ export default async function LocationsPage() {
                     </div>
 
                     <div className="flex flex-wrap gap-3 mb-3">
-                      {loc.land && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>🌍 {loc.land}</span>}
-                      {loc.region && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}><><IconPin size={11} /> {loc.region}</></span>}
+                      {loc.land && (
+                        <span className="text-xs flex items-center gap-1" style={{ color: "var(--dnd-text-muted)" }}>
+                          <IconGlobe size={11} /> {loc.land}
+                        </span>
+                      )}
+                      {loc.region && (
+                        <span className="text-xs flex items-center gap-1" style={{ color: "var(--dnd-text-muted)" }}>
+                          <IconPin size={11} /> {loc.region}
+                        </span>
+                      )}
                       {loc.population != null && (
-                        <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>
-                          👥 {loc.population.toLocaleString("de-DE")}
+                        <span className="text-xs flex items-center gap-1" style={{ color: "var(--dnd-text-muted)" }}>
+                          <IconPeople size={11} /> {loc.population.toLocaleString("de-DE")}
                         </span>
                       )}
                     </div>

@@ -152,6 +152,20 @@ export function IconGlobe({ size = 16, color, className }: IconProps) {
   );
 }
 
+/** 👥  People / population */
+export function IconPeople({ size = 16, color, className }: IconProps) {
+  return (
+    <svg {...base(size, color)} className={className}>
+      {/* Back person */}
+      <circle cx="10" cy="5" r="2" opacity="0.65" />
+      <path d="M7,14 C7,11.5 8.5,10.5 10,10.5 C12,10.5 13.5,11.5 13.5,14" opacity="0.65" />
+      {/* Front person */}
+      <circle cx="6" cy="6" r="2.5" />
+      <path d="M1,14 C1,11 3.5,9.5 6,9.5 C8.5,9.5 11,11 11,14" />
+    </svg>
+  );
+}
+
 /** 🔒  Lock / private notes */
 export function IconLock({ size = 16, color, className }: IconProps) {
   return (
