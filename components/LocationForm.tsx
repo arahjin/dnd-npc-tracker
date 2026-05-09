@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import MentionTextarea from "./MentionTextarea";
 
 const ART_OPTIONS = ["Land", "Region", "Stadt", "Dorf", "Besonderer Ort", "Wald", "Gewässer"];
 
@@ -385,10 +386,12 @@ export default function LocationForm({
 
       {/* Flora & Fauna */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Flora & Fauna</label>
-        <textarea
-          value={floraFauna} onChange={(e) => setFloraFauna(e.target.value)}
-          rows={3} placeholder="Typische Pflanzen und Tiere..."
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
+          Flora &amp; Fauna <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+        </label>
+        <MentionTextarea
+          value={floraFauna} onChange={(v) => setFloraFauna(v)}
+          rows={3} placeholder={"Typische Pflanzen und Tiere...\n\n@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
           className="w-full px-4 py-2.5 text-sm outline-none resize-none"
           style={inputStyle}
         />
@@ -396,10 +399,12 @@ export default function LocationForm({
 
       {/* Wissenswertes */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Wissenswertes</label>
-        <textarea
-          value={wissenswertes} onChange={(e) => setWissenswertes(e.target.value)}
-          rows={6} placeholder="Geschichte, Besonderheiten, Geheimnisse..."
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
+          Wissenswertes <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+        </label>
+        <MentionTextarea
+          value={wissenswertes} onChange={(v) => setWissenswertes(v)}
+          rows={6} placeholder={"Geschichte, Besonderheiten, Geheimnisse...\n\n@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
           className="w-full px-4 py-2.5 text-sm outline-none resize-none"
           style={inputStyle}
         />
