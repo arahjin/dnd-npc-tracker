@@ -3,7 +3,8 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
-  const { token, name, email, password } = await req.json();
+  const { token, name, email: rawEmail, password } = await req.json();
+  const email = rawEmail?.toLowerCase().trim() ?? "";
 
   if (!name || !email || !password)
     return NextResponse.json({ error: "Name, E-Mail und Passwort sind erforderlich." }, { status: 400 });
@@ -23,7 +24,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "E-Mail bereits registriert." }, { status: 400 });
 
   const passwordHash = await bcrypt.hash(password, 12);
-  // Role from invite if present, otherwise default SPIELER
   const role = invite?.role ?? "SPIELER";
 
   const user = await prisma.$transaction(async (tx) => {
@@ -50,7 +50,6 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({
     ok: true,
     userId: user.id,
-    // Return kampagneId so client can auto-activate it
     kampagneId: invite?.kampagneId ?? null,
   });
 }
