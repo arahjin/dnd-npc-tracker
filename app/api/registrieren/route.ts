@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 import { validatePassword } from "@/lib/password";
-import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(req: NextRequest) {
   const { token, name, email: rawEmail, password } = await req.json();
@@ -29,11 +27,10 @@ export async function POST(req: NextRequest) {
 
   const passwordHash = await bcrypt.hash(password, 12);
   const role = invite?.role ?? "SPIELER";
-  const emailVerifyToken = crypto.randomBytes(32).toString("hex");
 
   const user = await prisma.$transaction(async (tx) => {
     const newUser = await tx.user.create({
-      data: { email, name, passwordHash, role, emailVerified: false, emailVerifyToken },
+      data: { email, name, passwordHash, role, emailVerified: true },
     });
 
     if (invite) {
@@ -51,13 +48,6 @@ export async function POST(req: NextRequest) {
 
     return newUser;
   });
-
-  // Send verification email (non-blocking — don't fail registration if email fails)
-  try {
-    await sendVerificationEmail(email, emailVerifyToken);
-  } catch {
-    // Log but don't fail — user can resend from the waiting page
-  }
 
   return NextResponse.json({
     ok: true,

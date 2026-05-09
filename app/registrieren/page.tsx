@@ -42,18 +42,14 @@ function RegisterForm() {
     const data = await res.json();
     if (!res.ok) { setError(data.error ?? "Fehler bei der Registrierung."); setLoading(false); return; }
 
-    // Sign in
-    // Sign in (will have emailVerified: false in JWT)
     await signIn("credentials", { email, password, redirect: false });
 
-    // If the invite linked us to a campaign, store it for after verification
+    // If the invite linked us to a campaign, activate it immediately
     if (data.kampagneId) {
-      // Store pending campaign in sessionStorage — activated after email verification
-      sessionStorage.setItem("pendingKampagneId", data.kampagneId);
+      await fetch(`/api/kampagnen/${data.kampagneId}/aktiv`, { method: "POST" });
     }
 
-    // Always go to email verification waiting page first
-    router.push("/email-bestaetigen/warten");
+    router.push("/");
     router.refresh();
   }
 
