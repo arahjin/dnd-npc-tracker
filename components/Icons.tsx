@@ -212,9 +212,9 @@ export function LocationArtIcon({ art, size = 16, color }: { art?: string | null
 }
 
 /**
- * Lorehub icon mark — pointy-top hexagon with mountain range + diamond.
- * Use `size` for pixel width; height auto-scales (aspect ≈ 100:114).
- * Pass `style` for responsive sizing (e.g. style={{ width:"100%", height:"auto" }}).
+ * Lorehub icon mark — faithful vector of the original PNG.
+ * Pointy-top hexagon with rounded corners, mountain range + diamond inside.
+ * `size` = pixel width; height scales automatically (aspect ≈ 100:114).
  */
 export function LogoIcon({
   size = 48,
@@ -238,28 +238,32 @@ export function LogoIcon({
       style={style}
       className={className}
     >
-      {/* Pointy-top hexagon outline */}
-      <polygon
-        points="50,5 95,31 95,83 50,109 5,83 5,31"
+      {/*
+        Pointy-top hexagon with rounded corners (r≈7).
+        Vertices: top(50,5), TR(95,31), BR(95,83), bot(50,109), BL(5,83), TL(5,31)
+        Each corner replaced by a quadratic bezier (Q vertex endpoint).
+      */}
+      <path
+        d="M44,8.5 Q50,5 56,8.5 L89,27.5 Q95,31 95,38 L95,76 Q95,83 89,86.5 L56,105.5 Q50,109 44,105.5 L11,86.5 Q5,83 5,76 L5,38 Q5,31 11,27.5 Z"
         stroke={c}
-        strokeWidth="6"
+        strokeWidth="6.5"
         strokeLinejoin="round"
         fill="none"
       />
       {/* Left mountain */}
-      <polygon points="30,36 14,70 47,70" fill={c} />
+      <polygon points="32,38 19,68 46,68" fill={c} />
       {/* Right mountain */}
-      <polygon points="70,36 53,70 86,70" fill={c} />
-      {/* Center mountain — tallest, drawn last to sit in front */}
-      <polygon points="50,20 31,70 69,70" fill={c} />
-      {/* Diamond / gem below mountains */}
-      <polygon points="50,73 64,84 50,97 36,84" fill={c} />
+      <polygon points="68,38 54,68 81,68" fill={c} />
+      {/* Center mountain — tallest, overlaps side peaks */}
+      <polygon points="50,23 33,68 67,68" fill={c} />
+      {/* Diamond below */}
+      <polygon points="50,72 62,82 50,93 38,82" fill={c} />
     </svg>
   );
 }
 
 /**
- * Lorehub full logo — icon mark + "Lorehub" wordmark side by side.
+ * Lorehub full logo — icon mark + "Lorehub" wordmark (Nunito 600, matching original).
  * Control size via `style` (e.g. style={{ height:"50px", width:"auto" }}).
  */
 export function LogoFull({
@@ -274,35 +278,35 @@ export function LogoFull({
   const c = color ?? "currentColor";
   return (
     <svg
-      viewBox="0 0 344 114"
+      viewBox="0 0 335 114"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{ display: "block", ...style }}
       className={className}
     >
-      {/* ── Icon mark ── */}
-      <polygon
-        points="50,5 95,31 95,83 50,109 5,83 5,31"
+      {/* ── Icon mark (same as LogoIcon) ── */}
+      <path
+        d="M44,8.5 Q50,5 56,8.5 L89,27.5 Q95,31 95,38 L95,76 Q95,83 89,86.5 L56,105.5 Q50,109 44,105.5 L11,86.5 Q5,83 5,76 L5,38 Q5,31 11,27.5 Z"
         stroke={c}
-        strokeWidth="6"
+        strokeWidth="6.5"
         strokeLinejoin="round"
         fill="none"
       />
-      <polygon points="30,36 14,70 47,70" fill={c} />
-      <polygon points="70,36 53,70 86,70" fill={c} />
-      <polygon points="50,20 31,70 69,70" fill={c} />
-      <polygon points="50,73 64,84 50,97 36,84" fill={c} />
+      <polygon points="32,38 19,68 46,68" fill={c} />
+      <polygon points="68,38 54,68 81,68" fill={c} />
+      <polygon points="50,23 33,68 67,68" fill={c} />
+      <polygon points="50,72 62,82 50,93 38,82" fill={c} />
 
-      {/* ── Wordmark ── */}
+      {/* ── Wordmark — Nunito matches the rounded sans-serif of the original ── */}
       <text
-        x="114"
-        y="78"
-        fontFamily="'Cinzel', Georgia, serif"
-        fontSize="55"
+        x="112"
+        y="77"
+        fontFamily="'Nunito', system-ui, sans-serif"
+        fontSize="53"
         fill={c}
         stroke="none"
-        fontWeight="400"
-        letterSpacing="1"
+        fontWeight="600"
+        letterSpacing="0.5"
       >
         Lorehub
       </text>
