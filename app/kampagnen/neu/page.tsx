@@ -67,7 +67,7 @@ export default function NewKampagnePage() {
             <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Kampagnenname *</label>
             <input
               type="text" value={name} onChange={(e) => setName(e.target.value)}
-              placeholder="z.B. Wildgipfel Kampagne" autoFocus
+              placeholder="z.B. Lorehub Kampagne" autoFocus
               className="w-full px-4 py-2.5 text-base outline-none"
               style={inputStyle}
             />

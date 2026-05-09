@@ -173,19 +173,17 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
               const member = selectedOrgs.find((o) => o.organisationId === org.id);
               const checked = !!member;
               return (
-                <div key={org.id}>
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" checked={checked} className="accent-red-700 w-4 h-4"
-                      onChange={(e) => {
-                        if (e.target.checked) setSelectedOrgs((p) => [...p, { organisationId: org.id, rolle: "" }]);
-                        else setSelectedOrgs((p) => p.filter((o) => o.organisationId !== org.id));
-                      }} />
-                    <span className="font-cinzel text-sm" style={{ color: checked ? "var(--dnd-heading)" : "var(--dnd-text-muted)" }}>{org.name}</span>
-                  </label>
+                <div key={org.id} className="flex items-center gap-3">
+                  <input type="checkbox" checked={checked} className="accent-red-700 w-4 h-4 shrink-0 cursor-pointer"
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedOrgs((p) => [...p, { organisationId: org.id, rolle: "" }]);
+                      else setSelectedOrgs((p) => p.filter((o) => o.organisationId !== org.id));
+                    }} />
+                  <span className="font-cinzel text-sm shrink-0" style={{ color: checked ? "var(--dnd-heading)" : "var(--dnd-text-muted)" }}>{org.name}</span>
                   {checked && (
                     <input type="text" placeholder="Rolle (optional)" value={member?.rolle ?? ""}
                       onChange={(e) => setSelectedOrgs((p) => p.map((o) => o.organisationId === org.id ? { ...o, rolle: e.target.value } : o))}
-                      className="mt-1 ml-7 px-3 py-1.5 text-sm outline-none w-64"
+                      className="flex-1 px-3 py-1.5 text-sm outline-none"
                       style={{ background: "#0A0A0A", border: "1px solid #3A2A2A", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }} />
                   )}
                 </div>

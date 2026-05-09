@@ -46,7 +46,7 @@ function LoginForm() {
       <div className="w-full max-w-md px-4">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <Image src="/wildgipfel_logo.png" alt="Wildgipfel" width={200} height={90} className="object-contain"
+          <Image src="/lorehub_logo.png" alt="Lorehub" width={200} height={90} className="object-contain"
             style={{ filter: "drop-shadow(0 2px 12px rgba(0,0,0,0.9))" }} />
         </div>
 

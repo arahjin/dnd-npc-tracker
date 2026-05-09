@@ -205,7 +205,7 @@ export default function KampagnenPage() {
                   </label>
                   <input
                     type="text" value={newName} onChange={(e) => setNewName(e.target.value)}
-                    placeholder="z.B. Wildgipfel Kampagne" autoFocus
+                    placeholder="z.B. Lorehub Kampagne" autoFocus
                     className="w-full px-4 py-2.5 text-sm outline-none" style={inputStyle}
                   />
                 </div>

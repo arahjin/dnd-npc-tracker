@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Wildgipfel NPCs",
-  description: "NPC Tracker für die Wildgipfel Kampagne",
+  title: "Lorehub",
+  description: "NPC Tracker für Lorehub",
 };
 
 export default function RootLayout({

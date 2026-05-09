@@ -61,7 +61,7 @@ export default async function SiteHeader({ active }: {
           {/* Logo */}
           <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "16px", flexShrink: 0 }}>
             <Image
-              src="/wildgipfel_logo.png" alt="Wildgipfel"
+              src="/lorehub_logo.png" alt="Lorehub"
               width={140} height={63}
               className="object-contain"
               style={{ width: "clamp(90px, 18vw, 140px)", height: "auto", filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.9))" }}
@@ -105,7 +105,7 @@ export default async function SiteHeader({ active }: {
 
       {/* ── Hero Banner ── */}
       <div className="hero-banner" style={{ position: "relative", overflow: "hidden" }}>
-        <Image src="/wildgipfel_header.png" alt="Wildgipfel" fill className="object-cover object-top" priority style={{ zIndex: 0 }} />
+        <Image src="/lorehub_header.png" alt="Lorehub" fill className="object-cover object-top" priority style={{ zIndex: 0 }} />
         <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(to bottom, rgba(17,17,17,0.25) 0%, rgba(14,14,14,0.65) 100%)" }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "2px", zIndex: 2, background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
       </div>
