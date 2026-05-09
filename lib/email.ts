@@ -7,7 +7,7 @@ function getResend() {
   return _resend;
 }
 
-const FROM = () => process.env.RESEND_FROM ?? "noreply@resend.dev";
+const FROM = () => process.env.RESEND_FROM ?? "onboarding@resend.dev";
 const BASE_URL = () => process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
 function layout(content: string) {
