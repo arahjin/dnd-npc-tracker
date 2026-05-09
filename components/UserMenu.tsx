@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
+import { IconAdmin, IconSword, IconDice } from "@/components/Icons";
 
 type Props = { name: string; role: string; isDM?: boolean };
 
@@ -11,11 +12,12 @@ const ROLE_LABEL: Record<string, string> = {
   SPIELER: "Spieler",
 };
 
-const ROLE_ICON: Record<string, string> = {
-  ADMIN: "★",
-  DUNGEON_MASTER: "⚔",
-  SPIELER: "🎲",
-};
+function RoleIcon({ role }: { role: string }) {
+  const props = { size: 14, color: "var(--dnd-gold)" };
+  if (role === "ADMIN") return <IconAdmin {...props} />;
+  if (role === "DUNGEON_MASTER") return <IconSword {...props} />;
+  return <IconDice {...props} />;
+}
 
 export default function UserMenu({ name, role, isDM = false }: Props) {
   const [open, setOpen] = useState(false);
@@ -40,7 +42,7 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
         className="font-cinzel text-xs tracking-wide flex items-center gap-2 px-3 py-1.5 transition-all"
         style={{ border: "1px solid #333", color: "#C8B8A8", background: "#1A1A1A" }}
       >
-        <span style={{ color: "var(--dnd-gold)" }}>{ROLE_ICON[role] ?? "🎲"}</span>
+        <RoleIcon role={role} />
         {name}
         <span style={{ fontSize: "0.6rem", opacity: 0.6 }}>▾</span>
       </button>

@@ -7,6 +7,7 @@ import { canSeePrivate } from "@/lib/visibility";
 import DeleteButton from "@/components/DeleteButton";
 import NPCEditButton from "@/components/NPCEditButton";
 import RenderMentions from "@/components/RenderMentions";
+import { IconLock } from "@/components/Icons";
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   Lebendig:  { bg: "#0D2010", text: "#4ADE80", border: "#166534" },
@@ -236,7 +237,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
               <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
                 <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
                   <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FCA5A5" }}>
-                    🔒 Private Notizen
+                    <><IconLock size={13} color="#FCA5A5" /> Private Notizen</>
                   </h2>
                 </div>
                 <div className="px-4 py-4">

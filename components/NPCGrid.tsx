@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BEZIEHUNG_OPTIONS, STATUS_OPTIONS } from "@/lib/constants";
+import { IconPin, IconMap } from "@/components/Icons";
 
 type NPC = {
   id: string;
@@ -115,7 +116,7 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
       {/* Grid */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32">
-          <p className="text-5xl mb-4">🗺️</p>
+          <div className="mb-4" style={{ opacity: 0.3 }}><IconMap size={56} color="var(--dnd-text-muted)" /></div>
           <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>Keine Charaktere gefunden</p>
         </div>
       ) : (
@@ -164,8 +165,8 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
                 </div>
 
                 {npc.aktuellePosition && (
-                  <p className="mt-3 text-xs" style={{ color: "var(--dnd-text-muted)" }}>
-                    📍 {npc.aktuellePosition}
+                  <p className="mt-3 text-xs flex items-center gap-1" style={{ color: "var(--dnd-text-muted)" }}>
+                    <IconPin size={11} color="var(--dnd-text-muted)" /> {npc.aktuellePosition}
                   </p>
                 )}
               </div>

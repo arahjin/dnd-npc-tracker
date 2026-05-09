@@ -4,10 +4,18 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
+import { IconPerson, IconOrganisation, IconSword, IconDice, IconPin, IconSearch } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
-const TAG_ICON: Record<string, string> = { PERSON: "👤", ORGANISATION: "🏛", CHARAKTER: "⚔", SPIELER: "🎲" };
+function TagIcon({ typ }: { typ: string }) {
+  const p = { size: 11 };
+  if (typ === "PERSON")       return <IconPerson {...p} />;
+  if (typ === "ORGANISATION") return <IconOrganisation {...p} />;
+  if (typ === "CHARAKTER")    return <IconSword {...p} />;
+  if (typ === "SPIELER")      return <IconDice {...p} />;
+  return null;
+}
 
 function SectionHeader({ label, count }: { label: string; count: number }) {
   return (
@@ -222,7 +230,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
 
         {query && total === 0 && (
           <div className="flex flex-col items-center py-24">
-            <p className="text-5xl mb-4">🔍</p>
+            <div className="mb-4" style={{ opacity: 0.3 }}><IconSearch size={52} color="var(--dnd-text-muted)" /></div>
             <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>Keine Ergebnisse gefunden</p>
           </div>
         )}
@@ -242,7 +250,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                     <div className="flex flex-wrap gap-1 mt-1">
                       {npc.rasse && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>{npc.rasse}</span>}
                       {npc.organisationen.map((m) => (
-                        <span key={m.id} className="font-cinzel text-xs px-1.5 py-0.5" style={{ background: "#111", border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>🏛 {m.organisation.name}</span>
+                        <span key={m.id} className="font-cinzel text-xs px-1.5 py-0.5 inline-flex items-center gap-1" style={{ background: "#111", border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}><IconOrganisation size={11} /> {m.organisation.name}</span>
                       ))}
                     </div>
                   </div>
@@ -260,7 +268,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
               {orgs.map((org) => (
                 <Link key={org.id} href={`/organisationen/${org.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
-                  <div className="flex items-center justify-center w-10 h-10 shrink-0 text-xl" style={{ background: "#0A0A0A" }}>🏛</div>
+                  <div className="flex items-center justify-center w-10 h-10 shrink-0" style={{ background: "#0A0A0A" }}><IconOrganisation size={22} color="var(--dnd-text-muted)" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{org.name}</p>
                     {(org.typ || org.region) && <p className="text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>{[org.typ, org.region].filter(Boolean).join(" · ")}</p>}
@@ -285,7 +293,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{c.name}</p>
                     <div className="flex flex-wrap gap-1 mt-1">
-                      <span className="text-xs" style={{ color: "var(--dnd-gold)" }}>🎲 {c.user.name}</span>
+                      <span className="text-xs inline-flex items-center gap-1" style={{ color: "var(--dnd-gold)" }}><IconDice size={11} color="var(--dnd-gold)" /> {c.user.name}</span>
                       {c.rasse && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>· {c.rasse}</span>}
                     </div>
                   </div>
@@ -302,7 +310,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
               {allLocs.map((loc) => (
                 <Link key={loc.id} href={`/locations/${loc.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
-                  <div className="flex items-center justify-center w-10 h-10 shrink-0 text-xl" style={{ background: "#0A0A0A" }}>📍</div>
+                  <div className="flex items-center justify-center w-10 h-10 shrink-0" style={{ background: "#0A0A0A" }}><IconPin size={22} color="var(--dnd-text-muted)" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{loc.name}</p>
                     {loc.art && <p className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>{loc.art}</p>}
@@ -338,7 +346,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                           return obj ? (
                             <span key={tag.id} className="font-cinzel text-xs px-1.5 py-0.5"
                               style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
-                              {TAG_ICON[obj.typ]} {obj.name}
+                              <TagIcon typ={obj.typ} /> {obj.name}
                             </span>
                           ) : null;
                         })}

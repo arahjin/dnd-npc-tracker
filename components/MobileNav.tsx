@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { IconAdmin, IconSword, IconDice } from "@/components/Icons";
 
 type Kampagne = { id: string; name: string };
 
@@ -23,9 +24,12 @@ const NAV = [
   { href: "/tagebuch",       label: "Tagebuch",       key: "tagebuch" },
 ];
 
-const ROLE_ICON: Record<string, string> = {
-  ADMIN: "★", DUNGEON_MASTER: "⚔", SPIELER: "🎲",
-};
+function RoleIcon({ role }: { role: string }) {
+  const p = { size: 13, color: "var(--dnd-gold)" };
+  if (role === "ADMIN") return <IconAdmin {...p} />;
+  if (role === "DUNGEON_MASTER") return <IconSword {...p} />;
+  return <IconDice {...p} />;
+}
 
 export default function MobileNav({ active, userName, userRole, isDM, kampagneData }: Props) {
   const [open, setOpen] = useState(false);
@@ -164,7 +168,7 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
               <div style={{ marginTop: "auto" }}>
                 <div style={{ padding: "12px 20px", borderTop: "1px solid #1A1A1A", borderBottom: "1px solid #1A1A1A" }}>
                   <p className="font-cinzel" style={{ fontSize: "0.75rem", color: "var(--dnd-gold)" }}>
-                    {ROLE_ICON[userRole ?? "SPIELER"]} {userName}
+                    <RoleIcon role={userRole ?? "SPIELER"} /> {userName}
                   </p>
                 </div>
 

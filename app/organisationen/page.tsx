@@ -4,6 +4,7 @@ import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
+import { IconOrganisation, IconPin } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export default async function OrganisationenPage() {
         </div>
         {orgs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32">
-            <p className="text-5xl mb-4">🏛️</p>
+            <div className="mb-4" style={{ opacity: 0.3 }}><IconOrganisation size={52} color="var(--dnd-text-muted)" /></div>
             <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>Keine Organisationen erfasst</p>
           </div>
         ) : (
@@ -62,8 +63,8 @@ export default async function OrganisationenPage() {
                       )}
                     </div>
                     <div className="flex gap-3 mb-3">
-                      {org.typ && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>🏛 {org.typ}</span>}
-                      {org.region && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>📍 {org.region}</span>}
+                      {org.typ && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}><><IconOrganisation size={11} /> {org.typ}</></span>}
+                      {org.region && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}><><IconPin size={11} /> {org.region}</></span>}
                     </div>
                     {org.beschreibung && (
                       <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)" }}>{stripMentions(org.beschreibung)}</p>

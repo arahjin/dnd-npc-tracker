@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { IconSword } from "@/components/Icons";
 
 type Kampagne = { id: string; name: string };
 
@@ -34,7 +35,7 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
         className="flex items-center gap-2 font-cinzel text-xs tracking-wide px-3 py-1.5 transition-all"
         style={{ background: "#1A0A0A", border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}
       >
-        <span>⚔</span>
+        <IconSword size={14} color="var(--dnd-gold)" />
         <span className="max-w-32 truncate">{aktiveKampagne}</span>
         <span style={{ opacity: 0.6 }}>{open ? "▲" : "▼"}</span>
       </button>

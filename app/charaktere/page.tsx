@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { charakterVisibilityWhere } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
+import { IconPin } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -82,7 +83,7 @@ function CharCard({ c }: { c: { id: string; name: string; image: string | null; 
         <h2 className="font-cinzel font-semibold text-base leading-tight" style={{ color: "var(--dnd-heading)" }}>{c.name}</h2>
         {c.rasse && <p className="font-cinzel text-xs mt-1" style={{ color: "var(--dnd-text-muted)" }}>{c.rasse}</p>}
         <p className="mt-2 text-xs font-cinzel" style={{ color: STATUS_COLORS[c.status] ?? "#9CA3AF" }}>{c.status}</p>
-        {c.aktuellePosition && <p className="mt-1 text-xs" style={{ color: "var(--dnd-text-muted)" }}>📍 {c.aktuellePosition}</p>}
+        {c.aktuellePosition && <p className="mt-1 text-xs flex items-center gap-1" style={{ color: "var(--dnd-text-muted)" }}><><IconPin size={11} color="var(--dnd-text-muted)" /> {c.aktuellePosition}</></p>}
       </div>
       <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--dnd-border), transparent)" }} />
     </Link>

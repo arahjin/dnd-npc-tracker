@@ -10,11 +10,12 @@ export const MENTION_HREF: Record<string, string> = {
   LOCATION: "/locations",
 };
 
-export const MENTION_ICON: Record<string, string> = {
-  PERSON: "👤",
-  ORGANISATION: "🏛",
-  CHARAKTER: "⚔",
-  LOCATION: "📍",
+/** Icon key per mention type — rendered as SVG in React components (see components/Icons.tsx) */
+export const MENTION_TYPE: Record<string, string> = {
+  PERSON: "PERSON",
+  ORGANISATION: "ORGANISATION",
+  CHARAKTER: "CHARAKTER",
+  LOCATION: "LOCATION",
 };
 
 /** Strip @mention syntax, leaving only the display name */

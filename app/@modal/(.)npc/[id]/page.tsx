@@ -9,6 +9,7 @@ import ModalCloseButton from "@/components/ModalCloseButton";
 import NPCEditButton from "@/components/NPCEditButton";
 import DeleteButton from "@/components/DeleteButton";
 import RenderMentions from "@/components/RenderMentions";
+import { IconLock } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 
@@ -194,7 +195,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
               <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
                 <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
                   <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FCA5A5" }}>
-                    🔒 Private Notizen
+                    <><IconLock size={13} color="#FCA5A5" /> Private Notizen</>
                   </h2>
                 </div>
                 <div className="px-4 py-4">

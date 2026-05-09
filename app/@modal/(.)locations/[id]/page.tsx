@@ -7,14 +7,9 @@ import DetailModal from "@/components/DetailModal";
 import ModalCloseButton from "@/components/ModalCloseButton";
 import LocationDeleteButton from "@/components/LocationDeleteButton";
 import RenderMentions from "@/components/RenderMentions";
+import { LocationArtIcon, IconLock } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
-
-const ART_ICON: Record<string, string> = {
-  Kontinent: "🌐",
-  Land: "🌍", Region: "🗺️", Stadt: "🏰", Dorf: "🏘️",
-  "Besonderer Ort": "✨", Wald: "🌲", Gewässer: "🌊",
-};
 
 function Field({ label, value }: { label: string; value?: string | number | null }) {
   if (!value && value !== 0) return null;
@@ -75,7 +70,6 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
   if (location.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, location.erstellerId)) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, location.erstellerId);
-  const icon = location.art ? (ART_ICON[location.art] ?? "📍") : "📍";
 
   return (
     <DetailModal>
@@ -98,7 +92,7 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
         {/* Title */}
         <div>
           <div className="flex flex-wrap items-center gap-4 mb-2">
-            <span className="text-4xl">{icon}</span>
+            <span className="text-4xl"><LocationArtIcon art={location.art} size={20} color="var(--dnd-text-muted)" /></span>
             <div>
               <h1 className="font-cinzel text-4xl font-bold" style={{ color: "var(--dnd-heading)" }}>{location.name}</h1>
               {location.art && (
@@ -148,7 +142,7 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
           <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
             <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
               <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FCA5A5" }}>
-                🔒 Private Notizen
+                <><IconLock size={13} color="#FCA5A5" /> Private Notizen</>
               </h2>
             </div>
             <div className="px-4 py-4">

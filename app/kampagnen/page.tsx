@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { IconSword } from "@/components/Icons";
 
 type Kampagne = {
   id: string;
@@ -99,7 +100,7 @@ export default function KampagnenPage() {
         <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
         <div className="mx-auto max-w-2xl px-4 md:px-6" style={{ height: "60px", display: "flex", alignItems: "center" }}>
           <h1 className="font-cinzel text-lg font-bold tracking-widest" style={{ color: "var(--dnd-heading)" }}>
-            ⚔ Kampagnen
+            <IconSword size={14} color="var(--dnd-gold)" /> Kampagnen
           </h1>
         </div>
       </header>

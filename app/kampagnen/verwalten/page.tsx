@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { IconSword } from "@/components/Icons";
 
 type Member = {
   id: string;
@@ -147,7 +148,7 @@ export default function KampagnenVerwaltenPage() {
 
         {kampagnen.length === 0 && (
           <div className="flex flex-col items-center py-24 gap-4 text-center">
-            <p className="text-5xl">⚔</p>
+            <div style={{ opacity: 0.3 }}><IconSword size={52} color="var(--dnd-text-muted)" /></div>
             <p className="font-cinzel text-lg" style={{ color: "var(--dnd-heading)" }}>Keine Kampagnen</p>
             <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
               Du bist in keiner Kampagne.

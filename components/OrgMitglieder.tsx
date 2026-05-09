@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { IconPerson } from "@/components/Icons";
 
 type Mitglied = { id: string; npcId: string; name: string; image: string | null; rolle: string | null };
 type NPC = { id: string; name: string };
@@ -61,7 +62,7 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
               {m.image ? (
                 <Image src={m.image} alt={m.name} fill className="object-cover" />
               ) : (
-                <div className="flex h-full items-center justify-center text-lg" style={{ background: "#0A0A0A" }}>👤</div>
+                <div className="flex h-full items-center justify-center text-lg" style={{ background: "#0A0A0A" }}><IconPerson size={20} color="var(--dnd-text-muted)" /></div>
               )}
             </div>
             <div className="flex-1 min-w-0">

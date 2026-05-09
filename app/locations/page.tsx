@@ -4,19 +4,9 @@ import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
+import { LocationArtIcon, IconPin, IconMap } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
-
-const ART_ICON: Record<string, string> = {
-  Kontinent: "🌐",
-  Land: "🌍",
-  Region: "🗺️",
-  Stadt: "🏰",
-  Dorf: "🏘️",
-  "Besonderer Ort": "✨",
-  Wald: "🌲",
-  Gewässer: "🌊",
-};
 
 export default async function LocationsPage() {
   const ctx = await requireKampagne();
@@ -42,13 +32,12 @@ export default async function LocationsPage() {
 
         {locations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32">
-            <p className="text-5xl mb-4">🗺️</p>
+            <div className="mb-4" style={{ opacity: 0.3 }}><IconMap size={52} color="var(--dnd-text-muted)" /></div>
             <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>Keine Locations erfasst</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {locations.map((loc) => {
-              const icon = loc.art ? (ART_ICON[loc.art] ?? "📍") : "📍";
               const linked = loc._count.npcs + loc._count.organisationen + loc._count.charaktere;
               return (
                 <Link key={loc.id} href={`/locations/${loc.id}`}
@@ -57,7 +46,7 @@ export default async function LocationsPage() {
                   <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
                   <div className="p-5">
                     <div className="flex items-start gap-3 mb-3">
-                      <span className="text-2xl shrink-0 mt-0.5">{icon}</span>
+                      <span className="text-2xl shrink-0 mt-0.5"><LocationArtIcon art={loc.art} size={20} color="var(--dnd-text-muted)" /></span>
                       <div className="flex-1 min-w-0">
                         <h2 className="font-cinzel font-semibold text-lg leading-tight" style={{ color: "var(--dnd-heading)" }}>
                           {loc.name}
@@ -70,7 +59,7 @@ export default async function LocationsPage() {
 
                     <div className="flex flex-wrap gap-3 mb-3">
                       {loc.land && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>🌍 {loc.land}</span>}
-                      {loc.region && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>📍 {loc.region}</span>}
+                      {loc.region && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}><><IconPin size={11} /> {loc.region}</></span>}
                       {loc.population != null && (
                         <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>
                           👥 {loc.population.toLocaleString("de-DE")}

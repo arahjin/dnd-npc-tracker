@@ -10,6 +10,7 @@ import ModalCloseButton from "@/components/ModalCloseButton";
 import CharakterEditButton from "@/components/CharakterEditButton";
 import CharakterDeleteButton from "@/components/CharakterDeleteButton";
 import RenderMentions from "@/components/RenderMentions";
+import { IconLock } from "@/components/Icons";
 
 export const dynamic = "force-dynamic";
 

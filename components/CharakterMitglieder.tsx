@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { IconSword, IconDice } from "@/components/Icons";
 
 type Mitglied = {
   id: string;
@@ -73,14 +74,14 @@ export default function CharakterMitglieder({
             <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ border: "1px solid var(--dnd-border)" }}>
               {m.image
                 ? <Image src={m.image} alt={m.name} fill className="object-cover" />
-                : <div className="flex h-full items-center justify-center text-lg" style={{ background: "#0A0A0A" }}>⚔</div>
+                : <div className="flex h-full items-center justify-center text-lg" style={{ background: "#0A0A0A" }}><IconSword size={20} color="var(--dnd-text-muted)" /></div>
               }
             </div>
             <div className="flex-1 min-w-0">
               <Link href={`/charaktere/${m.charakterId}`} className="font-cinzel text-sm font-semibold hover:underline" style={{ color: "var(--dnd-heading)" }}>
                 {m.name}
               </Link>
-              <p className="text-xs mt-0.5" style={{ color: "var(--dnd-gold)" }}>🎲 {m.playerName}</p>
+              <p className="text-xs mt-0.5" style={{ color: "var(--dnd-gold)" }}><><IconDice size={11} color="var(--dnd-gold)" /> {m.playerName}</></p>
               {m.rolle && <p className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>{m.rolle}</p>}
             </div>
             <button onClick={() => handleRemove(m.charakterId)} className="font-cinzel text-xs px-3 py-1"

@@ -3,7 +3,17 @@
 import { useState, useEffect } from "react";
 import MentionTextarea from "./MentionTextarea";
 import RenderMentions from "./RenderMentions";
-import { extractTagsFromText, MENTION_ICON, type MentionOption } from "@/lib/mentions";
+import { extractTagsFromText, type MentionOption } from "@/lib/mentions";
+import { IconPerson, IconOrganisation, IconSword, IconPin, IconBook } from "@/components/Icons";
+
+function MentionTypeIcon({ typ }: { typ: string }) {
+  const p = { size: 12 };
+  if (typ === "PERSON")       return <IconPerson {...p} />;
+  if (typ === "ORGANISATION") return <IconOrganisation {...p} />;
+  if (typ === "CHARAKTER")    return <IconSword {...p} />;
+  if (typ === "LOCATION")     return <IconPin {...p} />;
+  return null;
+}
 
 type Tag = { id: string; tagTyp: string; referenzId: string };
 type Entry = {
@@ -118,7 +128,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
           {filterTag ? (
             <span className="font-cinzel text-xs px-2 py-1 flex items-center gap-2"
               style={{ background: "#1A0A0A", border: "1px solid var(--dnd-red-dark)", color: "var(--dnd-red-light)" }}>
-              {MENTION_ICON[filterTag.typ]} {filterTag.label}
+              <MentionTypeIcon typ={filterTag.typ} /> {filterTag.label}
               <button onClick={() => { setFilterTag(null); setFilterSearch(""); }} style={{ opacity: 0.7 }}>✕</button>
             </span>
           ) : (
@@ -136,7 +146,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                       style={{ color: "var(--dnd-text)", borderBottom: "1px solid #1A1A1A" }}
                       onMouseEnter={(e) => (e.currentTarget.style.background = "#1A1A1A")}
                       onMouseLeave={(e) => (e.currentTarget.style.background = "")}>
-                      {MENTION_ICON[t.typ]} {t.label}
+                      <MentionTypeIcon typ={t.typ} /> {t.label}
                     </button>
                   ))}
                 </div>
@@ -188,7 +198,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
         <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>Lade Einträge...</p>
       ) : visibleEntries.length === 0 ? (
         <div className="flex flex-col items-center py-20">
-          <p className="text-4xl mb-4">📖</p>
+          <div className="mb-4" style={{ opacity: 0.3 }}><IconBook size={52} color="var(--dnd-text-muted)" /></div>
           <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
             {filterTag ? `Keine Einträge mit @${filterTag.label}.` : "Noch keine Einträge."}
           </p>
