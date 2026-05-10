@@ -130,6 +130,9 @@ model NPC {
   organisationen   NPCOrganisation[]
   locations        Location[]
   quests           QuestNPC[]
+
+  @@index([kampagneId])
+  @@index([kampagneId, name])
 }
 
 model Organisation {
@@ -153,6 +156,8 @@ model Organisation {
   charakterMitglieder CharakterOrganisation[]
   locations           Location[]
   quests              QuestOrganisation[]
+
+  @@index([kampagneId])
 }
 
 model NPCOrganisation {
@@ -194,6 +199,9 @@ model Charakter {
   organisationen   CharakterOrganisation[]
   locations        Location[]
   quests           QuestCharakter[]
+
+  @@index([kampagneId])
+  @@index([userId])
 }
 
 model CharakterOrganisation {
@@ -232,6 +240,8 @@ model Location {
   organisationen Organisation[]
   charaktere     Charakter[]
   quests         QuestLocation[]
+
+  @@index([kampagneId])
 }
 
 // ─── Journal ─────────────────────────────────────────────
@@ -249,6 +259,10 @@ model JournalEntry {
   updatedAt  DateTime     @updatedAt
   tags       JournalTag[]
   quests     QuestJournalEntry[]
+
+  @@index([kampagneId, createdAt])
+  @@index([userId])
+  @@index([typ])
 }
 
 model JournalTag {
@@ -257,6 +271,9 @@ model JournalTag {
   entryId    String
   tagTyp     TagTyp
   referenzId String
+
+  @@index([entryId])
+  @@index([tagTyp, referenzId])
 }
 
 // ─── Quests ──────────────────────────────────────────────
@@ -288,6 +305,9 @@ model Quest {
   journalEntries QuestJournalEntry[]
   vorlaeuferVon  QuestRelation[]     @relation("nachfolgerQuest")
   nachfolgerVon  QuestRelation[]     @relation("vorlaeuferQuest")
+
+  @@index([kampagneId])
+  @@index([kampagneId, status])
 }
 
 model QuestObjective {
