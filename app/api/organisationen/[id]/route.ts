@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
+import { organisationUpdateSchema, parseOrError } from "@/lib/entitySchemas";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -38,12 +39,13 @@ export async function PUT(req: NextRequest, { params }: Params) {
   if (existing.kampagneId && existing.kampagneId !== ctx.kampagneId)
     return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
 
-  const { erstellerId: _eid, kampagneId: _kid, privateNotizen, ...rest } = await req.json();
+  const parsed = parseOrError(organisationUpdateSchema, await req.json());
+  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  const { privateNotizen, ...rest } = parsed.data;
 
   const allowPrivate = canSeePrivate(ctx, existing.erstellerId);
-  const data = (allowPrivate && privateNotizen !== undefined)
-    ? { ...rest, privateNotizen: privateNotizen || null }
-    : rest;
+  const data: Record<string, unknown> = { ...rest };
+  if (allowPrivate && privateNotizen !== undefined) data.privateNotizen = privateNotizen;
 
   const org = await prisma.organisation.update({ where: { id }, data });
   return NextResponse.json(org);

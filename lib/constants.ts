@@ -3,7 +3,7 @@ export const STATUS_OPTIONS = [
   "Tot",
   "Vermisst",
   "Unbekannt",
-];
+] as const;
 
 export const BEZIEHUNG_OPTIONS = [
   "Verbündet",
@@ -11,13 +11,13 @@ export const BEZIEHUNG_OPTIONS = [
   "Neutral",
   "Feindlich",
   "Unbekannt",
-];
+] as const;
 
 export const GESCHLECHT_OPTIONS = [
   "Männlich",
   "Weiblich",
   "Divers",
-];
+] as const;
 
 export const REGION_OPTIONS = [
   "Kaiserreich Asim",
@@ -26,7 +26,7 @@ export const REGION_OPTIONS = [
   "Königreich der Nebelwölfe",
   "Wogenimperium",
   "Luxaria",
-];
+] as const;
 
 export const ALIGNMENT_OPTIONS = [
   "Rechtschaffen Gut",
@@ -38,7 +38,7 @@ export const ALIGNMENT_OPTIONS = [
   "Rechtschaffen Böse",
   "Neutral Böse",
   "Chaotisch Böse",
-];
+] as const;
 
 export const ORGANISATION_TYP_OPTIONS = [
   "Gilde",
@@ -50,7 +50,7 @@ export const ORGANISATION_TYP_OPTIONS = [
   "Militär",
   "Kriminelle Organisation",
   "Sonstiges",
-];
+] as const;
 
 export const QUEST_STATUS_OPTIONS = ["Aktiv","Abgeschlossen","Gescheitert","Pausiert","Unbekannt"] as const;
 export const QUEST_TYP_OPTIONS = ["Hauptquest","Nebenquest","Gildenauftrag","Persönlich","Geheim"] as const;

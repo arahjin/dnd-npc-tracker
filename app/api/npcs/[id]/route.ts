@@ -3,6 +3,7 @@ import { requireKampagneApi } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 import { validateImageUrl } from "@/lib/imageUrl";
+import { npcUpdateSchema, parseOrError } from "@/lib/entitySchemas";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -37,32 +38,36 @@ export async function PUT(req: NextRequest, { params }: Params) {
   if (existing.kampagneId && existing.kampagneId !== ctx.kampagneId)
     return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
 
-  const { organisationen, erstellerId: _eid, kampagneId: _kid, privateNotizen, image, ...rest } = await req.json();
+  const raw = await req.json();
+  const parsed = parseOrError(npcUpdateSchema, raw);
+  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  const { organisationen, privateNotizen, ...rest } = parsed.data;
 
   let validatedImage: string | null | undefined = undefined;
-  if (image !== undefined) {
-    try { validatedImage = validateImageUrl(image); }
+  if (raw.image !== undefined) {
+    try { validatedImage = validateImageUrl(raw.image); }
     catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
   }
 
   const allowPrivate = canSeePrivate(ctx, existing.erstellerId);
-  const baseData = validatedImage !== undefined ? { ...rest, image: validatedImage } : rest;
-  const data = (allowPrivate && privateNotizen !== undefined)
-    ? { ...baseData, privateNotizen: privateNotizen || null }
-    : baseData;
+  const baseData: Record<string, unknown> = { ...rest };
+  if (validatedImage !== undefined) baseData.image = validatedImage;
+  if (allowPrivate && privateNotizen !== undefined) baseData.privateNotizen = privateNotizen;
 
   const npc = await prisma.$transaction(async (tx) => {
-    await tx.nPCOrganisation.deleteMany({ where: { npcId: id } });
-    if (organisationen?.length > 0) {
-      await tx.nPCOrganisation.createMany({
-        data: organisationen.map((o: { organisationId: string; rolle: string }) => ({
-          npcId: id,
-          organisationId: o.organisationId,
-          rolle: o.rolle || null,
-        })),
-      });
+    if (organisationen !== undefined) {
+      await tx.nPCOrganisation.deleteMany({ where: { npcId: id } });
+      if (organisationen.length > 0) {
+        await tx.nPCOrganisation.createMany({
+          data: organisationen.map((o) => ({
+            npcId: id,
+            organisationId: o.organisationId,
+            rolle: o.rolle,
+          })),
+        });
+      }
     }
-    return tx.nPC.update({ where: { id }, data });
+    return tx.nPC.update({ where: { id }, data: baseData });
   });
 
   return NextResponse.json(npc);
