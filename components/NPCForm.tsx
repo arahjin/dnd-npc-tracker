@@ -32,6 +32,7 @@ type Props = {
   initialOrgs?: OrgMembership[];
   availableLocations?: { id: string; name: string }[];
   onSuccess?: () => void;
+  onCancel?: () => void;
   canSeePrivate?: boolean;
 };
 
@@ -42,7 +43,7 @@ const EMPTY: NPCData = {
   sichtbarkeit: "public", privateNotizen: "",
 };
 
-export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, canSeePrivate = true }: Props) {
+export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<NPCData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
@@ -414,7 +415,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
           style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
           {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "NPC ERSTELLEN"}
         </button>
-        <button type="button" onClick={() => router.push(id ? `/npc/${id}` : "/npc")}
+        <button type="button" onClick={() => onCancel ? onCancel() : router.push(id ? `/npc/${id}` : "/npc")}
           className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
           ABBRECHEN

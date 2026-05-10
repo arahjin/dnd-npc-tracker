@@ -22,6 +22,8 @@ type Props = {
   availableOrgs?: LinkedItem[];
   availableChars?: LinkedItem[];
   canSeePrivate?: boolean;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 };
 
 const inputStyle: React.CSSProperties = {
@@ -243,6 +245,8 @@ export default function LocationForm({
   availableOrgs = [],
   availableChars = [],
   canSeePrivate = true,
+  onSuccess,
+  onCancel,
 }: Props) {
   const router = useRouter();
   const [name, setName] = useState(initial.name ?? "");
@@ -304,7 +308,8 @@ export default function LocationForm({
     }
 
     const result = await res.json();
-    window.location.href = `/locations/${id ?? result.id}`;
+    if (onSuccess) { router.refresh(); onSuccess(); }
+    else { window.location.href = `/locations/${id ?? result.id}`; }
   }
 
   return (
@@ -470,7 +475,7 @@ export default function LocationForm({
           {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "LOCATION ERSTELLEN"}
         </button>
         <button
-          type="button" onClick={() => router.back()}
+          type="button" onClick={() => onCancel ? onCancel() : router.back()}
           className="font-cinzel text-sm tracking-widest px-6 py-3"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
           ABBRECHEN

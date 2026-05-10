@@ -5,6 +5,7 @@ import { visibilityWhere } from "@/lib/visibility";
 import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
 import { IconOrganisation, IconPin } from "@/components/Icons";
+import OrgCreateButton from "@/components/OrgCreateButton";
 
 export const dynamic = "force-dynamic";
 
@@ -23,11 +24,18 @@ const ALIGNMENT_COLORS: Record<string, { bg: string; text: string; border: strin
 export default async function OrganisationenPage() {
   const ctx = await requireKampagne();
 
-  const orgs = await prisma.organisation.findMany({
-    where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
-    orderBy: { name: "asc" },
-    include: { mitglieder: true },
-  });
+  const [orgs, locations] = await Promise.all([
+    prisma.organisation.findMany({
+      where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
+      orderBy: { name: "asc" },
+      include: { mitglieder: true },
+    }),
+    prisma.location.findMany({
+      where: { kampagneId: ctx.kampagneId },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
+  ]);
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -37,7 +45,7 @@ export default async function OrganisationenPage() {
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
             {orgs.length} {orgs.length === 1 ? "Organisation" : "Organisationen"}
           </p>
-          <a href="/organisationen/neu" className="ddb-cta">+ Organisation</a>
+          <OrgCreateButton availableLocations={locations} />
         </div>
         {orgs.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-32">

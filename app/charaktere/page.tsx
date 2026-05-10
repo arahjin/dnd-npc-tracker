@@ -5,6 +5,7 @@ import { requireKampagne } from "@/lib/kampagne";
 import { charakterVisibilityWhere } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
 import { IconPin } from "@/components/Icons";
+import CharakterCreateButton from "@/components/CharakterCreateButton";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +16,15 @@ const STATUS_COLORS: Record<string, string> = {
 export default async function CharakterePage() {
   const ctx = await requireKampagne();
 
-  const charaktere = await prisma.charakter.findMany({
-    where: { kampagneId: ctx.kampagneId, ...charakterVisibilityWhere(ctx) },
-    orderBy: { name: "asc" },
-    include: { user: { select: { id: true, name: true } } },
-  });
+  const [charaktere, availableOrgs, availableLocations] = await Promise.all([
+    prisma.charakter.findMany({
+      where: { kampagneId: ctx.kampagneId, ...charakterVisibilityWhere(ctx) },
+      orderBy: { name: "asc" },
+      include: { user: { select: { id: true, name: true } } },
+    }),
+    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+  ]);
 
   const own = charaktere.filter((c) => c.userId === ctx.userId);
   const others = charaktere.filter((c) => c.userId !== ctx.userId);
@@ -32,7 +37,7 @@ export default async function CharakterePage() {
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
             {charaktere.length} {charaktere.length === 1 ? "Charakter" : "Charaktere"}
           </p>
-          <a href="/charaktere/neu" className="ddb-cta">+ Charakter</a>
+          <CharakterCreateButton availableOrgs={availableOrgs} availableLocations={availableLocations} />
         </div>
         <section className="mb-10">
           <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
@@ -41,7 +46,7 @@ export default async function CharakterePage() {
           </h2>
           {own.length === 0 ? (
             <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-              Du hast noch keinen Charakter. <a href="/charaktere/neu" style={{ color: "var(--dnd-red-light)" }}>Erstelle einen.</a>
+              Du hast noch keinen Charakter. Klicke auf <span style={{ color: "var(--dnd-red-light)" }}>+ Charakter</span> oben rechts.
             </p>
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

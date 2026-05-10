@@ -5,19 +5,23 @@ import { visibilityWhere } from "@/lib/visibility";
 import { stripMentions } from "@/lib/mentions";
 import SiteHeader from "@/components/SiteHeader";
 import { LocationArtIcon, IconPin, IconMap, IconGlobe, IconPeople } from "@/components/Icons";
+import LocationCreateButton from "@/components/LocationCreateButton";
 
 export const dynamic = "force-dynamic";
 
 export default async function LocationsPage() {
   const ctx = await requireKampagne();
 
-  const locations = await prisma.location.findMany({
-    where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
-    orderBy: { name: "asc" },
-    include: {
-      _count: { select: { npcs: true, organisationen: true, charaktere: true } },
-    },
-  });
+  const [locations, availableNpcs, availableOrgs, availableChars] = await Promise.all([
+    prisma.location.findMany({
+      where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
+      orderBy: { name: "asc" },
+      include: { _count: { select: { npcs: true, organisationen: true, charaktere: true } } },
+    }),
+    prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+  ]);
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -27,7 +31,7 @@ export default async function LocationsPage() {
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
             {locations.length} {locations.length === 1 ? "Location" : "Locations"}
           </p>
-          <a href="/locations/neu" className="ddb-cta">+ Location</a>
+          <LocationCreateButton availableNpcs={availableNpcs} availableOrgs={availableOrgs} availableChars={availableChars} />
         </div>
 
         {locations.length === 0 ? (

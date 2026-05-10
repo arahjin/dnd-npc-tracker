@@ -22,7 +22,7 @@ const EMPTY: OrgData = {
   sichtbarkeit: "public", privateNotizen: "",
 };
 
-export default function OrgForm({ initial, id, availableLocations = [], canSeePrivate = true }: { initial?: Partial<OrgData & { sichtbarkeit?: string; privateNotizen?: string }>; id?: string; availableLocations?: { id: string; name: string }[]; canSeePrivate?: boolean }) {
+export default function OrgForm({ initial, id, availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: { initial?: Partial<OrgData & { sichtbarkeit?: string; privateNotizen?: string }>; id?: string; availableLocations?: { id: string; name: string }[]; onSuccess?: () => void; onCancel?: () => void; canSeePrivate?: boolean }) {
   const router = useRouter();
   const [form, setForm] = useState<OrgData>({ ...EMPTY, ...initial });
   const [saving, setSaving] = useState(false);
@@ -53,7 +53,8 @@ export default function OrgForm({ initial, id, availableLocations = [], canSeePr
       : await fetch("/api/organisationen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
     if (!res.ok) { setError("Fehler beim Speichern."); setSaving(false); return; }
     const org = await res.json();
-    window.location.href = `/organisationen/${org.id}`;
+    if (onSuccess) { router.refresh(); onSuccess(); }
+    else { window.location.href = `/organisationen/${org.id}`; }
   }
 
   const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";
@@ -148,7 +149,7 @@ export default function OrgForm({ initial, id, availableLocations = [], canSeePr
           style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
           {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "ORGANISATION ERSTELLEN"}
         </button>
-        <button type="button" onClick={() => router.back()} className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
+        <button type="button" onClick={() => onCancel ? onCancel() : router.back()} className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
           ABBRECHEN
         </button>

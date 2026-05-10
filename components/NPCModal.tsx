@@ -68,6 +68,7 @@ export default function NPCModal({ isOpen, onClose, title, id, availableOrgs, in
               availableLocations={availableLocations}
               initial={initial}
               onSuccess={onClose}
+              onCancel={onClose}
               canSeePrivate={canSeePrivate}
             />
           </div>

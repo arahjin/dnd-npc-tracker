@@ -22,6 +22,7 @@ type Props = {
   initialOrgs?: OrgMembership[];
   availableLocations?: { id: string; name: string }[];
   onSuccess?: () => void;
+  onCancel?: () => void;
   canSeePrivate?: boolean;
 };
 
@@ -32,7 +33,7 @@ const EMPTY: CharData = {
   sichtbarkeit: "public", privateNotizen: "",
 };
 
-export default function CharakterForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, canSeePrivate = true }: Props) {
+export default function CharakterForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: Props) {
   const router = useRouter();
   const [form, setForm] = useState<CharData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
@@ -239,7 +240,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
         <button type="submit" disabled={saving} className="ddb-cta py-3 px-8">
           {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "CHARAKTER ERSTELLEN"}
         </button>
-        <button type="button" onClick={() => router.back()} className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
+        <button type="button" onClick={() => onCancel ? onCancel() : router.back()} className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
           ABBRECHEN
         </button>
