@@ -62,7 +62,7 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
   });
 
   if (!quest || quest.kampagneId !== ctx.kampagneId) notFound();
-  if (!canSeePrivate(ctx, quest.erstellerId)) notFound();
+  if (quest.sichtbarkeit === "privat" && !canSeePrivate(ctx, quest.erstellerId)) notFound();
 
   const canEdit = ctx.isDM || ctx.isAdmin || quest.erstellerId === ctx.userId;
   const statusColors = STATUS_COLORS[quest.status] ?? STATUS_COLORS["Unbekannt"];
