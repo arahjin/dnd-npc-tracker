@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
 import QuestCreateButton from "@/components/QuestCreateButton";
+import QuestCard from "@/components/QuestCard";
 
 export const dynamic = "force-dynamic";
 
@@ -63,74 +63,21 @@ export default async function QuestsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {quests.map((quest) => {
-              const doneCount = quest.objectives.filter((o) => o.done).length;
-              const totalCount = quest.objectives.length;
               const statusColor = STATUS_COLORS[quest.status] ?? STATUS_COLORS["Unbekannt"];
               const prioritaetColor = quest.prioritaet ? PRIORITAET_COLORS[quest.prioritaet] : null;
-
               return (
-                <Link
+                <QuestCard
                   key={quest.id}
-                  href={`/quests/${quest.id}`}
-                  style={{
-                    display: "block",
-                    background: "var(--dnd-bg-card)",
-                    border: "1px solid var(--dnd-border)",
-                    textDecoration: "none",
-                    transition: "border-color 0.2s",
-                  }}
-                  onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "var(--dnd-gold)"; }}
-                  onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "var(--dnd-border)"; }}
-                >
-                  {/* Gold accent line */}
-                  <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
-
-                  <div className="p-4 space-y-2">
-                    {/* Title */}
-                    <h3 className="font-cinzel font-semibold text-base leading-snug" style={{ color: "var(--dnd-heading)" }}>
-                      {quest.title}
-                    </h3>
-
-                    {/* Status badge */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span
-                        className="font-cinzel text-xs px-2 py-0.5"
-                        style={{
-                          color: statusColor,
-                          background: statusColor + "1A",
-                          border: `1px solid ${statusColor}44`,
-                        }}
-                      >
-                        {quest.status}
-                      </span>
-                      {prioritaetColor && (
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: prioritaetColor, display: "inline-block" }} />
-                          <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>{quest.prioritaet}</span>
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Typ */}
-                    <p className="font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-text-muted)" }}>
-                      {quest.typ}
-                    </p>
-
-                    {/* Summary */}
-                    {quest.summary && (
-                      <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
-                        {quest.summary}
-                      </p>
-                    )}
-
-                    {/* Objectives progress */}
-                    {totalCount > 0 && (
-                      <p className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>
-                        {doneCount}/{totalCount} Ziele
-                      </p>
-                    )}
-                  </div>
-                </Link>
+                  id={quest.id}
+                  title={quest.title}
+                  status={quest.status}
+                  typ={quest.typ}
+                  prioritaet={quest.prioritaet}
+                  summary={quest.summary}
+                  objectives={quest.objectives}
+                  statusColor={statusColor}
+                  prioritaetColor={prioritaetColor}
+                />
               );
             })}
           </div>
