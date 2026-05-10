@@ -6,6 +6,7 @@ import { authConfig } from "./auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
+  trustHost: true, // accept requests from lorehub.io and any configured host
   providers: [
     Credentials({
       credentials: {
