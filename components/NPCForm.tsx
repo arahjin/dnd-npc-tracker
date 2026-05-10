@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS } from "@/lib/constants";
 import MentionTextarea from "./MentionTextarea";
+import { randomFantasyName } from "@/lib/nameGenerator";
 
 type NPCData = {
   name: string;
@@ -151,8 +152,21 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       {/* Name */}
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Name *</label>
-        <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)}
-          placeholder="z.B. Thandrel Nachtschatten" className={inputClass} style={inputStyle} />
+        <div style={{ display: "flex", gap: "8px" }}>
+          <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)}
+            placeholder="z.B. Thandrel Nachtschatten" className={inputClass} style={{ ...inputStyle, flex: 1 }} />
+          <button
+            type="button"
+            title="Zufälligen Fantasy-Namen generieren"
+            onClick={() => set("name", randomFantasyName(form.geschlecht as "männlich" | "weiblich" | "divers" | ""))}
+            className="font-cinzel text-xs px-3 py-2 transition-all shrink-0"
+            style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-gold)" }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--dnd-gold)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2A2A2A"; }}
+          >
+            ⚄ Würfeln
+          </button>
+        </div>
       </div>
 
       {/* Bild + Generator */}
