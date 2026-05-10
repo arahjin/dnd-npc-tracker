@@ -33,6 +33,7 @@ export default function KampagnenVerwaltenPage() {
   const [removing, setRemoving] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [confirmName, setConfirmName] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -84,12 +85,17 @@ export default function KampagnenVerwaltenPage() {
   async function deleteKampagne(kampagneId: string) {
     setDeleting(kampagneId);
     setError(null);
-    const res = await fetch(`/api/kampagnen/${kampagneId}`, { method: "DELETE" });
+    const res = await fetch(`/api/kampagnen/${kampagneId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ confirmName }),
+    });
     const data = await res.json();
-    if (!res.ok) { setError(data.error); setDeleting(null); setConfirmDelete(null); return; }
+    if (!res.ok) { setError(data.error); setDeleting(null); setConfirmDelete(null); setConfirmName(""); return; }
     await clearCookieIfActive(kampagneId);
     setDeleting(null);
     setConfirmDelete(null);
+    setConfirmName("");
     load();
   }
 
@@ -200,20 +206,38 @@ export default function KampagnenVerwaltenPage() {
                     {/* Delete button (owner or admin only) */}
                     {(isSelfOwner || isAdmin) && (
                       confirmDelete === k.id ? (
-                        <>
-                          <span className="font-cinzel text-xs" style={{ color: "#F87171" }}>Sicher?</span>
-                          <button onClick={() => deleteKampagne(k.id)} disabled={deleting === k.id}
+                        <div className="flex flex-wrap items-center gap-2 w-full">
+                          <span className="font-cinzel text-xs basis-full" style={{ color: "#F87171" }}>
+                            Tippe „{k.name}" zum Bestätigen — alle NPCs, Locations, Quests, Charaktere und Tagebucheinträge werden unwiderruflich gelöscht.
+                          </span>
+                          <input
+                            type="text"
+                            value={confirmName}
+                            onChange={(e) => setConfirmName(e.target.value)}
+                            placeholder={k.name}
+                            autoFocus
+                            className="font-cinzel text-xs px-3 py-1.5 flex-1 min-w-[200px]"
+                            style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "#D8D0C8" }}
+                          />
+                          <button
+                            onClick={() => deleteKampagne(k.id)}
+                            disabled={deleting === k.id || confirmName !== k.name}
                             className={btnBase}
-                            style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
-                            {deleting === k.id ? "..." : "Ja, löschen"}
+                            style={{
+                              background: confirmName === k.name ? "#200D0D" : "#0A0A0A",
+                              border: "1px solid #991B1B",
+                              color: confirmName === k.name ? "#F87171" : "#5A1A1A",
+                              cursor: confirmName === k.name ? "pointer" : "not-allowed",
+                            }}>
+                            {deleting === k.id ? "..." : "Endgültig löschen"}
                           </button>
-                          <button onClick={() => setConfirmDelete(null)} className={btnBase}
+                          <button onClick={() => { setConfirmDelete(null); setConfirmName(""); }} className={btnBase}
                             style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
                             Abbrechen
                           </button>
-                        </>
+                        </div>
                       ) : (
-                        <button onClick={() => { setConfirmDelete(k.id); setError(null); }}
+                        <button onClick={() => { setConfirmDelete(k.id); setConfirmName(""); setError(null); }}
                           className={btnBase}
                           style={{ border: "1px solid #991B1B", color: "#F87171" }}>
                           Löschen
