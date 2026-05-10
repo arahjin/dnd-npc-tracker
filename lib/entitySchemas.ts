@@ -3,7 +3,6 @@ import {
   STATUS_OPTIONS,
   BEZIEHUNG_OPTIONS,
   GESCHLECHT_OPTIONS,
-  REGION_OPTIONS,
   ALIGNMENT_OPTIONS,
   ORGANISATION_TYP_OPTIONS,
 } from "./constants";
@@ -37,7 +36,7 @@ const npcBase = {
   status: z.enum(STATUS_OPTIONS).default("Unbekannt"),
   beziehung: z.enum(BEZIEHUNG_OPTIONS).default("Unbekannt"),
   geschlecht: optEnum(GESCHLECHT_OPTIONS),
-  region: optEnum(REGION_OPTIONS),
+  region: optStr(200),
   alter: optStr(50),
   rasse: optStr(100),
   herkunft: optStr(200),
