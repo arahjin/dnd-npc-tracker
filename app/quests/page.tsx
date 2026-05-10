@@ -26,17 +26,11 @@ export default async function QuestsPage() {
 
   const where = { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) };
 
-  const [quests, npcs, locations, orgs, chars] = await Promise.all([
-    prisma.quest.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-      include: { objectives: { orderBy: { order: "asc" } } },
-    }),
-    prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-  ]);
+  const quests = await prisma.quest.findMany({
+    where,
+    orderBy: { createdAt: "desc" },
+    include: { objectives: { orderBy: { order: "asc" } } },
+  });
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -46,12 +40,7 @@ export default async function QuestsPage() {
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
             {quests.length} {quests.length === 1 ? "Quest" : "Quests"}
           </p>
-          <QuestCreateButton
-              availableNpcs={npcs}
-              availableLocations={locations}
-              availableOrgs={orgs}
-              availableChars={chars}
-            />
+          <QuestCreateButton />
         </div>
 
         {quests.length === 0 ? (

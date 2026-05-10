@@ -10,22 +10,16 @@ export default async function QuestEditPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const ctx = await requireKampagne();
 
-  const [quest, npcs, locations, orgs, chars] = await Promise.all([
-    prisma.quest.findUnique({
-      where: { id },
-      include: {
-        objectives: { orderBy: { order: "asc" } },
-        npcs: true,
-        locations: true,
-        organisationen: true,
-        charaktere: true,
-      },
-    }),
-    prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-  ]);
+  const quest = await prisma.quest.findUnique({
+    where: { id },
+    include: {
+      objectives: { orderBy: { order: "asc" } },
+      npcs: true,
+      locations: true,
+      organisationen: true,
+      charaktere: true,
+    },
+  });
 
   if (!quest || quest.kampagneId !== ctx.kampagneId) notFound();
 
@@ -63,10 +57,6 @@ export default async function QuestEditPage({ params }: { params: Promise<{ id: 
             deadline: quest.deadline ?? "",
             sichtbarkeit: quest.sichtbarkeit,
           }}
-          availableNpcs={npcs}
-          availableLocations={locations}
-          availableOrgs={orgs}
-          availableChars={chars}
           initialNpcs={quest.npcs.map((n) => ({ npcId: n.npcId, rolle: n.rolle ?? "" }))}
           initialLocations={quest.locations.map((l) => ({ locationId: l.locationId, rolle: l.rolle ?? "" }))}
           initialOrgs={quest.organisationen.map((o) => ({ organisationId: o.organisationId, rolle: o.rolle ?? "" }))}

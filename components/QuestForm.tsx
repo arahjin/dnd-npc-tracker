@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   QUEST_STATUS_OPTIONS,
@@ -59,10 +59,10 @@ const EMPTY: QuestData = {
 export default function QuestForm({
   initial,
   id,
-  availableNpcs = [],
-  availableLocations = [],
-  availableOrgs = [],
-  availableChars = [],
+  availableNpcs: availableNpcsProp,
+  availableLocations: availableLocationsProp,
+  availableOrgs: availableOrgsProp,
+  availableChars: availableCharsProp,
   initialNpcs = [],
   initialLocations = [],
   initialOrgs = [],
@@ -75,6 +75,32 @@ export default function QuestForm({
   const [form, setForm] = useState<QuestData>({ ...EMPTY, ...initial });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  // Lazy-load relation lists if not supplied via props
+  const propsHaveRelations =
+    availableNpcsProp !== undefined ||
+    availableLocationsProp !== undefined ||
+    availableOrgsProp !== undefined ||
+    availableCharsProp !== undefined;
+  const [availableNpcs, setAvailableNpcs] = useState(availableNpcsProp ?? []);
+  const [availableLocations, setAvailableLocations] = useState(availableLocationsProp ?? []);
+  const [availableOrgs, setAvailableOrgs] = useState(availableOrgsProp ?? []);
+  const [availableChars, setAvailableChars] = useState(availableCharsProp ?? []);
+  useEffect(() => {
+    if (propsHaveRelations) return;
+    let cancelled = false;
+    fetch("/api/quests/relations")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data || cancelled) return;
+        setAvailableNpcs(data.npcs ?? []);
+        setAvailableLocations(data.locations ?? []);
+        setAvailableOrgs(data.organisationen ?? []);
+        setAvailableChars(data.charaktere ?? []);
+      })
+      .catch(() => { /* non-fatal: dropdowns stay empty */ });
+    return () => { cancelled = true; };
+  }, [propsHaveRelations]);
 
   // Association state
   const [selectedNpcs, setSelectedNpcs] = useState<AssocItem<"npcId">[]>(initialNpcs);
