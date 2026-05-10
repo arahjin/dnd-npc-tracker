@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { visibilityWhere } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
 import QuestCreateButton from "@/components/QuestCreateButton";
 
@@ -23,8 +24,7 @@ const PRIORITAET_COLORS: Record<string, string> = {
 export default async function QuestsPage() {
   const ctx = await requireKampagne();
 
-  const where: Record<string, unknown> = { kampagneId: ctx.kampagneId };
-  if (!ctx.isDM && !ctx.isAdmin) where.sichtbarkeit = "public";
+  const where = { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) };
 
   const [quests, npcs, locations, orgs, chars] = await Promise.all([
     prisma.quest.findMany({
@@ -32,18 +32,10 @@ export default async function QuestsPage() {
       orderBy: { createdAt: "desc" },
       include: { objectives: { orderBy: { order: "asc" } } },
     }),
-    ctx.isDM || ctx.isAdmin
-      ? prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
-      : Promise.resolve([]),
-    ctx.isDM || ctx.isAdmin
-      ? prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
-      : Promise.resolve([]),
-    ctx.isDM || ctx.isAdmin
-      ? prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
-      : Promise.resolve([]),
-    ctx.isDM || ctx.isAdmin
-      ? prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
-      : Promise.resolve([]),
+    prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
 
   return (
@@ -54,14 +46,12 @@ export default async function QuestsPage() {
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
             {quests.length} {quests.length === 1 ? "Quest" : "Quests"}
           </p>
-          {(ctx.isDM || ctx.isAdmin) && (
-            <QuestCreateButton
+          <QuestCreateButton
               availableNpcs={npcs}
               availableLocations={locations}
               availableOrgs={orgs}
               availableChars={chars}
             />
-          )}
         </div>
 
         {quests.length === 0 ? (

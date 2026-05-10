@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireKampagne } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
+import { canSeePrivate } from "@/lib/visibility";
 import { IconLock, IconScroll } from "@/components/Icons";
 import QuestObjectivesChecklist from "@/components/QuestObjectivesChecklist";
 import QuestDeleteButton from "@/components/QuestDeleteButton";
@@ -61,9 +62,9 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
   });
 
   if (!quest || quest.kampagneId !== ctx.kampagneId) notFound();
-  if (quest.sichtbarkeit !== "public" && !ctx.isDM && !ctx.isAdmin) notFound();
+  if (!canSeePrivate(ctx, quest.erstellerId)) notFound();
 
-  const canEdit = ctx.isDM || ctx.isAdmin;
+  const canEdit = ctx.isDM || ctx.isAdmin || quest.erstellerId === ctx.userId;
   const statusColors = STATUS_COLORS[quest.status] ?? STATUS_COLORS["Unbekannt"];
 
   return (
@@ -159,7 +160,7 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
         )}
 
         {/* GM Notes — DM only */}
-        {canEdit && quest.gmNotes && (
+        {(ctx.isDM || ctx.isAdmin) && quest.gmNotes && (
           <div style={{ border: "1px solid #991B1B", background: "#120808" }}>
             <div className="px-4 py-2" style={{ background: "#200D0D", borderBottom: "1px solid #991B1B" }}>
               <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase flex items-center gap-2" style={{ color: "#FCA5A5" }}>

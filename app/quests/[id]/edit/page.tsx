@@ -10,8 +10,6 @@ export default async function QuestEditPage({ params }: { params: Promise<{ id: 
   const { id } = await params;
   const ctx = await requireKampagne();
 
-  if (!ctx.isDM && !ctx.isAdmin) notFound();
-
   const [quest, npcs, locations, orgs, chars] = await Promise.all([
     prisma.quest.findUnique({
       where: { id },
@@ -30,6 +28,11 @@ export default async function QuestEditPage({ params }: { params: Promise<{ id: 
   ]);
 
   if (!quest || quest.kampagneId !== ctx.kampagneId) notFound();
+
+  // Only DM, Admin, or the creator may edit
+  if (!ctx.isDM && !ctx.isAdmin && quest.erstellerId !== ctx.userId) notFound();
+
+  const isDM = ctx.isDM || ctx.isAdmin;
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -56,7 +59,7 @@ export default async function QuestEditPage({ params }: { params: Promise<{ id: 
             summary: quest.summary ?? "",
             description: quest.description ?? "",
             reward: quest.reward ?? "",
-            gmNotes: quest.gmNotes ?? "",
+            gmNotes: isDM ? (quest.gmNotes ?? "") : "",
             deadline: quest.deadline ?? "",
             sichtbarkeit: quest.sichtbarkeit,
           }}
@@ -68,7 +71,7 @@ export default async function QuestEditPage({ params }: { params: Promise<{ id: 
           initialLocations={quest.locations.map((l) => ({ locationId: l.locationId, rolle: l.rolle ?? "" }))}
           initialOrgs={quest.organisationen.map((o) => ({ organisationId: o.organisationId, rolle: o.rolle ?? "" }))}
           initialChars={quest.charaktere.map((c) => ({ charakterId: c.charakterId, rolle: c.rolle ?? "" }))}
-          canSeePrivate={true}
+          canSeePrivate={isDM}
         />
       </div>
     </main>
