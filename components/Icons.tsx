@@ -276,6 +276,21 @@ export function LogoIcon({
   );
 }
 
+/** 📜  Quest / scroll */
+export function IconScroll({ size = 16, color, className }: IconProps) {
+  return (
+    <svg
+      width={size} height={size} viewBox="0 0 16 16"
+      fill={color ?? "currentColor"} stroke="none"
+      display="inline-block" style={{ verticalAlign: "middle", flexShrink: 0 }}
+      className={className}
+    >
+      <path d="M3 2.5A1.5 1.5 0 0 1 4.5 1h8A1.5 1.5 0 0 1 14 2.5v10a.5.5 0 0 1-.5.5H4.5a.5.5 0 0 0 0 1h9a.5.5 0 0 1 0 1h-9A1.5 1.5 0 0 1 3 13.5v-11z"/>
+      <path d="M5 4.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5zm0 2a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5z" opacity="0.7"/>
+    </svg>
+  );
+}
+
 /**
  * Lorehub full logo — icon mark + "Lorehub" wordmark (Nunito 600, matching original).
  * Control size via `style` (e.g. style={{ height:"50px", width:"auto" }}).

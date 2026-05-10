@@ -48,6 +48,7 @@ model User {
   erstellteOrganisationen Organisation[] @relation("erstellteOrganisationen")
   erstellteLocations      Location[]     @relation("erstellteLocations")
   bildGenerierungen       BildGenerierung[]
+  erstellteQuests         Quest[]        @relation("erstellteQuests")
 }
 
 // Tracks DALL-E image generation per user for rate limiting
@@ -85,6 +86,7 @@ model Kampagne {
   locations      Location[]
   eintraege      JournalEntry[]
   invites        Invite[]
+  quests         Quest[]
 }
 
 model KampagneMitglied {
@@ -127,6 +129,7 @@ model NPC {
   updatedAt        DateTime          @updatedAt
   organisationen   NPCOrganisation[]
   locations        Location[]
+  quests           QuestNPC[]
 }
 
 model Organisation {
@@ -149,6 +152,7 @@ model Organisation {
   mitglieder          NPCOrganisation[]
   charakterMitglieder CharakterOrganisation[]
   locations           Location[]
+  quests              QuestOrganisation[]
 }
 
 model NPCOrganisation {
@@ -189,6 +193,7 @@ model Charakter {
   updatedAt        DateTime                @updatedAt
   organisationen   CharakterOrganisation[]
   locations        Location[]
+  quests           QuestCharakter[]
 }
 
 model CharakterOrganisation {
@@ -226,6 +231,7 @@ model Location {
   npcs           NPC[]
   organisationen Organisation[]
   charaktere     Charakter[]
+  quests         QuestLocation[]
 }
 
 // ─── Journal ─────────────────────────────────────────────
@@ -242,6 +248,7 @@ model JournalEntry {
   createdAt  DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
   tags       JournalTag[]
+  quests     QuestJournalEntry[]
 }
 
 model JournalTag {
@@ -250,6 +257,106 @@ model JournalTag {
   entryId    String
   tagTyp     TagTyp
   referenzId String
+}
+
+// ─── Quests ──────────────────────────────────────────────
+
+model Quest {
+  id           String    @id @default(cuid())
+  kampagneId   String
+  kampagne     Kampagne  @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  title        String
+  status       String    @default("Aktiv")
+  typ          String    @default("Nebenquest")
+  prioritaet   String?
+  summary      String?
+  description  String?
+  reward       String?
+  gmNotes      String?
+  deadline     String?
+  sichtbarkeit String    @default("public")
+  erstellerId  String?
+  ersteller    User?     @relation("erstellteQuests", fields: [erstellerId], references: [id], onDelete: SetNull)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  objectives     QuestObjective[]
+  npcs           QuestNPC[]
+  locations      QuestLocation[]
+  organisationen QuestOrganisation[]
+  charaktere     QuestCharakter[]
+  journalEntries QuestJournalEntry[]
+  vorlaeuferVon  QuestRelation[]     @relation("nachfolgerQuest")
+  nachfolgerVon  QuestRelation[]     @relation("vorlaeuferQuest")
+}
+
+model QuestObjective {
+  id      String  @id @default(cuid())
+  questId String
+  quest   Quest   @relation(fields: [questId], references: [id], onDelete: Cascade)
+  label   String
+  done    Boolean @default(false)
+  order   Int     @default(0)
+}
+
+model QuestNPC {
+  id      String @id @default(cuid())
+  questId String
+  quest   Quest  @relation(fields: [questId], references: [id], onDelete: Cascade)
+  npcId   String
+  npc     NPC    @relation(fields: [npcId], references: [id], onDelete: Cascade)
+  rolle   String?
+  @@unique([questId, npcId])
+}
+
+model QuestLocation {
+  id         String   @id @default(cuid())
+  questId    String
+  quest      Quest    @relation(fields: [questId], references: [id], onDelete: Cascade)
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  rolle      String?
+  @@unique([questId, locationId])
+}
+
+model QuestOrganisation {
+  id             String       @id @default(cuid())
+  questId        String
+  quest          Quest        @relation(fields: [questId], references: [id], onDelete: Cascade)
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  rolle          String?
+  @@unique([questId, organisationId])
+}
+
+model QuestCharakter {
+  id          String    @id @default(cuid())
+  questId     String
+  quest       Quest     @relation(fields: [questId], references: [id], onDelete: Cascade)
+  charakterId String
+  charakter   Charakter @relation(fields: [charakterId], references: [id], onDelete: Cascade)
+  rolle       String?
+  @@unique([questId, charakterId])
+}
+
+model QuestJournalEntry {
+  id      String       @id @default(cuid())
+  questId String
+  quest   Quest        @relation(fields: [questId], references: [id], onDelete: Cascade)
+  entryId String
+  entry   JournalEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  typ     String?
+  @@unique([questId, entryId])
+}
+
+model QuestRelation {
+  id                String @id @default(cuid())
+  vorlaeuferQuestId String
+  vorlaeuferQuest   Quest  @relation("vorlaeuferQuest", fields: [vorlaeuferQuestId], references: [id], onDelete: Cascade)
+  nachfolgerQuestId String
+  nachfolgerQuest   Quest  @relation("nachfolgerQuest", fields: [nachfolgerQuestId], references: [id], onDelete: Cascade)
+  relation          String?
+  @@unique([vorlaeuferQuestId, nachfolgerQuestId])
 }
 
 // ─── Site Settings (singleton) ───────────────────────────

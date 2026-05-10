@@ -69,6 +69,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
       npcs: { orderBy: { name: "asc" }, select: { id: true, name: true } },
       organisationen: { orderBy: { name: "asc" }, select: { id: true, name: true } },
       charaktere: { orderBy: { name: "asc" }, select: { id: true, name: true } },
+      quests: { include: { quest: { select: { id: true, title: true, status: true, typ: true } } } },
     },
   });
 
@@ -182,6 +183,27 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <LinkedList items={location.charaktere} baseHref="/charaktere" />
           </Section>
         </div>
+
+        {/* Zugehörige Quests */}
+        {location.quests && location.quests.length > 0 && (
+          <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+            <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+              <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Zugehörige Quests</h2>
+            </div>
+            <div className="px-4 py-3 flex flex-wrap gap-2">
+              {location.quests.map((ql) => (
+                <Link
+                  key={ql.questId}
+                  href={`/quests/${ql.questId}`}
+                  className="font-cinzel text-xs px-3 py-1.5"
+                  style={{ background: "#141414", border: "1px solid var(--dnd-border)", color: "var(--dnd-heading)", textDecoration: "none" }}
+                >
+                  {ql.quest.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

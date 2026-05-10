@@ -8,7 +8,7 @@ import { IconAdmin, IconSword, IconDice } from "@/components/Icons";
 type Kampagne = { id: string; name: string };
 
 type Props = {
-  active: "npcs" | "organisationen" | "locations" | "charaktere" | "geschichte" | "tagebuch";
+  active: "npcs" | "organisationen" | "locations" | "charaktere" | "geschichte" | "tagebuch" | "quests";
   userName?: string;
   userRole?: string;
   isDM?: boolean;
@@ -22,6 +22,7 @@ const NAV = [
   { href: "/charaktere",     label: "Charaktere",     key: "charaktere" },
   { href: "/geschichte",     label: "Geschichte",     key: "geschichte" },
   { href: "/tagebuch",       label: "Tagebuch",       key: "tagebuch" },
+  { href: "/quests",         label: "Quests",         key: "quests" },
 ];
 
 function RoleIcon({ role }: { role: string }) {

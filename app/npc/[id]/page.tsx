@@ -61,6 +61,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
       include: {
         organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } },
         locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
+        quests: { include: { quest: { select: { id: true, title: true, status: true, typ: true } } } },
       },
     }),
     prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
@@ -228,6 +229,27 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                   <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "1.1rem" }}>
                     <RenderMentions text={npc.notizen} />
                   </p>
+                </div>
+              </div>
+            )}
+
+            {/* Quests */}
+            {npc.quests && npc.quests.length > 0 && (
+              <div className="mt-6" style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+                <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+                  <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Zugehörige Quests</h2>
+                </div>
+                <div className="px-4 py-3 flex flex-wrap gap-2">
+                  {npc.quests.map((qn) => (
+                    <Link
+                      key={qn.questId}
+                      href={`/quests/${qn.questId}`}
+                      className="font-cinzel text-xs px-3 py-1.5"
+                      style={{ background: "#141414", border: "1px solid var(--dnd-border)", color: "var(--dnd-heading)", textDecoration: "none" }}
+                    >
+                      {qn.quest.title}
+                    </Link>
+                  ))}
                 </div>
               </div>
             )}

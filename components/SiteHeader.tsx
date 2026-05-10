@@ -9,7 +9,7 @@ import KampagneSelector from "./KampagneSelector";
 import MobileNav from "./MobileNav";
 
 export default async function SiteHeader({ active }: {
-  active: "npcs" | "organisationen" | "locations" | "charaktere" | "geschichte" | "tagebuch";
+  active: "npcs" | "organisationen" | "locations" | "charaktere" | "geschichte" | "tagebuch" | "quests";
 }) {
   const session = await auth();
   const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
@@ -97,6 +97,7 @@ export default async function SiteHeader({ active }: {
             <Link href="/charaktere"     className={`ddb-nav-link${active === "charaktere"      ? " ddb-nav-active" : ""}`}>Charaktere</Link>
             <Link href="/geschichte"     className={`ddb-nav-link${active === "geschichte"      ? " ddb-nav-active" : ""}`}>Geschichte</Link>
             <Link href="/tagebuch"       className={`ddb-nav-link${active === "tagebuch"        ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
+            <Link href="/quests"         className={`ddb-nav-link${active === "quests"          ? " ddb-nav-active" : ""}`}>Quests</Link>
           </nav>
 
           <div style={{ flex: 1 }} />
