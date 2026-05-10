@@ -422,7 +422,7 @@ export default function LocationForm({
           className="w-full px-4 py-2.5 text-sm outline-none font-cinzel"
           style={inputStyle}>
           <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
-          <option value="privat">Privat – nur Ersteller &amp; DM/Admin</option>
+          <option value="privat">Privat – nur Ersteller & DM</option>
         </select>
       </div>
 
@@ -430,7 +430,7 @@ export default function LocationForm({
       {canSeePrivate && (
         <div>
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
+            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller & DM sichtbar</span>
           </label>
           <textarea value={privateNotizen} onChange={(e) => setPrivateNotizen(e.target.value)}
             placeholder="Geheime Infos, DM-Notizen..." rows={4}

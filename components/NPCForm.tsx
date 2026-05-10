@@ -399,7 +399,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
         <select value={form.sichtbarkeit} onChange={(e) => setForm(f => ({ ...f, sichtbarkeit: e.target.value }))}
           className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
           <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
-          <option value="privat">Privat – nur Ersteller &amp; DM/Admin</option>
+          <option value="privat">Privat – nur Ersteller & DM</option>
         </select>
       </div>
 
@@ -407,7 +407,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       {canSeePrivate && (
         <div>
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller &amp; DM/Admin sichtbar</span>
+            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller & DM sichtbar</span>
           </label>
           <textarea value={form.privateNotizen} onChange={(e) => setForm(f => ({ ...f, privateNotizen: e.target.value }))}
             placeholder="Geheime Infos, DM-Notizen..." rows={4}
