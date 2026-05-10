@@ -82,7 +82,7 @@ const charBase = {
   status: z.enum(STATUS_OPTIONS).default("Lebendig"),
   beziehung: z.enum(BEZIEHUNG_OPTIONS).default("Neutral"),
   geschlecht: optEnum(GESCHLECHT_OPTIONS),
-  region: optEnum(REGION_OPTIONS),
+  region: optStr(200),
   alter: optStr(50),
   rasse: optStr(100),
   herkunft: optStr(200),
