@@ -42,7 +42,14 @@ function RegisterForm() {
     const data = await res.json();
     if (!res.ok) { setError(data.error ?? "Fehler bei der Registrierung."); setLoading(false); return; }
 
-    await signIn("credentials", { email, password, redirect: false });
+    const signInRes = await signIn("credentials", { email, password, redirect: false });
+
+    // If signIn failed, the email may already exist with a different password.
+    // Send the user to /login with a friendly hint instead of leaking enumeration.
+    if (signInRes && (signInRes as { error?: string }).error) {
+      router.push("/login?bereitsRegistriert=1");
+      return;
+    }
 
     // If the invite linked us to a campaign, activate it immediately
     if (data.kampagneId) {

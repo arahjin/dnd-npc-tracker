@@ -22,8 +22,13 @@ export async function POST(req: NextRequest) {
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing)
-    return NextResponse.json({ error: "E-Mail bereits registriert." }, { status: 400 });
+  if (existing) {
+    // S-13: Don't reveal email enumeration. Return the same success-shape
+    // response without creating anything or consuming the invite. The
+    // client's auto-signIn will succeed only if the password matches the
+    // existing account; otherwise the user lands on /login.
+    return NextResponse.json({ ok: true, userId: null, kampagneId: null });
+  }
 
   const passwordHash = await bcrypt.hash(password, 12);
   const role = invite?.role ?? "SPIELER";

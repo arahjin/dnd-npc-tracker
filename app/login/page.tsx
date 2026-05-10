@@ -11,6 +11,7 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const verified = searchParams.get("verified") === "1";
   const reset = searchParams.get("reset") === "1";
+  const bereitsRegistriert = searchParams.get("bereitsRegistriert") === "1";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -73,6 +74,12 @@ function LoginForm() {
               <div className="font-cinzel text-xs px-4 py-3"
                 style={{ background: "#0A1A0A", border: "1px solid #1E3A1E", color: "#4ADE80" }}>
                 ✓ Passwort geändert! Bitte anmelden.
+              </div>
+            )}
+            {bereitsRegistriert && (
+              <div className="font-cinzel text-xs px-4 py-3"
+                style={{ background: "#1A1208", border: "1px solid #92400E", color: "#FCD34D" }}>
+                Diese E-Mail ist bereits registriert. Bitte logge dich ein oder setze dein Passwort zurück.
               </div>
             )}
             {error && (
