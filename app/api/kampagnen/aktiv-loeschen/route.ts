@@ -14,7 +14,11 @@ export async function POST(req: NextRequest) {
   const res = NextResponse.json({ ok: true });
   if (!kampagneId || active === kampagneId) {
     res.cookies.set("aktiveKampagne", "", {
-      httpOnly: false, sameSite: "lax", path: "/", maxAge: 0,
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 0,
     });
   }
   return res;
