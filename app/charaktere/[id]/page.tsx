@@ -1,8 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { auth } from "@/auth";
-import { cookies } from "next/headers";
+import { requireKampagne } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 import SiteHeader from "@/components/SiteHeader";
@@ -25,16 +24,9 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function CharakterDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await auth();
-  const userId = session!.user!.id as string;
-  const userRole = (session!.user! as { role: string }).role;
-  const isDM = userRole === "DUNGEON_MASTER";
-  const isAdmin = userRole === "ADMIN";
-  // Keep backward-compat: canEdit uses isDM which previously included ADMIN
+  const ctx = await requireKampagne();
+  const { userId, isDM, isAdmin } = ctx;
   const isDMOrAdmin = isDM || isAdmin;
-
-  const cookieStore = await cookies();
-  const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
 
   const [charakter, orgs, locations] = await Promise.all([
     prisma.charakter.findUnique({
@@ -47,17 +39,18 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
       },
     }),
     prisma.organisation.findMany({
-      where: kampagneId ? { kampagneId } : {},
+      where: { kampagneId: ctx.kampagneId },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
     prisma.location.findMany({
-      where: kampagneId ? { kampagneId } : {},
+      where: { kampagneId: ctx.kampagneId },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
   ]);
   if (!charakter) notFound();
+  if (charakter.kampagneId && charakter.kampagneId !== ctx.kampagneId) notFound();
   if (charakter.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, charakter.userId)) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, charakter.userId);

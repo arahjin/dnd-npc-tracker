@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { requireKampagneApi } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
+import { validateImageUrl } from "@/lib/imageUrl";
+type Params = { params: Promise<{ id: string }> };
 
-async function canEdit(userId: string, charakterId: string, role: string) {
-  if (role === "DUNGEON_MASTER" || role === "ADMIN") return true;
-  const c = await prisma.charakter.findUnique({ where: { id: charakterId }, select: { userId: true } });
-  return c?.userId === userId;
+function canEdit(ctx: { userId: string; isDM: boolean; isAdmin: boolean }, ownerId: string) {
+  return ctx.isDM || ctx.isAdmin || ownerId === ctx.userId;
 }
 
-export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(_: NextRequest, { params }: Params) {
   const { id } = await params;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const charakter = await prisma.charakter.findUnique({
     where: { id },
     include: {
@@ -18,19 +21,37 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
     },
   });
   if (!charakter) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (charakter.kampagneId && charakter.kampagneId !== ctx.kampagneId)
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+
+  // Apply visibility (charaktere use userId-based visibility, not erstellerId)
+  if (!ctx.isDM && !ctx.isAdmin && charakter.sichtbarkeit === "privat" && charakter.userId !== ctx.userId)
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+
   return NextResponse.json(charakter);
 }
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
+export async function PUT(req: NextRequest, { params }: Params) {
   const { id } = await params;
-  const user = session.user!;
-  const role = (user as { role: string }).role;
-  if (!(await canEdit(user.id as string, id, role)))
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const existing = await prisma.charakter.findUnique({
+    where: { id },
+    select: { userId: true, kampagneId: true },
+  });
+  if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (existing.kampagneId && existing.kampagneId !== ctx.kampagneId)
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (!canEdit(ctx, existing.userId))
     return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
 
-  const { organisationen, userId: _uid, ...data } = await req.json();
+  const { organisationen, userId: _uid, kampagneId: _kid, image, ...rest } = await req.json();
+  let data: Record<string, unknown> = rest;
+  if (image !== undefined) {
+    try { data = { ...rest, image: validateImageUrl(image) }; }
+    catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
+  }
   const charakter = await prisma.$transaction(async (tx) => {
     await tx.charakterOrganisation.deleteMany({ where: { charakterId: id } });
     if (organisationen?.length > 0) {
@@ -45,14 +66,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   return NextResponse.json(charakter);
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
+export async function DELETE(_: NextRequest, { params }: Params) {
   const { id } = await params;
-  const user = session.user!;
-  const role = (user as { role: string }).role;
-  if (!(await canEdit(user.id as string, id, role)))
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const existing = await prisma.charakter.findUnique({
+    where: { id },
+    select: { userId: true, kampagneId: true },
+  });
+  if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (existing.kampagneId && existing.kampagneId !== ctx.kampagneId)
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (!canEdit(ctx, existing.userId))
     return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
+
   await prisma.charakter.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

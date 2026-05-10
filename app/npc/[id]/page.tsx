@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { auth } from "@/auth";
+import { requireKampagne } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 import DeleteButton from "@/components/DeleteButton";
@@ -49,11 +49,8 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function NPCDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await auth();
-  const userId = session!.user!.id as string;
-  const role = (session!.user! as { role: string }).role;
-  const isDM = role === "DUNGEON_MASTER";
-  const isAdmin = role === "ADMIN";
+  const ctx = await requireKampagne();
+  const { userId, isDM, isAdmin } = ctx;
 
   const [npc, orgs] = await Promise.all([
     prisma.nPC.findUnique({
@@ -64,13 +61,19 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
         quests: { include: { quest: { select: { id: true, title: true, status: true, typ: true } } } },
       },
     }),
-    prisma.organisation.findMany({ orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({
+      where: { kampagneId: ctx.kampagneId },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
   ]);
   if (!npc) notFound();
+  // Cross-campaign isolation: NPC must belong to active campaign (legacy null kampagneId allowed)
+  if (npc.kampagneId && npc.kampagneId !== ctx.kampagneId) notFound();
   if (npc.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId)) notFound();
 
   const locations = await prisma.location.findMany({
-    where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {},
+    where: { kampagneId: ctx.kampagneId },
     orderBy: { name: "asc" },
     select: { id: true, name: true },
   });

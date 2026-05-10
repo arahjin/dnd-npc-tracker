@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { charakterVisibilityWhere } from "@/lib/visibility";
+import { validateImageUrl } from "@/lib/imageUrl";
 
 export async function GET() {
   const ctx = await requireKampagneApi();
@@ -19,11 +20,15 @@ export async function POST(req: NextRequest) {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
 
-  const { organisationen, ...data } = await req.json();
+  const { organisationen, image, userId: _uid, kampagneId: _kid, ...data } = await req.json();
+  let validatedImage: string | null;
+  try { validatedImage = validateImageUrl(image); }
+  catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
 
   const charakter = await prisma.charakter.create({
     data: {
       ...data,
+      image: validatedImage,
       userId: ctx.userId,
       kampagneId: ctx.kampagneId,
       ...(organisationen?.length > 0 && {

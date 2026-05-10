@@ -1,34 +1,46 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { requireKampagneApi } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 
-export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+type Params = { params: Promise<{ id: string }> };
+
+export async function GET(_: NextRequest, { params }: Params) {
   const { id } = await params;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const org = await prisma.organisation.findUnique({
     where: { id },
-    include: { mitglieder: { include: { npc: true } } },
+    include: { mitglieder: { include: { npc: { select: { id: true, name: true, image: true } } } } },
   });
   if (!org) return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
-  return NextResponse.json(org);
+  if (org.kampagneId && org.kampagneId !== ctx.kampagneId)
+    return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
+  if (org.sichtbarkeit === "privat" && !canSeePrivate(ctx, org.erstellerId))
+    return NextResponse.json({ error: "Nicht gefunden" }, { status: 404 });
+
+  const allowPrivate = canSeePrivate(ctx, org.erstellerId);
+  const { privateNotizen, ...safe } = org;
+  return NextResponse.json(allowPrivate ? org : safe);
 }
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
+export async function PUT(req: NextRequest, { params }: Params) {
   const { id } = await params;
-  const userId = session.user!.id as string;
-  const role = (session.user! as { role: string }).role;
-  const isDM = role === "DUNGEON_MASTER";
-  const isAdmin = role === "ADMIN";
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const existing = await prisma.organisation.findUnique({ where: { id }, select: { erstellerId: true } });
+  const existing = await prisma.organisation.findUnique({
+    where: { id },
+    select: { erstellerId: true, kampagneId: true },
+  });
   if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (existing.kampagneId && existing.kampagneId !== ctx.kampagneId)
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
 
-  const { erstellerId: _eid, privateNotizen, ...rest } = await req.json();
+  const { erstellerId: _eid, kampagneId: _kid, privateNotizen, ...rest } = await req.json();
 
-  // Only update privateNotizen if user is authorized and field was explicitly sent
-  const allowPrivate = canSeePrivate({ userId, isDM, isAdmin }, existing.erstellerId);
+  const allowPrivate = canSeePrivate(ctx, existing.erstellerId);
   const data = (allowPrivate && privateNotizen !== undefined)
     ? { ...rest, privateNotizen: privateNotizen || null }
     : rest;
@@ -37,8 +49,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   return NextResponse.json(org);
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(_: NextRequest, { params }: Params) {
   const { id } = await params;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const existing = await prisma.organisation.findUnique({
+    where: { id },
+    select: { erstellerId: true, kampagneId: true },
+  });
+  if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (existing.kampagneId && existing.kampagneId !== ctx.kampagneId)
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (!ctx.isDM && !ctx.isAdmin && existing.erstellerId !== ctx.userId)
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
   await prisma.organisation.delete({ where: { id } });
   return NextResponse.json({ success: true });
 }

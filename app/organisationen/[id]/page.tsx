@@ -3,8 +3,7 @@ export const dynamic = "force-dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
-import { auth } from "@/auth";
+import { requireKampagne } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 import OrgDeleteButton from "@/components/OrgDeleteButton";
@@ -37,11 +36,8 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function OrganisationDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await auth();
-  const userId = session!.user!.id as string;
-  const role = (session!.user! as { role: string }).role;
-  const isDM = role === "DUNGEON_MASTER";
-  const isAdmin = role === "ADMIN";
+  const ctx = await requireKampagne();
+  const { userId, isDM, isAdmin } = ctx;
 
   const org = await prisma.organisation.findUnique({
     where: { id },
@@ -56,20 +52,19 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
     },
   });
   if (!org) notFound();
+  if (org.kampagneId && org.kampagneId !== ctx.kampagneId) notFound();
   if (org.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId)) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId);
-  const cookieStore = await cookies();
-  const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
 
   const [alleNPCs, alleCharaktere] = await Promise.all([
     prisma.nPC.findMany({
-      where: kampagneId ? { kampagneId } : {},
+      where: { kampagneId: ctx.kampagneId },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
     prisma.charakter.findMany({
-      where: kampagneId ? { kampagneId } : {},
+      where: { kampagneId: ctx.kampagneId },
       orderBy: { name: "asc" },
       select: { id: true, name: true, user: { select: { id: true, name: true } } },
     }),

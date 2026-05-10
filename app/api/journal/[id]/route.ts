@@ -1,26 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { requireKampagneApi } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 
-async function getEntry(id: string) {
-  return prisma.journalEntry.findUnique({ where: { id } });
+type Params = { params: Promise<{ id: string }> };
+
+async function loadAndAuthorize(id: string, ctx: { userId: string; isDM: boolean; isAdmin: boolean; kampagneId: string }) {
+  const entry = await prisma.journalEntry.findUnique({
+    where: { id },
+    select: { id: true, userId: true, kampagneId: true },
+  });
+  if (!entry) return { entry: null, error: NextResponse.json({ error: "Nicht gefunden." }, { status: 404 }) };
+  if (entry.kampagneId && entry.kampagneId !== ctx.kampagneId)
+    return { entry: null, error: NextResponse.json({ error: "Nicht gefunden." }, { status: 404 }) };
+  if (!ctx.isDM && !ctx.isAdmin && entry.userId !== ctx.userId)
+    return { entry: null, error: NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 }) };
+  return { entry, error: null as null };
 }
 
-function isPrivileged(role: string) {
-  return ["DUNGEON_MASTER", "ADMIN"].includes(role);
-}
-
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
+export async function PUT(req: NextRequest, { params }: Params) {
   const { id } = await params;
-  const userId = session.user!.id as string;
-  const role = (session.user as { role: string }).role;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const entry = await getEntry(id);
-  if (!entry) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
-  if (!isPrivileged(role) && entry.userId !== userId)
-    return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
+  const { entry, error } = await loadAndAuthorize(id, ctx);
+  if (error) return error;
+  void entry;
 
   const { titel, inhalt, tags } = await req.json();
   if (!inhalt?.trim()) return NextResponse.json({ error: "Inhalt darf nicht leer sein." }, { status: 400 });
@@ -47,17 +51,13 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   return NextResponse.json(updated);
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Nicht angemeldet." }, { status: 401 });
+export async function DELETE(_: NextRequest, { params }: Params) {
   const { id } = await params;
-  const userId = session.user!.id as string;
-  const role = (session.user as { role: string }).role;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const entry = await getEntry(id);
-  if (!entry) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
-  if (!isPrivileged(role) && entry.userId !== userId)
-    return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
+  const { error } = await loadAndAuthorize(id, ctx);
+  if (error) return error;
 
   await prisma.journalEntry.delete({ where: { id } });
   return NextResponse.json({ ok: true });
