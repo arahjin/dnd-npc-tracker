@@ -164,7 +164,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--dnd-gold)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2A2A2A"; }}
           >
-            ⚄ Würfeln
+            ⚄ Namen würfeln
           </button>
         </div>
       </div>
