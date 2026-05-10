@@ -7,6 +7,7 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user;
       const { pathname } = request.nextUrl;
       const isPublic =
+        pathname === "/" ||
         pathname.startsWith("/login") ||
         pathname.startsWith("/registrieren") ||
         pathname.startsWith("/setup") ||
