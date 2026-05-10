@@ -245,15 +245,9 @@ export default async function StartPage() {
             {isLoggedIn ? (
               <Link href="/npc" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>Zur App →</Link>
             ) : (
-              <>
-                <Link href="/login" className="font-cinzel text-xs tracking-widest uppercase"
-                  style={{ color: "rgba(255,255,255,0.6)", padding: "8px 16px", textDecoration: "none" }}>
-                  Anmelden
-                </Link>
-                <Link href="/registrieren" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
-                  Kostenlos starten
-                </Link>
-              </>
+              <Link href="/registrieren" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
+                Kostenlos starten
+              </Link>
             )}
           </nav>
         </div>
@@ -308,16 +302,9 @@ export default async function StartPage() {
               Zur App →
             </Link>
           ) : (
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: "8px" }}>
-              <Link href="/registrieren" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "13px 38px" }}>
-                Kostenlos starten
-              </Link>
-              <Link href="/login"
-                className="font-cinzel text-sm tracking-widest uppercase"
-                style={{ padding: "13px 24px", border: "1px solid var(--dnd-border)", color: "rgba(255,255,255,0.6)", textDecoration: "none" }}>
-                Anmelden
-              </Link>
-            </div>
+            <Link href="/registrieren" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "13px 38px", marginTop: "8px", display: "inline-block" }}>
+              Kostenlos starten
+            </Link>
           )}
         </div>
       </section>
