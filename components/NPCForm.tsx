@@ -414,7 +414,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
           style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
           {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "NPC ERSTELLEN"}
         </button>
-        <button type="button" onClick={() => id ? router.push(`/npc/${id}`) : router.push("/")}
+        <button type="button" onClick={() => router.push(id ? `/npc/${id}` : "/npc")}
           className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
           ABBRECHEN
