@@ -17,6 +17,13 @@
   --dnd-text-muted: #7A6A5A;
 }
 
+html {
+  /* Reserve the scrollbar gutter on every page so navigating between
+     tall (scrollable) and short (non-scrollable) routes doesn't shift
+     centered layouts horizontally by ~6px. */
+  scrollbar-gutter: stable;
+}
+
 body {
   background: var(--dnd-bg);
   color: var(--dnd-text);
