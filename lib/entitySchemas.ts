@@ -61,7 +61,7 @@ const orgBase = {
   name: z.string().trim().min(1, "Name erforderlich.").max(200),
   beschreibung: optStr(10000),
   typ: optEnum(ORGANISATION_TYP_OPTIONS),
-  region: optEnum(REGION_OPTIONS),
+  region: optStr(200),
   alignment: optEnum(ALIGNMENT_OPTIONS),
   beziehungZurGruppe: optStr(200),
   gottheit: optStr(100),
