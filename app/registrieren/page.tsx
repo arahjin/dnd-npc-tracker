@@ -49,7 +49,7 @@ function RegisterForm() {
       await fetch(`/api/kampagnen/${data.kampagneId}/aktiv`, { method: "POST" });
     }
 
-    router.push("/");
+    router.push("/npc");
     router.refresh();
   }
 

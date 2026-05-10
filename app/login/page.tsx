@@ -29,7 +29,7 @@ function LoginForm() {
     if (result?.error) {
       setError("E-Mail oder Passwort ungültig.");
     } else {
-      router.push("/");
+      router.push("/npc");
       router.refresh();
     }
   }

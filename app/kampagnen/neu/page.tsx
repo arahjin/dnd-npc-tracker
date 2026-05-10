@@ -32,7 +32,7 @@ export default function NewKampagnePage() {
     const kampagne = await res.json();
     // Set as active and go to home
     await fetch(`/api/kampagnen/${kampagne.id}/aktiv`, { method: "POST" });
-    router.push("/");
+    router.push("/npc");
     router.refresh();
   }
 

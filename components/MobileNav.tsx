@@ -16,7 +16,7 @@ type Props = {
 };
 
 const NAV = [
-  { href: "/",               label: "NPCs",           key: "npcs" },
+  { href: "/npc",            label: "NPCs",           key: "npcs" },
   { href: "/organisationen", label: "Organisationen", key: "organisationen" },
   { href: "/locations",      label: "Locations",      key: "locations" },
   { href: "/charaktere",     label: "Charaktere",     key: "charaktere" },
@@ -43,7 +43,7 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
     if (id === kampagneData?.aktiveId) { setOpen(false); return; }
     setSwitching(true);
     await fetch(`/api/kampagnen/${id}/aktiv`, { method: "POST" });
-    router.push("/");
+    router.push("/npc");
     router.refresh();
     setOpen(false);
     setSwitching(false);

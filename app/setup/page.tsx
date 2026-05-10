@@ -33,7 +33,7 @@ export default function SetupPage() {
       }
       setDone(true);
       await signIn("credentials", { email, password, redirect: false });
-      router.push("/");
+      router.push("/npc");
     } catch (err) {
       setError(`Netzwerkfehler: ${String(err)}`);
       setLoading(false);

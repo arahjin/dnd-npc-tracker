@@ -14,7 +14,7 @@ export default async function NewNPC() {
       <header style={{ background: "#0A0A0A", borderBottom: "1px solid #2A1A1A" }}>
         <div style={{ height: "3px", background: "linear-gradient(90deg, transparent, var(--dnd-red), var(--dnd-gold), var(--dnd-red), transparent)" }} />
         <div className="mx-auto max-w-2xl px-4 md:px-6 py-4">
-          <Link href="/" className="font-cinzel text-xs tracking-widest uppercase transition-colors"
+          <Link href="/npc" className="font-cinzel text-xs tracking-widest uppercase transition-colors"
             style={{ color: "var(--dnd-text-muted)" }}>
             ← Zurück
           </Link>

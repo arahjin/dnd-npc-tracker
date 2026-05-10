@@ -8,7 +8,7 @@ export default function DeleteButton({ id }: { id: string }) {
   async function handleDelete() {
     if (!confirm("NPC wirklich löschen?")) return;
     await fetch(`/api/npcs/${id}`, { method: "DELETE" });
-    router.push("/");
+    router.push("/npc");
     router.refresh();
   }
 

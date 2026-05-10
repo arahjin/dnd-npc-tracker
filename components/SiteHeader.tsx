@@ -79,7 +79,7 @@ export default async function SiteHeader({ active }: {
           style={{ display: "flex", alignItems: "stretch", height: "68px" }}>
 
           {/* Logo */}
-          <Link href="/start" style={{ display: "flex", alignItems: "center", marginRight: "8px", flexShrink: 0 }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", marginRight: "8px", flexShrink: 0 }}>
             <Image
               src="/lorehub_logo.png"
               alt="Lorehub"
@@ -91,7 +91,7 @@ export default async function SiteHeader({ active }: {
 
           {/* Desktop nav links — same row as logo */}
           <nav className="hidden md:flex" style={{ alignItems: "stretch" }}>
-            <Link href="/"               className={`ddb-nav-link${active === "npcs"           ? " ddb-nav-active" : ""}`}>NPCs</Link>
+            <Link href="/npc"             className={`ddb-nav-link${active === "npcs"           ? " ddb-nav-active" : ""}`}>NPCs</Link>
             <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen"  ? " ddb-nav-active" : ""}`}>Organisationen</Link>
             <Link href="/locations"      className={`ddb-nav-link${active === "locations"       ? " ddb-nav-active" : ""}`}>Locations</Link>
             <Link href="/charaktere"     className={`ddb-nav-link${active === "charaktere"      ? " ddb-nav-active" : ""}`}>Charaktere</Link>

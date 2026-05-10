@@ -53,7 +53,7 @@ export default async function SiteSettingsPage() {
         {/* Preview links */}
         <div className="mt-8 pt-6 flex flex-wrap gap-4" style={{ borderTop: "1px solid var(--dnd-border)" }}>
           <span className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-label)" }}>Vorschau:</span>
-          <a href="/start" target="_blank" className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-red-light)" }}>
+          <a href="/" target="_blank" className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-red-light)" }}>
             Startseite ↗
           </a>
           <a href="/impressum" target="_blank" className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-red-light)" }}>
