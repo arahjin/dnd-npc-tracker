@@ -222,7 +222,7 @@ export default function QuestForm({
           <select value={form.sichtbarkeit} onChange={(e) => set("sichtbarkeit", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
-            <option value="privat">Privat – nur DM/Admin</option>
+            <option value="privat">Privat – nur DM</option>
           </select>
         </div>
       </div>
@@ -283,7 +283,7 @@ export default function QuestForm({
       {canSeePrivate && (
         <div>
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-            GM-Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für DM/Admin sichtbar</span>
+            GM-Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für DM sichtbar</span>
           </label>
           <textarea
             value={form.gmNotes}
