@@ -65,6 +65,10 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
             {canManageInvites && menuItem("/dm/einladungen", "Einladungen verwalten")}
             {divider}
 
+            {/* Account */}
+            {menuItem("/konto", "Mein Konto")}
+            {divider}
+
             {/* Admin section */}
             {isAdmin && (
               <>

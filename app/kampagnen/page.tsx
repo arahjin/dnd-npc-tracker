@@ -9,6 +9,7 @@ type Kampagne = {
   name: string;
   beschreibung: string | null;
   isDM?: boolean;
+  isOwner?: boolean;
   _count: { mitglieder: number };
 };
 
@@ -135,9 +136,18 @@ export default function KampagnenPage() {
                       {k._count.mitglieder} {k._count.mitglieder === 1 ? "Mitglied" : "Mitglieder"}
                     </p>
                   </div>
-                  <button onClick={() => activate(k.id)} disabled={activating === k.id} className="ddb-cta shrink-0">
-                    {activating === k.id ? "..." : "Betreten →"}
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {k.isDM && (
+                      <a href="/kampagnen/verwalten"
+                        className="font-cinzel text-xs px-3 py-1.5 transition-colors"
+                        style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)", textDecoration: "none" }}>
+                        Verwalten
+                      </a>
+                    )}
+                    <button onClick={() => activate(k.id)} disabled={activating === k.id} className="ddb-cta shrink-0">
+                      {activating === k.id ? "..." : "Betreten →"}
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
