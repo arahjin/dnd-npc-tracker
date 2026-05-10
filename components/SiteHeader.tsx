@@ -3,14 +3,13 @@ import Image from "next/image";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import NavLinks from "./NavLinks";
 import NavSearch from "./NavSearch";
 import UserMenu from "./UserMenu";
 import KampagneSelector from "./KampagneSelector";
 import MobileNav from "./MobileNav";
 
-export default async function SiteHeader({ active }: {
-  active: "npcs" | "organisationen" | "locations" | "charaktere" | "geschichte" | "tagebuch" | "quests";
-}) {
+export default async function SiteHeader() {
   const session = await auth();
   const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
 
@@ -91,13 +90,7 @@ export default async function SiteHeader({ active }: {
 
           {/* Desktop nav links — same row as logo */}
           <nav className="hidden md:flex" style={{ alignItems: "stretch" }}>
-            <Link href="/npc"             className={`ddb-nav-link${active === "npcs"           ? " ddb-nav-active" : ""}`}>NPCs</Link>
-            <Link href="/organisationen" className={`ddb-nav-link${active === "organisationen"  ? " ddb-nav-active" : ""}`}>Organisationen</Link>
-            <Link href="/locations"      className={`ddb-nav-link${active === "locations"       ? " ddb-nav-active" : ""}`}>Locations</Link>
-            <Link href="/charaktere"     className={`ddb-nav-link${active === "charaktere"      ? " ddb-nav-active" : ""}`}>Charaktere</Link>
-            <Link href="/geschichte"     className={`ddb-nav-link${active === "geschichte"      ? " ddb-nav-active" : ""}`}>Geschichte</Link>
-            <Link href="/tagebuch"       className={`ddb-nav-link${active === "tagebuch"        ? " ddb-nav-active" : ""}`}>Tagebuch</Link>
-            <Link href="/quests"         className={`ddb-nav-link${active === "quests"          ? " ddb-nav-active" : ""}`}>Quests</Link>
+            <NavLinks />
           </nav>
 
           <div style={{ flex: 1 }} />
@@ -113,7 +106,6 @@ export default async function SiteHeader({ active }: {
           <div className="flex md:hidden" style={{ alignItems: "center", gap: "4px" }}>
             <NavSearch compact />
             <MobileNav
-              active={active}
               userName={user?.name ?? undefined}
               userRole={user?.role}
               isDM={isDMofActive}

@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { IconAdmin, IconSword, IconDice } from "@/components/Icons";
 
 type Kampagne = { id: string; name: string };
 
 type Props = {
-  active: "npcs" | "organisationen" | "locations" | "charaktere" | "geschichte" | "tagebuch" | "quests";
   userName?: string;
   userRole?: string;
   isDM?: boolean;
@@ -32,10 +31,11 @@ function RoleIcon({ role }: { role: string }) {
   return <IconDice {...p} />;
 }
 
-export default function MobileNav({ active, userName, userRole, isDM, kampagneData }: Props) {
+export default function MobileNav({ userName, userRole, isDM, kampagneData }: Props) {
   const [open, setOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
   const isAdmin = userRole === "ADMIN";
   const canManageInvites = isDM || isAdmin;
@@ -115,9 +115,9 @@ export default function MobileNav({ active, userName, userRole, isDM, kampagneDa
                     padding: "14px 20px",
                     fontSize: "0.75rem", letterSpacing: "0.14em", textTransform: "uppercase",
                     textDecoration: "none",
-                    color: active === item.key ? "#F5EDD6" : "#9A8A78",
-                    borderLeft: active === item.key ? "3px solid var(--dnd-red)" : "3px solid transparent",
-                    background: active === item.key ? "rgba(163,32,32,0.1)" : "transparent",
+                    color: pathname.startsWith(item.href) ? "#F5EDD6" : "#9A8A78",
+                    borderLeft: pathname.startsWith(item.href) ? "3px solid var(--dnd-red)" : "3px solid transparent",
+                    background: pathname.startsWith(item.href) ? "rgba(163,32,32,0.1)" : "transparent",
                   }}
                 >
                   {item.label}

@@ -9,16 +9,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  modal,
 }: Readonly<{
   children: React.ReactNode;
-  modal?: React.ReactNode;
 }>) {
   return (
     <html lang="de" className="h-full">
       <body className="min-h-full flex flex-col antialiased">
         {children}
-        {modal}
         <SiteFooter />
       </body>
     </html>
