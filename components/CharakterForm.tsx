@@ -68,7 +68,13 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
       ? await fetch(`/api/charaktere/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       : await fetch("/api/charaktere", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
 
-    if (!res.ok) { setError("Fehler beim Speichern."); setSaving(false); return; }
+    if (!res.ok) {
+      let msg = `Fehler ${res.status}`;
+      try { const j = await res.json(); msg = j.error ?? msg; } catch { /* ignore */ }
+      setError(msg);
+      setSaving(false);
+      return;
+    }
     const c = await res.json();
     if (id && onSuccess) { router.refresh(); onSuccess(); }
     else { router.push(`/charaktere/${c.id}`); router.refresh(); }
