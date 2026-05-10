@@ -65,8 +65,10 @@ export default function QuestObjectivesChecklist({ questId, initialObjectives, c
           <input
             type="checkbox"
             checked={obj.done}
+            disabled={!canEdit}
             onChange={() => toggleDone(obj)}
-            className="accent-red-700 w-4 h-4 shrink-0 cursor-pointer"
+            className="accent-red-700 w-4 h-4 shrink-0"
+            style={{ cursor: canEdit ? "pointer" : "not-allowed" }}
           />
           <span
             className="text-sm flex-1"
