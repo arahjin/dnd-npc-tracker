@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
+import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function GET(req: NextRequest) {
   const ctx = await requireKampagneApi();
@@ -31,6 +32,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
+
+  if (!(await checkPresetLimit(ctx.userId, "journal.create")))
+    return rateLimitResponse(RATE_LIMITS["journal.create"].windowSeconds);
 
   const { titel, inhalt, typ, tags } = await req.json();
 

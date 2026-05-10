@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
+import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function GET() {
   try {
@@ -24,6 +25,10 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const ctx = await requireKampagne();
+
+    if (!(await checkPresetLimit(ctx.userId, "location.create")))
+      return rateLimitResponse(RATE_LIMITS["location.create"].windowSeconds);
+
     const { name, art, land, region, population, klima, floraFauna, wissenswertes, sichtbarkeit, privateNotizen, npcIds = [], orgIds = [], charakterIds = [] } = await req.json();
 
     if (!name?.trim()) {

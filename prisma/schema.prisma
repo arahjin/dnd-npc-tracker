@@ -48,6 +48,7 @@ model User {
   erstellteOrganisationen Organisation[] @relation("erstellteOrganisationen")
   erstellteLocations      Location[]     @relation("erstellteLocations")
   bildGenerierungen       BildGenerierung[]
+  rateLimitEvents         RateLimitEvent[]
   erstellteQuests         Quest[]        @relation("erstellteQuests")
 }
 
@@ -59,6 +60,19 @@ model BildGenerierung {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+}
+
+// Generic rate-limit ledger. One row per state-changing API call.
+// Cleanup is opportunistic (purgeOldRateLimitEvents() in lib/rateLimit.ts).
+model RateLimitEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, action, createdAt])
+  @@index([createdAt])
 }
 
 model Invite {

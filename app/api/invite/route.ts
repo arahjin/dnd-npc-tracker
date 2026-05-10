@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
+import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
   if (!ctx.isDM) return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
+
+  if (!(await checkPresetLimit(ctx.userId, "invite.create")))
+    return rateLimitResponse(RATE_LIMITS["invite.create"].windowSeconds);
 
   const body = await req.json().catch(() => ({}));
   const inviteRole = body.role === "DUNGEON_MASTER" ? "DUNGEON_MASTER" : "SPIELER";

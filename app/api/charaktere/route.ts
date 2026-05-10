@@ -4,6 +4,7 @@ import { requireKampagneApi } from "@/lib/kampagne";
 import { charakterVisibilityWhere } from "@/lib/visibility";
 import { validateImageUrl } from "@/lib/imageUrl";
 import { charakterCreateSchema, parseOrError } from "@/lib/entitySchemas";
+import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function GET() {
   const ctx = await requireKampagneApi();
@@ -20,6 +21,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
+
+  if (!(await checkPresetLimit(ctx.userId, "charakter.create")))
+    return rateLimitResponse(RATE_LIMITS["charakter.create"].windowSeconds);
 
   const raw = await req.json();
   const parsed = parseOrError(charakterCreateSchema, raw);

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { organisationCreateSchema, parseOrError } from "@/lib/entitySchemas";
+import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function GET() {
   const ctx = await requireKampagneApi();
@@ -19,6 +20,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
+
+  if (!(await checkPresetLimit(ctx.userId, "organisation.create")))
+    return rateLimitResponse(RATE_LIMITS["organisation.create"].windowSeconds);
 
   const parsed = parseOrError(organisationCreateSchema, await req.json());
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });

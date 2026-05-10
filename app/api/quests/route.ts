@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { questCreateSchema } from "@/lib/questSchemas";
+import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  if (!(await checkPresetLimit(ctx.userId, "quest.create")))
+    return rateLimitResponse(RATE_LIMITS["quest.create"].windowSeconds);
 
   const parsed = questCreateSchema.safeParse(await req.json());
   if (!parsed.success) {

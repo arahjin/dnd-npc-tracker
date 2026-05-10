@@ -4,6 +4,7 @@ import { requireKampagneApi } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { validateImageUrl } from "@/lib/imageUrl";
 import { npcCreateSchema, parseOrError } from "@/lib/entitySchemas";
+import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function GET() {
   const ctx = await requireKampagneApi();
@@ -19,6 +20,9 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Keine Kampagne ausgewählt." }, { status: 401 });
+
+  if (!(await checkPresetLimit(ctx.userId, "npc.create")))
+    return rateLimitResponse(RATE_LIMITS["npc.create"].windowSeconds);
 
   const raw = await req.json();
   const parsed = parseOrError(npcCreateSchema, raw);
