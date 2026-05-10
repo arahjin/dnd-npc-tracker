@@ -245,9 +245,15 @@ export default async function StartPage() {
             {isLoggedIn ? (
               <Link href="/npc" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>Zur App →</Link>
             ) : (
-              <Link href="/registrieren" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
-                Kostenlos starten
-              </Link>
+              <>
+                <Link href="/login" className="font-cinzel text-xs tracking-widest uppercase"
+                  style={{ color: "rgba(255,255,255,0.6)", padding: "8px 16px", textDecoration: "none" }}>
+                  Anmelden
+                </Link>
+                <Link href="/registrieren" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
+                  Kostenlos starten
+                </Link>
+              </>
             )}
           </nav>
         </div>
