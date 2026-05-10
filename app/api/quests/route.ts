@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
+import { questCreateSchema } from "@/lib/questSchemas";
 
 export const dynamic = "force-dynamic";
 
@@ -26,25 +27,30 @@ export async function POST(req: NextRequest) {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await req.json();
-  if (!body.title?.trim()) return NextResponse.json({ error: "Titel erforderlich." }, { status: 400 });
-
+  const parsed = questCreateSchema.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Ungültige Eingabe.", issues: parsed.error.issues },
+      { status: 400 },
+    );
+  }
+  const body = parsed.data;
   const canSeeGmNotes = ctx.isDM || ctx.isAdmin;
 
   const quest = await prisma.quest.create({
     data: {
       kampagneId: ctx.kampagneId,
       erstellerId: ctx.userId,
-      title: body.title.trim(),
-      status: body.status ?? "Aktiv",
-      typ: body.typ ?? "Nebenquest",
-      prioritaet: body.prioritaet || null,
-      summary: body.summary?.trim() || null,
-      description: body.description?.trim() || null,
-      reward: body.reward?.trim() || null,
-      gmNotes: canSeeGmNotes ? (body.gmNotes?.trim() || null) : null,
-      deadline: body.deadline?.trim() || null,
-      sichtbarkeit: body.sichtbarkeit ?? "public",
+      title: body.title,
+      status: body.status,
+      typ: body.typ,
+      prioritaet: body.prioritaet ?? null,
+      summary: body.summary,
+      description: body.description,
+      reward: body.reward,
+      gmNotes: canSeeGmNotes ? body.gmNotes : null,
+      deadline: body.deadline,
+      sichtbarkeit: body.sichtbarkeit,
     },
   });
   return NextResponse.json(quest, { status: 201 });
