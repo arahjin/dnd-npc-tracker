@@ -9,6 +9,7 @@ const envSchema = z.object({
   RESEND_FROM: z.string().optional(),
   OPENAI_API_KEY: z.string().optional(),
   BLOB_READ_WRITE_TOKEN: z.string().optional(),
+  CRON_SECRET: z.string().optional(),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
