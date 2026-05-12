@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import NPCModal from "./NPCModal";
+import dynamic from "next/dynamic";
+
+const NPCModal = dynamic(() => import("./NPCModal"));
 
 type OrgMembership = { organisationId: string; rolle: string };
 
@@ -33,17 +35,19 @@ export default function NPCEditButton({ id, name, availableOrgs, initialOrgs, av
         Bearbeiten
       </button>
 
-      <NPCModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title={`${name} bearbeiten`}
-        id={id}
-        availableOrgs={availableOrgs}
-        initialOrgs={initialOrgs}
-        availableLocations={availableLocations}
-        initial={initial}
-        canSeePrivate={canSeePrivate}
-      />
+      {open && (
+        <NPCModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          title={`${name} bearbeiten`}
+          id={id}
+          availableOrgs={availableOrgs}
+          initialOrgs={initialOrgs}
+          availableLocations={availableLocations}
+          initial={initial}
+          canSeePrivate={canSeePrivate}
+        />
+      )}
     </>
   );
 }

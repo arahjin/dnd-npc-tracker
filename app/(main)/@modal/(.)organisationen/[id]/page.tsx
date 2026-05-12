@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -41,25 +42,33 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
   const isDM = role === "DUNGEON_MASTER";
   const isAdmin = role === "ADMIN";
 
-  const org = await prisma.organisation.findUnique({
-    where: { id },
-    include: {
-      mitglieder: { include: { npc: true }, orderBy: { npc: { name: "asc" } } },
-      charakterMitglieder: {
-        include: { charakter: { include: { user: { select: { id: true, name: true } } } } },
-        orderBy: { charakter: { name: "asc" } },
+  const cookieStore = await cookies();
+  const kampagneId = cookieStore.get("aktiveKampagne")?.value;
+
+  const [org, alleNPCs, alleCharaktere] = await Promise.all([
+    prisma.organisation.findUnique({
+      where: { id },
+      include: {
+        mitglieder: { include: { npc: true }, orderBy: { npc: { name: "asc" } } },
+        charakterMitglieder: {
+          include: { charakter: { include: { user: { select: { id: true, name: true } } } } },
+          orderBy: { charakter: { name: "asc" } },
+        },
+        locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
       },
-      locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
-    },
-  });
+    }),
+    kampagneId
+      ? prisma.nPC.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
+      : Promise.resolve([]),
+    kampagneId
+      ? prisma.charakter.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true, user: { select: { id: true, name: true } } } })
+      : Promise.resolve([]),
+  ]);
   if (!org) notFound();
   if (org.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId)) notFound();
+  if (kampagneId && org.kampagneId !== kampagneId) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId);
-  const [alleNPCs, alleCharaktere] = await Promise.all([
-    prisma.nPC.findMany({ where: { kampagneId: org.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.charakter.findMany({ where: { kampagneId: org.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true, user: { select: { id: true, name: true } } } }),
-  ]);
   const alignColors = org.alignment ? (ALIGNMENT_COLORS[org.alignment] ?? ALIGNMENT_COLORS["Wahrhaft Neutral"]) : null;
 
   return (

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import NPCModal from "./NPCModal";
+import dynamic from "next/dynamic";
+
+const NPCModal = dynamic(() => import("./NPCModal"));
 
 type Props = {
   availableOrgs: { id: string; name: string }[];
@@ -20,13 +22,15 @@ export default function NPCCreateButton({ availableOrgs, availableLocations = []
         + NPC
       </button>
 
-      <NPCModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Neuen NPC erstellen"
-        availableOrgs={availableOrgs}
-        availableLocations={availableLocations}
-      />
+      {open && (
+        <NPCModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          title="Neuen NPC erstellen"
+          availableOrgs={availableOrgs}
+          availableLocations={availableLocations}
+        />
+      )}
     </>
   );
 }

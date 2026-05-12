@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import QuestModal from "./QuestModal";
+import dynamic from "next/dynamic";
+
+const QuestModal = dynamic(() => import("./QuestModal"));
 
 export default function QuestCreateButton() {
   const [open, setOpen] = useState(false);
@@ -11,7 +13,6 @@ export default function QuestCreateButton() {
       <button onClick={() => setOpen(true)} className="ddb-cta">
         + Quest
       </button>
-      {/* Mounted only when open → relations API fetched lazily on first click */}
       {open && (
         <QuestModal
           isOpen={open}

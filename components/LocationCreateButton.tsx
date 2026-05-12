@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import LocationModal from "./LocationModal";
+import dynamic from "next/dynamic";
+
+const LocationModal = dynamic(() => import("./LocationModal"));
 
 type LinkedItem = { id: string; name: string };
 
@@ -19,14 +21,16 @@ export default function LocationCreateButton({ availableNpcs = [], availableOrgs
       <button onClick={() => setOpen(true)} className="ddb-cta">
         + Location
       </button>
-      <LocationModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Neue Location erstellen"
-        availableNpcs={availableNpcs}
-        availableOrgs={availableOrgs}
-        availableChars={availableChars}
-      />
+      {open && (
+        <LocationModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          title="Neue Location erstellen"
+          availableNpcs={availableNpcs}
+          availableOrgs={availableOrgs}
+          availableChars={availableChars}
+        />
+      )}
     </>
   );
 }

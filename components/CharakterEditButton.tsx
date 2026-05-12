@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import CharakterModal from "./CharakterModal";
+import dynamic from "next/dynamic";
+
+const CharakterModal = dynamic(() => import("./CharakterModal"));
 
 type OrgMembership = { organisationId: string; rolle: string };
 
@@ -27,10 +29,12 @@ export default function CharakterEditButton({ id, name, availableOrgs, initialOr
         style={{ background: "transparent", borderColor: "var(--dnd-gold)", color: "var(--dnd-gold)" }}>
         Bearbeiten
       </button>
-      <CharakterModal isOpen={open} onClose={() => setOpen(false)}
-        title={`${name} bearbeiten`} id={id}
-        availableOrgs={availableOrgs} initialOrgs={initialOrgs}
-        availableLocations={availableLocations} initial={initial} canSeePrivate={canSeePrivate} />
+      {open && (
+        <CharakterModal isOpen={open} onClose={() => setOpen(false)}
+          title={`${name} bearbeiten`} id={id}
+          availableOrgs={availableOrgs} initialOrgs={initialOrgs}
+          availableLocations={availableLocations} initial={initial} canSeePrivate={canSeePrivate} />
+      )}
     </>
   );
 }

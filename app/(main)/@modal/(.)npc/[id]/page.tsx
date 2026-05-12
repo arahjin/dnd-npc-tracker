@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -51,22 +52,29 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
   const isDM = role === "DUNGEON_MASTER";
   const isAdmin = role === "ADMIN";
 
-  const npc = await prisma.nPC.findUnique({
-    where: { id },
-    include: {
-      organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
-      locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
-    },
-  });
+  const cookieStore = await cookies();
+  const kampagneId = cookieStore.get("aktiveKampagne")?.value;
+
+  const [npc, orgs, locations] = await Promise.all([
+    prisma.nPC.findUnique({
+      where: { id },
+      include: {
+        organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
+        locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
+      },
+    }),
+    kampagneId
+      ? prisma.organisation.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
+      : Promise.resolve([]),
+    kampagneId
+      ? prisma.location.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
+      : Promise.resolve([]),
+  ]);
   if (!npc) notFound();
   if (npc.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId)) notFound();
+  if (kampagneId && npc.kampagneId !== kampagneId) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId);
-
-  const [orgs, locations] = await Promise.all([
-    prisma.organisation.findMany({ where: { kampagneId: npc.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.location.findMany({ where: { kampagneId: npc.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-  ]);
 
   return (
     <DetailModal>

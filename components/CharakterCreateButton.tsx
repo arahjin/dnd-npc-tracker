@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import CharakterModal from "./CharakterModal";
+import dynamic from "next/dynamic";
+
+const CharakterModal = dynamic(() => import("./CharakterModal"));
 
 type Props = {
   availableOrgs?: { id: string; name: string }[];
@@ -16,13 +18,15 @@ export default function CharakterCreateButton({ availableOrgs = [], availableLoc
       <button onClick={() => setOpen(true)} className="ddb-cta">
         + Charakter
       </button>
-      <CharakterModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        title="Neuen Charakter erstellen"
-        availableOrgs={availableOrgs}
-        availableLocations={availableLocations}
-      />
+      {open && (
+        <CharakterModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          title="Neuen Charakter erstellen"
+          availableOrgs={availableOrgs}
+          availableLocations={availableLocations}
+        />
+      )}
     </>
   );
 }
