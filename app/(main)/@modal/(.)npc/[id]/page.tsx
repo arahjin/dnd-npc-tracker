@@ -64,8 +64,8 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId);
 
   const [orgs, locations] = await Promise.all([
-    prisma.organisation.findMany({ where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.location.findMany({ where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({ where: { kampagneId: npc.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: { kampagneId: npc.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
 
   return (

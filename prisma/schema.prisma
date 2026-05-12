@@ -121,8 +121,8 @@ model KampagneMitglied {
 
 model NPC {
   id               String            @id @default(cuid())
-  kampagneId       String?
-  kampagne         Kampagne?         @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  kampagneId       String
+  kampagne         Kampagne          @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
   name             String
   image            String?
   status           String            @default("Unbekannt")
@@ -151,8 +151,8 @@ model NPC {
 
 model Organisation {
   id                  String                  @id @default(cuid())
-  kampagneId          String?
-  kampagne            Kampagne?               @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  kampagneId          String
+  kampagne            Kampagne                @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
   name                String
   beschreibung        String?
   typ                 String?
@@ -189,8 +189,8 @@ model NPCOrganisation {
 
 model Charakter {
   id               String                  @id @default(cuid())
-  kampagneId       String?
-  kampagne         Kampagne?               @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  kampagneId       String
+  kampagne         Kampagne                @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
   userId           String
   user             User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   name             String
@@ -260,8 +260,8 @@ model Location {
 
 model JournalEntry {
   id         String       @id @default(cuid())
-  kampagneId String?
-  kampagne   Kampagne?    @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  kampagneId String
+  kampagne   Kampagne     @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
   userId     String
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   typ        JournalTyp

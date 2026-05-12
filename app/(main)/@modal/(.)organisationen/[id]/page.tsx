@@ -57,8 +57,8 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId);
   const [alleNPCs, alleCharaktere] = await Promise.all([
-    prisma.nPC.findMany({ where: org.kampagneId ? { kampagneId: org.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.charakter.findMany({ where: org.kampagneId ? { kampagneId: org.kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true, user: { select: { id: true, name: true } } } }),
+    prisma.nPC.findMany({ where: { kampagneId: org.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.charakter.findMany({ where: { kampagneId: org.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true, user: { select: { id: true, name: true } } } }),
   ]);
   const alignColors = org.alignment ? (ALIGNMENT_COLORS[org.alignment] ?? ALIGNMENT_COLORS["Wahrhaft Neutral"]) : null;
 

@@ -18,7 +18,7 @@ export default async function EditOrganisation({ params }: { params: Promise<{ i
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, org.erstellerId);
 
   const locations = await prisma.location.findMany({
-    where: org.kampagneId ? { kampagneId: org.kampagneId } : {},
+    where: { kampagneId: org.kampagneId },
     orderBy: { name: "asc" },
     select: { id: true, name: true },
   });

@@ -12,7 +12,7 @@ export default async function EditNPC({ params }: { params: Promise<{ id: string
   if (!npc) notFound();
 
   const locations = await prisma.location.findMany({
-    where: npc.kampagneId ? { kampagneId: npc.kampagneId } : {},
+    where: { kampagneId: npc.kampagneId },
     orderBy: { name: "asc" },
     select: { id: true, name: true },
   });

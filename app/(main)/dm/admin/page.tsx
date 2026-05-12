@@ -1,5 +1,4 @@
 ﻿import Link from "next/link";
-import MigrationButton from "./MigrationButton";
 
 export default function AdminPage() {
   return (
@@ -12,19 +11,6 @@ export default function AdminPage() {
           <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
           <span style={{ color: "var(--dnd-red)" }}>✦</span>
         </div>
-
-        <section className="p-5 mb-6" style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
-          <div style={{ height: "2px", marginBottom: "1rem", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
-          <h2 className="font-cinzel text-sm font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>
-            Kampagnen-Migration
-          </h2>
-          <p className="text-sm mb-4" style={{ color: "var(--dnd-text-muted)" }}>
-            Weist alle bestehenden NPCs, Organisationen, Charaktere und Journal-Einträge
-            einer „Standard-Kampagne" zu und fügt alle User als Mitglieder hinzu.
-            Kann bedenkenlos mehrfach ausgeführt werden.
-          </p>
-          <MigrationButton />
-        </section>
 
         <section className="p-5 mb-6" style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
           <div style={{ height: "2px", marginBottom: "1rem", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
