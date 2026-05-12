@@ -16,6 +16,7 @@ export const authConfig = {
         pathname.startsWith("/impressum") ||
         pathname.startsWith("/datenschutz") ||
         pathname.startsWith("/start") ||
+        pathname.startsWith("/einladen") ||
         pathname.startsWith("/api/setup") ||
         pathname.startsWith("/api/registrieren") ||
         pathname.startsWith("/api/invite/check") ||

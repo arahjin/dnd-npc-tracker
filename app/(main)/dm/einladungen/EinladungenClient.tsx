@@ -1,14 +1,116 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 type Invite = { id: string; token: string; usedById: string | null; role: string; createdAt: string };
+type PermanentInvite = { token: string; createdAt: string } | null;
 
 const ROLE_LABEL: Record<string, string> = {
   SPIELER: "Spieler",
   DUNGEON_MASTER: "Dungeon Master",
   ADMIN: "Admin",
 };
+
+// ── Permanent link panel ──────────────────────────────────────────────────────
+
+function PermanentInvitePanel() {
+  const [invite, setInvite] = useState<PermanentInvite>(undefined as unknown as PermanentInvite);
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const load = useCallback(async () => {
+    const res = await fetch("/api/invite/permanent");
+    setInvite(res.ok ? await res.json() : null);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  function inviteUrl(token: string) {
+    return `${window.location.origin}/einladen/${token}`;
+  }
+
+  function copy(url: string) {
+    navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function generate() {
+    setLoading(true);
+    await fetch("/api/invite/permanent", { method: "POST" });
+    await load();
+    setLoading(false);
+  }
+
+  async function deactivate() {
+    setLoading(true);
+    await fetch("/api/invite/permanent", { method: "DELETE" });
+    await load();
+    setLoading(false);
+  }
+
+  // Still loading initial state
+  if (invite === undefined) return null;
+
+  return (
+    <div className="mb-10">
+      <h2 className="font-cinzel text-lg font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>
+        Dauerhafter Einladungslink
+      </h2>
+      <p className="text-sm mb-4" style={{ color: "var(--dnd-text-muted)" }}>
+        Dieser Link bleibt gültig, bis du ihn deaktivierst. Alle, die ihn öffnen, treten als Spieler bei.
+      </p>
+
+      <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
+        <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
+        <div className="px-4 py-4">
+          {invite ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <code
+                  className="flex-1 min-w-0 block text-sm px-3 py-2 truncate"
+                  style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-gold)", fontFamily: "monospace" }}>
+                  {inviteUrl(invite.token)}
+                </code>
+                <button
+                  onClick={() => copy(inviteUrl(invite.token))}
+                  className="ddb-cta shrink-0"
+                  style={{ padding: "6px 14px", fontSize: "0.65rem" }}>
+                  {copied ? "✓ KOPIERT" : "KOPIEREN"}
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={generate}
+                  disabled={loading}
+                  className="font-cinzel text-xs tracking-widest px-3 py-1.5 transition-all disabled:opacity-40"
+                  style={{ border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>
+                  ↺ NEU GENERIEREN
+                </button>
+                <button
+                  onClick={deactivate}
+                  disabled={loading}
+                  className="font-cinzel text-xs tracking-widest px-3 py-1.5 transition-all disabled:opacity-40"
+                  style={{ border: "1px solid #7F1D1D", color: "#F87171" }}>
+                  ✕ DEAKTIVIEREN
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={generate}
+              disabled={loading}
+              className="ddb-cta disabled:opacity-50">
+              {loading ? "…" : "+ Link generieren"}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── One-time invite panel ─────────────────────────────────────────────────────
 
 export default function EinladungenClient() {
   const [invites, setInvites] = useState<Invite[]>([]);
@@ -52,9 +154,16 @@ export default function EinladungenClient() {
           <div className="h-px w-40" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
           <span style={{ color: "var(--dnd-red)" }}>✦</span>
         </div>
-        <p className="mt-3 text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-          Generiere Einladungen für diese Kampagne. Jede Einladung kann einmal verwendet werden —
-          entweder zur Neuregistrierung oder zum Beitreten für bestehende Nutzer.
+      </div>
+
+      <PermanentInvitePanel />
+
+      <div className="mb-6">
+        <h2 className="font-cinzel text-lg font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>
+          Einmalige Einladungen
+        </h2>
+        <p className="text-sm mb-4" style={{ color: "var(--dnd-text-muted)" }}>
+          Jede Einladung kann einmal verwendet werden — zur Neuregistrierung oder zum Beitreten für bestehende Nutzer.
         </p>
       </div>
 

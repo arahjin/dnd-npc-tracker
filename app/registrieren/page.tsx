@@ -11,6 +11,7 @@ function RegisterForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token") ?? "";
+  const returnTo = searchParams.get("returnTo") ?? "";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -56,7 +57,7 @@ function RegisterForm() {
       await fetch(`/api/kampagnen/${data.kampagneId}/aktiv`, { method: "POST" });
     }
 
-    router.push("/npc");
+    router.push(returnTo || "/npc");
     router.refresh();
   }
 

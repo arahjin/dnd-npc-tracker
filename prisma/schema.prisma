@@ -89,13 +89,17 @@ model RateLimitEvent {
 }
 
 model Invite {
-  id         String    @id @default(cuid())
-  token      String    @unique @default(cuid())
-  usedById   String?
-  role       Role      @default(SPIELER)
-  kampagneId String?
-  kampagne   Kampagne? @relation(fields: [kampagneId], references: [id], onDelete: SetNull)
-  createdAt  DateTime  @default(now())
+  id          String    @id @default(cuid())
+  token       String    @unique @default(cuid())
+  usedById    String?
+  role        Role      @default(SPIELER)
+  kampagneId  String?
+  kampagne    Kampagne? @relation(fields: [kampagneId], references: [id], onDelete: SetNull)
+  isPermanent Boolean   @default(false)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  @@index([kampagneId, isPermanent, active])
 }
 
 // ─── Kampagnen ───────────────────────────────────────────
