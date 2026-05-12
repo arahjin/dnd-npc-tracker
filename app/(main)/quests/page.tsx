@@ -2,29 +2,13 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import QuestCreateButton from "@/components/QuestCreateButton";
-import QuestCard from "@/components/QuestCard";
-
-const STATUS_COLORS: Record<string, string> = {
-  Aktiv:          "#4ADE80",
-  Abgeschlossen:  "#60A5FA",
-  Gescheitert:    "#F87171",
-  Pausiert:       "#FCD34D",
-  Unbekannt:      "#9CA3AF",
-};
-
-const PRIORITAET_COLORS: Record<string, string> = {
-  Hoch:    "var(--dnd-red)",
-  Mittel:  "var(--dnd-gold)",
-  Niedrig: "#9CA3AF",
-};
+import QuestGrid from "@/components/QuestGrid";
 
 export default async function QuestsPage() {
   const ctx = await requireKampagne();
 
-  const where = { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) };
-
   const quests = await prisma.quest.findMany({
-    where,
+    where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
     orderBy: { createdAt: "desc" },
     include: { objectives: { orderBy: { order: "asc" } } },
   });
@@ -46,26 +30,7 @@ export default async function QuestsPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {quests.map((quest) => {
-              const statusColor = STATUS_COLORS[quest.status] ?? STATUS_COLORS["Unbekannt"];
-              const prioritaetColor = quest.prioritaet ? PRIORITAET_COLORS[quest.prioritaet] : null;
-              return (
-                <QuestCard
-                  key={quest.id}
-                  id={quest.id}
-                  title={quest.title}
-                  status={quest.status}
-                  typ={quest.typ}
-                  prioritaet={quest.prioritaet}
-                  summary={quest.summary}
-                  objectives={quest.objectives}
-                  statusColor={statusColor}
-                  prioritaetColor={prioritaetColor}
-                />
-              );
-            })}
-          </div>
+          <QuestGrid quests={quests} />
         )}
       </div>
       <footer className="mt-auto py-6 text-center">
