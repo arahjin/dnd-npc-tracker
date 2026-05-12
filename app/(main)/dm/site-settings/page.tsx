@@ -1,15 +1,12 @@
-﻿import { auth } from "@/auth";
+import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import SiteSettingsForm from "./SiteSettingsForm";
 
-export const dynamic = "force-dynamic";
-
 export default async function SiteSettingsPage() {
   const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  if (role !== "ADMIN") redirect("/");
+  if (session?.user.role !== "ADMIN") redirect("/");
 
   const raw = await prisma.siteSettings.findUnique({ where: { id: "singleton" } });
   const initial = {

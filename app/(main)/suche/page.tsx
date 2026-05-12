@@ -1,11 +1,9 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { stripMentions } from "@/lib/mentions";
 import { IconPerson, IconOrganisation, IconSword, IconDice, IconPin, IconSearch } from "@/components/Icons";
-
-export const dynamic = "force-dynamic";
 
 function TagIcon({ typ }: { typ: string }) {
   const p = { size: 11 };

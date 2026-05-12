@@ -13,8 +13,7 @@ import { prisma } from "@/lib/prisma";
  */
 export async function POST(req: NextRequest) {
   const session = await auth();
-  const role = (session?.user as { role?: string })?.role ?? "";
-  if (!session || role !== "ADMIN")
+  if (!session || session.user.role !== "ADMIN")
     return NextResponse.json({ error: "Nur Admins." }, { status: 403 });
 
   let dryRun = false;
@@ -74,23 +73,22 @@ export async function POST(req: NextRequest) {
     prisma.journalEntry.updateMany({ where: { kampagneId: null }, data: { kampagneId } }),
   ]);
 
-  const allUsers = await prisma.user.findMany({ select: { id: true, role: true } });
-  let addedMembers = 0;
-  for (const user of allUsers) {
-    const already = await prisma.kampagneMitglied.findUnique({
-      where: { kampagneId_userId: { kampagneId, userId: user.id } },
-    });
-    if (!already) {
-      await prisma.kampagneMitglied.create({
-        data: {
-          kampagneId,
-          userId: user.id,
-          isDM: user.role === "DUNGEON_MASTER" || user.role === "ADMIN",
-        },
-      });
-      addedMembers++;
-    }
+  const [allUsers, existingMembers] = await Promise.all([
+    prisma.user.findMany({ select: { id: true, role: true } }),
+    prisma.kampagneMitglied.findMany({ where: { kampagneId }, select: { userId: true } }),
+  ]);
+  const existing = new Set(existingMembers.map((m) => m.userId));
+  const newMembers = allUsers
+    .filter((u) => !existing.has(u.id))
+    .map((u) => ({
+      kampagneId,
+      userId: u.id,
+      isDM: u.role === "DUNGEON_MASTER" || u.role === "ADMIN",
+    }));
+  if (newMembers.length > 0) {
+    await prisma.kampagneMitglied.createMany({ data: newMembers });
   }
+  const addedMembers = newMembers.length;
 
   return NextResponse.json({
     ok: true,

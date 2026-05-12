@@ -14,9 +14,8 @@ export type KampagneCtx = {
 /** Use in Server Components / Pages. Redirects to /kampagnen if no valid campaign. */
 export async function requireKampagne(): Promise<KampagneCtx> {
   const session = await auth();
-  const userId = session!.user!.id as string;
-  const role = (session!.user! as { role: string }).role;
-  const isAdmin = role === "ADMIN";
+  const userId = session!.user.id;
+  const isAdmin = session!.user.role === "ADMIN";
 
   const cookieStore = await cookies();
   const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? null;
@@ -52,9 +51,8 @@ export async function requireKampagneApi(): Promise<KampagneCtx | null> {
   const session = await auth();
   if (!session?.user) return null;
 
-  const userId = session.user.id as string;
-  const role = (session.user as { role: string }).role;
-  const isAdmin = role === "ADMIN";
+  const userId = session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
 
   const cookieStore = await cookies();
   const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? null;

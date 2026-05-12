@@ -3,8 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { visibilityWhere, charakterVisibilityWhere } from "@/lib/visibility";
 
-export const dynamic = "force-dynamic";
-
 /**
  * Lightweight bundle of selectable entities for the active campaign,
  * used to populate Quest form multi-selects. Lazy-fetched from QuestForm.

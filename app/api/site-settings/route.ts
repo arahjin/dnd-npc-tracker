@@ -23,8 +23,7 @@ export async function GET() {
 
 export async function PATCH(req: NextRequest) {
   const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-  if (role !== "ADMIN") {
+  if (session?.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Nicht autorisiert" }, { status: 403 });
   }
 

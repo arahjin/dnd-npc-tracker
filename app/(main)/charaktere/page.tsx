@@ -1,12 +1,10 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { charakterVisibilityWhere } from "@/lib/visibility";
 import { IconPin } from "@/components/Icons";
 import CharakterCreateButton from "@/components/CharakterCreateButton";
-
-export const dynamic = "force-dynamic";
 
 const STATUS_COLORS: Record<string, string> = {
   Lebendig: "#4ADE80", Tot: "#F87171", Vermisst: "#FCD34D", Unbekannt: "#9CA3AF",

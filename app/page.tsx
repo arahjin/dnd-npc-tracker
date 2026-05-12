@@ -3,8 +3,6 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
-
 export const metadata = {
   title: "Lorehub – Dein digitales Kampagnen-Archiv für Pen & Paper",
   description:

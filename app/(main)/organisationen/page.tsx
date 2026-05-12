@@ -1,12 +1,10 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { stripMentions } from "@/lib/mentions";
 import { IconOrganisation, IconPin } from "@/components/Icons";
 import OrgCreateButton from "@/components/OrgCreateButton";
-
-export const dynamic = "force-dynamic";
 
 const ALIGNMENT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   "Rechtschaffen Gut":    { bg: "#0A1020", text: "#60A5FA", border: "#1E3A8A" },

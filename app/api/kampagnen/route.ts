@@ -2,16 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
-
 // GET — list campaigns the current user belongs to
 export async function GET() {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const userId = session.user.id as string;
-  const role = (session.user as { role: string }).role;
-  const isAdmin = role === "ADMIN";
+  const userId = session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
 
   if (isAdmin) {
     const kampagnen = await prisma.kampagne.findMany({

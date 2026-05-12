@@ -9,8 +9,6 @@ import CharakterDeleteButton from "@/components/CharakterDeleteButton";
 import RenderMentions from "@/components/RenderMentions";
 import { IconLock } from "@/components/Icons";
 
-export const dynamic = "force-dynamic";
-
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (

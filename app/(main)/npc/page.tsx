@@ -1,10 +1,8 @@
-﻿import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import NPCGrid from "@/components/NPCGrid";
 import NPCCreateButton from "@/components/NPCCreateButton";
-
-export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const ctx = await requireKampagne();

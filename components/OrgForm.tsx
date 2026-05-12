@@ -51,7 +51,13 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
     const res = id
       ? await fetch(`/api/organisationen/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       : await fetch("/api/organisationen", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    if (!res.ok) { setError("Fehler beim Speichern."); setSaving(false); return; }
+    if (!res.ok) {
+      let msg = `Fehler ${res.status}`;
+      try { const j = await res.json(); msg = j.error ?? msg; } catch { /* ignore */ }
+      setError(msg);
+      setSaving(false);
+      return;
+    }
     const org = await res.json();
     if (onSuccess) { router.refresh(); onSuccess(); }
     else { window.location.href = `/organisationen/${org.id}`; }

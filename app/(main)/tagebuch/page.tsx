@@ -1,8 +1,6 @@
-﻿import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import JournalView from "@/components/JournalView";
-
-export const dynamic = "force-dynamic";
 
 export default async function TagebuchPage() {
   const ctx = await requireKampagne();

@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
-export const dynamic = "force-dynamic";
-
 // DELETE — delete campaign (only campaign owner or Admin).
 // Body must contain { confirmName: <exact campaign name> } as a destructive-action guard.
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -11,9 +9,8 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const userId = session.user.id as string;
-  const role = (session.user as { role: string }).role;
-  const isAdmin = role === "ADMIN";
+  const userId = session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
 
   const kampagne = await prisma.kampagne.findUnique({
     where: { id },

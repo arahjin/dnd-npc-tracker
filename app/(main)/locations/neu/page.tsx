@@ -1,5 +1,3 @@
-﻿export const dynamic = "force-dynamic";
-
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import LocationForm from "@/components/LocationForm";

@@ -6,7 +6,7 @@ import { authConfig } from "./auth.config";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
-  trustHost: true, // accept requests from lorehub.io and any configured host
+  trustHost: true,
   providers: [
     Credentials({
       credentials: {
@@ -31,16 +31,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = (user as { role: string }).role;
-        token.emailVerified = (user as { emailVerified: boolean }).emailVerified ?? true;
+        token.id = user.id as string;
+        token.role = user.role;
+        // NextAuth's User.emailVerified is typed as Date; ours is a boolean column.
+        token.emailVerified = Boolean(user.emailVerified ?? true);
       }
       return token;
     },
     session({ session, token }) {
-      session.user.id = token.id as string;
-      (session.user as unknown as { role: string }).role = token.role as string;
-      (session.user as unknown as { emailVerified: boolean }).emailVerified = token.emailVerified as boolean ?? true;
+      session.user.id = token.id;
+      session.user.role = token.role;
+      (session.user as { emailVerified: boolean }).emailVerified = token.emailVerified ?? true;
       return session;
     },
   },

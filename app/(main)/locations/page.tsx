@@ -1,12 +1,10 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { stripMentions } from "@/lib/mentions";
 import { LocationArtIcon, IconPin, IconMap, IconGlobe, IconPeople } from "@/components/Icons";
 import LocationCreateButton from "@/components/LocationCreateButton";
-
-export const dynamic = "force-dynamic";
 
 export default async function LocationsPage() {
   const ctx = await requireKampagne();

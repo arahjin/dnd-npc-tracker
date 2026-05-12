@@ -10,8 +10,8 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const userId = session.user.id as string;
-  const isAdmin = (session.user as { role: string }).role === "ADMIN";
+  const userId = session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
 
   if (!isAdmin) {
     const self = await prisma.kampagneMitglied.findUnique({
@@ -36,8 +36,8 @@ export async function DELETE(req: NextRequest, { params }: Params) {
   const session = await auth();
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const requesterId = session.user.id as string;
-  const isAdmin = (session.user as { role: string }).role === "ADMIN";
+  const requesterId = session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
   const { userId: targetUserId } = await req.json();
 
   if (!targetUserId) return NextResponse.json({ error: "userId erforderlich." }, { status: 400 });

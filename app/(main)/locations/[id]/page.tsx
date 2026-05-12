@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
@@ -55,8 +53,8 @@ function LinkedList({ items, baseHref }: { items: { id: string; name: string }[]
 export default async function LocationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
-  const userId = session!.user!.id as string;
-  const role = (session!.user! as { role: string }).role;
+  const userId = session!.user.id;
+  const role = session!.user.role;
   const isDM = role === "DUNGEON_MASTER";
   const isAdmin = role === "ADMIN";
 

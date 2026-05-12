@@ -7,8 +7,6 @@ import { IconLock, IconScroll } from "@/components/Icons";
 import QuestObjectivesChecklist from "@/components/QuestObjectivesChecklist";
 import QuestDeleteButton from "@/components/QuestDeleteButton";
 
-export const dynamic = "force-dynamic";
-
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   Aktiv:         { bg: "#0D2010", text: "#4ADE80", border: "#166534" },
   Abgeschlossen: { bg: "#0A1020", text: "#60A5FA", border: "#1E3A8A" },

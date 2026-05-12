@@ -1,5 +1,3 @@
-﻿export const dynamic = "force-dynamic";
-
 import OrgForm from "@/components/OrgForm";
 import { requireKampagne } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";

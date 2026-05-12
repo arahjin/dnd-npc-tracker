@@ -11,7 +11,7 @@ import MobileNav from "./MobileNav";
 
 export default async function SiteHeader() {
   const session = await auth();
-  const user = session?.user as { name?: string | null; role?: string; id?: string } | undefined;
+  const user = session?.user;
 
   let kampagneSelector: React.ReactNode = null;
   let isDMofActive = false;

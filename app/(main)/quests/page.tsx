@@ -1,10 +1,8 @@
-﻿import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import QuestCreateButton from "@/components/QuestCreateButton";
 import QuestCard from "@/components/QuestCard";
-
-export const dynamic = "force-dynamic";
 
 const STATUS_COLORS: Record<string, string> = {
   Aktiv:          "#4ADE80",

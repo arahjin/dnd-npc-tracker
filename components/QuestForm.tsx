@@ -150,7 +150,13 @@ export default function QuestForm({
       ? await fetch(`/api/quests/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
       : await fetch("/api/quests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
 
-    if (!res.ok) { setError("Fehler beim Speichern."); setSaving(false); return; }
+    if (!res.ok) {
+      let msg = `Fehler ${res.status}`;
+      try { const j = await res.json(); msg = j.error ?? msg; } catch { /* ignore */ }
+      setError(msg);
+      setSaving(false);
+      return;
+    }
     const quest = await res.json();
     const questId: string = quest.id;
 

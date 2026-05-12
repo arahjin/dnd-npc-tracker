@@ -5,8 +5,6 @@ import { visibilityWhere } from "@/lib/visibility";
 import { questCreateSchema } from "@/lib/questSchemas";
 import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
-export const dynamic = "force-dynamic";
-
 export async function GET() {
   const ctx = await requireKampagneApi();
   if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -11,8 +11,6 @@ import CharakterMitglieder from "@/components/CharakterMitglieder";
 import RenderMentions from "@/components/RenderMentions";
 import { IconLock } from "@/components/Icons";
 
-export const dynamic = "force-dynamic";
-
 const ALIGNMENT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   "Rechtschaffen Gut":    { bg: "#0A1020", text: "#60A5FA", border: "#1E3A8A" },
   "Neutral Gut":          { bg: "#0A1A12", text: "#34D399", border: "#065F46" },
@@ -38,8 +36,8 @@ function Field({ label, value }: { label: string; value: string | null }) {
 export default async function OrganisationModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
-  const userId = session!.user!.id as string;
-  const role = (session!.user! as { role: string }).role;
+  const userId = session!.user.id;
+  const role = session!.user.role;
   const isDM = role === "DUNGEON_MASTER";
   const isAdmin = role === "ADMIN";
 

@@ -9,8 +9,6 @@ import LocationDeleteButton from "@/components/LocationDeleteButton";
 import RenderMentions from "@/components/RenderMentions";
 import { LocationArtIcon, IconLock } from "@/components/Icons";
 
-export const dynamic = "force-dynamic";
-
 function Field({ label, value }: { label: string; value?: string | number | null }) {
   if (!value && value !== 0) return null;
   return (
@@ -53,8 +51,8 @@ function LinkedList({ items, baseHref }: { items: { id: string; name: string }[]
 export default async function LocationModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
-  const userId = session!.user!.id as string;
-  const role = (session!.user! as { role: string }).role;
+  const userId = session!.user.id;
+  const role = session!.user.role;
   const isDM = role === "DUNGEON_MASTER";
   const isAdmin = role === "ADMIN";
 

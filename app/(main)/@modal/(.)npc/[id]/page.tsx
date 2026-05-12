@@ -11,8 +11,6 @@ import DeleteButton from "@/components/DeleteButton";
 import RenderMentions from "@/components/RenderMentions";
 import { IconLock } from "@/components/Icons";
 
-export const dynamic = "force-dynamic";
-
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   Lebendig:  { bg: "#0D2010", text: "#4ADE80", border: "#166534" },
   Tot:       { bg: "#200D0D", text: "#F87171", border: "#991B1B" },
@@ -48,8 +46,8 @@ function Field({ label, value }: { label: string; value: string | null }) {
 export default async function NPCModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
-  const userId = session!.user!.id as string;
-  const role = (session!.user! as { role: string }).role;
+  const userId = session!.user.id;
+  const role = session!.user.role;
   const isDM = role === "DUNGEON_MASTER";
   const isAdmin = role === "ADMIN";
 

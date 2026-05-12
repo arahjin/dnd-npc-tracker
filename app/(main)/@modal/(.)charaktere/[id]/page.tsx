@@ -12,8 +12,6 @@ import CharakterDeleteButton from "@/components/CharakterDeleteButton";
 import RenderMentions from "@/components/RenderMentions";
 import { IconLock } from "@/components/Icons";
 
-export const dynamic = "force-dynamic";
-
 function Field({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
   return (
@@ -27,8 +25,8 @@ function Field({ label, value }: { label: string; value: string | null }) {
 export default async function CharakterModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
-  const userId = session!.user!.id as string;
-  const role = (session!.user! as { role: string }).role;
+  const userId = session!.user.id;
+  const role = session!.user.role;
   const isDM = role === "DUNGEON_MASTER";
   const isAdmin = role === "ADMIN";
 
