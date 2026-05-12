@@ -27,7 +27,10 @@ export default async function OrganisationenPage() {
     prisma.organisation.findMany({
       where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
       orderBy: { name: "asc" },
-      include: { mitglieder: true },
+      select: {
+        id: true, name: true, typ: true, region: true, alignment: true, beschreibung: true,
+        _count: { select: { mitglieder: true } },
+      },
     }),
     prisma.location.findMany({
       where: { kampagneId: ctx.kampagneId },
@@ -76,7 +79,7 @@ export default async function OrganisationenPage() {
                       <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)" }}>{stripMentions(org.beschreibung)}</p>
                     )}
                     <p className="mt-3 font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-red-light)" }}>
-                      {org.mitglieder.length} {org.mitglieder.length === 1 ? "Mitglied" : "Mitglieder"}
+                      {org._count.mitglieder} {org._count.mitglieder === 1 ? "Mitglied" : "Mitglieder"}
                     </p>
                   </div>
                   <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--dnd-border), transparent)" }} />

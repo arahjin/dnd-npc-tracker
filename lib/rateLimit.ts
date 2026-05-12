@@ -21,7 +21,24 @@ export async function consumeRateLimit(
   });
   if (count >= limit) return false;
   await prisma.rateLimitEvent.create({ data: { userId, action } });
+  // Opportunistic cleanup: ~1% of writes purge old rows so the table doesn't grow unbounded.
+  if (Math.random() < 0.01) {
+    purgeOldRateLimitEvents().catch(() => { /* best-effort, never block the request */ });
+  }
   return true;
+}
+
+/**
+ * Deletes RateLimitEvent rows older than 24h. All current limits use a 1h window,
+ * so anything older than 24h is far past any window and safe to drop.
+ * Best-effort: callers should swallow errors.
+ */
+export async function purgeOldRateLimitEvents(): Promise<number> {
+  const cutoff = new Date(Date.now() - 24 * 3600 * 1000);
+  const result = await prisma.rateLimitEvent.deleteMany({
+    where: { createdAt: { lt: cutoff } },
+  });
+  return result.count;
 }
 
 /**

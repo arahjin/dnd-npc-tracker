@@ -12,7 +12,7 @@ export async function GET() {
   const orgs = await prisma.organisation.findMany({
     where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
     orderBy: { name: "asc" },
-    include: { mitglieder: { include: { npc: { select: { id: true, name: true, image: true } } } } },
+    select: { id: true, name: true, typ: true, region: true, alignment: true },
   });
   return NextResponse.json(orgs);
 }
