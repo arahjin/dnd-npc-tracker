@@ -81,7 +81,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
   }
 
   const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";
-  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" };
+  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" };
   const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
   return (
@@ -102,7 +102,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
           placeholder="https://..." className={inputClass} style={inputStyle} />
         {form.image && (
           <div className="mt-2 relative w-20 h-20 overflow-hidden" style={{ border: "1px solid var(--dnd-border)" }}>
-            <Image src={form.image} alt="Vorschau" fill className="object-cover" />
+            <Image src={form.image} alt="Vorschau" fill sizes="80px" className="object-cover" />
           </div>
         )}
       </div>
@@ -196,7 +196,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
                     <input type="text" placeholder="Rolle (optional)" value={member?.rolle ?? ""}
                       onChange={(e) => setSelectedOrgs((p) => p.map((o) => o.organisationId === org.id ? { ...o, rolle: e.target.value } : o))}
                       className="flex-1 px-3 py-1.5 text-sm outline-none"
-                      style={{ background: "#0A0A0A", border: "1px solid #3A2A2A", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }} />
+                      style={{ background: "#0A0A0A", border: "1px solid #3A2A2A", color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }} />
                   )}
                 </div>
               );

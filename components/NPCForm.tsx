@@ -142,7 +142,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
     background: "#0A0A0A",
     border: "1px solid #2A2A2A",
     color: "var(--dnd-text)",
-    fontFamily: "'Roboto', sans-serif",
+    fontFamily: "var(--font-roboto), sans-serif",
   };
   const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
@@ -195,7 +195,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
           {/* Current image preview */}
           {form.image && (
             <div className="relative w-32 h-32 overflow-hidden" style={{ border: "1px solid var(--dnd-border)" }}>
-              <Image src={form.image} alt="Vorschau" fill className="object-cover" />
+              <Image src={form.image} alt="Vorschau" fill sizes="80px" className="object-cover" />
             </div>
           )}
 
@@ -379,7 +379,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
                         prev.map((o) => o.organisationId === org.id ? { ...o, rolle: e.target.value } : o)
                       )}
                       className="flex-1 px-3 py-1.5 text-sm outline-none"
-                      style={{ background: "#0A0A0A", border: "1px solid #3A2A2A", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}
+                      style={{ background: "#0A0A0A", border: "1px solid #3A2A2A", color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}
                     />
                   )}
                 </div>

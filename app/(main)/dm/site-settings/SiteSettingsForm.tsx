@@ -19,7 +19,7 @@ const inputStyle: React.CSSProperties = {
   background: "var(--dnd-bg)",
   border: "1px solid var(--dnd-border)",
   color: "var(--dnd-text)",
-  fontFamily: "'Roboto', sans-serif",
+  fontFamily: "var(--font-roboto), sans-serif",
   fontSize: "0.9rem",
   outline: "none",
 };
@@ -75,7 +75,7 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
   }
 
   const tabStyle = (tab: string): React.CSSProperties => ({
-    fontFamily: "'Oswald', sans-serif",
+    fontFamily: "var(--font-oswald), sans-serif",
     fontSize: "0.7rem",
     letterSpacing: "0.14em",
     textTransform: "uppercase" as const,

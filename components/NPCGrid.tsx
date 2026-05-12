@@ -121,7 +121,7 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {filtered.map((npc) => (
+          {filtered.map((npc, i) => (
             <Link
               key={npc.id}
               href={`/npc/${npc.id}`}
@@ -137,7 +137,14 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
               {/* Image */}
               <div className="relative h-52 w-full overflow-hidden" style={{ background: "#0A0A0A" }}>
                 {npc.image ? (
-                  <Image src={npc.image} alt={npc.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <Image
+                    src={npc.image}
+                    alt={npc.name}
+                    fill
+                    sizes="(min-width: 1024px) 280px, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    priority={i < 4}
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
                 ) : (
                   <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
                     <Image src="/lorehub_icon.png" alt="" width={150} height={150} className="object-contain opacity-20" />

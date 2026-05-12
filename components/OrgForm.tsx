@@ -64,7 +64,7 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
   }
 
   const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";
-  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" };
+  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" };
   const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
   return (

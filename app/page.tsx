@@ -115,7 +115,7 @@ function IconDM() {
       <line x1="6"  y1="38" x2="28" y2="27" stroke={gold} opacity="0.5" strokeWidth={1} />
       <line x1="50" y1="38" x2="28" y2="27" stroke={gold} opacity="0.5" strokeWidth={1} />
       {/* "20" text */}
-      <text x="28" y="37" textAnchor="middle" fontSize="11" fontFamily="'Oswald', sans-serif"
+      <text x="28" y="37" textAnchor="middle" fontSize="11" fontFamily="var(--font-oswald), sans-serif"
         fill={gold} stroke="none" fontWeight="600" letterSpacing="1">20</text>
     </svg>
   );
@@ -169,7 +169,7 @@ function FeatureCard({
       <h3 className="font-cinzel font-bold mb-3" style={{ color: "var(--dnd-heading)", fontSize: "1.05rem", letterSpacing: "0.04em" }}>
         {title}
       </h3>
-      <p style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "0.9rem", lineHeight: 1.65 }}>
+      <p style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "0.9rem", lineHeight: 1.65 }}>
         {description}
       </p>
     </div>
@@ -203,7 +203,7 @@ function SectionTitle({ children, sub }: { children: React.ReactNode; sub?: stri
       <h2 className="font-cinzel font-bold" style={{ color: "var(--dnd-heading)", fontSize: "clamp(1.4rem, 3vw, 2rem)", letterSpacing: "0.03em" }}>
         {children}
       </h2>
-      {sub && <p className="mt-3 text-sm" style={{ color: "var(--dnd-text-muted)", fontFamily: "'Roboto', sans-serif", maxWidth: 560, margin: "12px auto 0" }}>{sub}</p>}
+      {sub && <p className="mt-3 text-sm" style={{ color: "var(--dnd-text-muted)", fontFamily: "var(--font-roboto), sans-serif", maxWidth: 560, margin: "12px auto 0" }}>{sub}</p>}
       <div style={{ width: 48, height: 2, background: "var(--dnd-red)", margin: "16px auto 0" }} />
     </div>
   );
@@ -294,7 +294,7 @@ export default async function StartPage() {
           {paragraphs.length > 0 && (
             <div style={{ maxWidth: 580 }}>
               {paragraphs.map((p, i) => (
-                <p key={i} style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "0.95rem", lineHeight: 1.7 }}>
+                <p key={i} style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "0.95rem", lineHeight: 1.7 }}>
                   {p}
                 </p>
               ))}
@@ -375,7 +375,7 @@ export default async function StartPage() {
                   <h3 className="font-cinzel font-bold mb-2" style={{ color: "var(--dnd-heading)", fontSize: "1rem" }}>
                     {step.title}
                   </h3>
-                  <p style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "0.9rem", lineHeight: 1.65 }}>
+                  <p style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "0.9rem", lineHeight: 1.65 }}>
                     {step.text}
                   </p>
                 </div>
@@ -409,7 +409,7 @@ export default async function StartPage() {
                 ].map((item, i) => (
                   <li key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
                     <span style={{ color: "var(--dnd-red)", marginTop: "2px", flexShrink: 0 }}>✦</span>
-                    <span style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "0.9rem" }}>{item}</span>
+                    <span style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "0.9rem" }}>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -431,7 +431,7 @@ export default async function StartPage() {
                 ].map((item, i) => (
                   <li key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
                     <span style={{ color: "var(--dnd-gold)", marginTop: "2px", flexShrink: 0 }}>✦</span>
-                    <span style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "0.9rem" }}>{item}</span>
+                    <span style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "0.9rem" }}>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -487,7 +487,7 @@ export default async function StartPage() {
                 </summary>
                 <p style={{
                   padding: "0 0 18px 0",
-                  color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif",
+                  color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif",
                   fontSize: "0.9rem", lineHeight: 1.7,
                 }}>
                   {faq.a}
@@ -506,7 +506,7 @@ export default async function StartPage() {
           <h2 className="font-cinzel font-bold" style={{ color: "var(--dnd-heading)", fontSize: "clamp(1.4rem, 3vw, 2rem)", letterSpacing: "0.03em", marginBottom: "16px" }}>
             Bereit, deine Geschichte zu schreiben?
           </h2>
-          <p style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "1rem", lineHeight: 1.7, marginBottom: "36px" }}>
+          <p style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "1rem", lineHeight: 1.7, marginBottom: "36px" }}>
             Erstelle dein kostenloses Konto und starte noch heute mit deiner ersten Kampagne.
           </p>
           {isLoggedIn ? (

@@ -116,7 +116,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
     ? entries.filter((e) => e.tags.some((t) => t.referenzId === filterTag.id))
     : entries;
 
-  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "#D8D0C8", fontFamily: "'Roboto', sans-serif" };
+  const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "#D8D0C8", fontFamily: "var(--font-roboto), sans-serif" };
   const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
   return (
@@ -257,7 +257,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                         </div>
                       )}
                     </div>
-                    <div className="leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
+                    <div className="leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}>
                       <RenderMentions text={entry.inhalt} />
                     </div>
                     {entry.tags.length > 0 && (

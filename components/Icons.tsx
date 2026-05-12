@@ -330,7 +330,7 @@ export function LogoFull({
       <text
         x="112"
         y="77"
-        fontFamily="'Nunito', system-ui, sans-serif"
+        fontFamily="var(--font-nunito), system-ui, sans-serif"
         fontSize="53"
         fill={c}
         stroke="none"

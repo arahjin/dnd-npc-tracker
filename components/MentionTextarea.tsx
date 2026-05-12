@@ -48,7 +48,7 @@ function mkChip(label: string, typ: string, id: string): HTMLSpanElement {
   s.style.cssText   =
     "background:#1A0A0A;border:1px solid #7F1D1D;color:#FCA5A5;" +
     "padding:1px 6px;border-radius:2px;font-size:0.82em;" +
-    "font-family:'Cinzel',serif;cursor:default;user-select:none;white-space:nowrap;";
+    "font-family:var(--font-oswald),sans-serif;cursor:default;user-select:none;white-space:nowrap;";
   return s;
 }
 
@@ -293,7 +293,7 @@ export default function MentionTextarea({
       {!value && placeholder && (
         <div
           className="absolute top-0 left-0 pointer-events-none px-4 py-2.5 text-base"
-          style={{ color: "#4A4540", fontFamily: "'Roboto', sans-serif" }}
+          style={{ color: "#4A4540", fontFamily: "var(--font-roboto), sans-serif" }}
         >
           {placeholder}
         </div>

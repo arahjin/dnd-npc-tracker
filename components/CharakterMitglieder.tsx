@@ -73,7 +73,7 @@ export default function CharakterMitglieder({
           <div key={m.id} className="flex items-center gap-4 px-4 py-3">
             <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ border: "1px solid var(--dnd-border)" }}>
               {m.image
-                ? <Image src={m.image} alt={m.name} fill className="object-cover" />
+                ? <Image src={m.image} alt={m.name} fill sizes="40px" className="object-cover" />
                 : <div className="flex h-full items-center justify-center text-lg" style={{ background: "#0A0A0A" }}><IconSword size={20} color="var(--dnd-text-muted)" /></div>
               }
             </div>

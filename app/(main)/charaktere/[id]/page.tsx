@@ -14,7 +14,7 @@ function Field({ label, value }: { label: string; value: string | null }) {
   return (
     <div className="flex gap-4 py-3" style={{ borderBottom: "1px solid #1E1E1E" }}>
       <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-label)" }}>{label}</span>
-      <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{value}</span>
+      <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}>{value}</span>
     </div>
   );
 }
@@ -90,7 +90,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
               <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
               <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
               {charakter.image
-                ? <Image src={charakter.image} alt={charakter.name} fill className="object-cover" />
+                ? <Image src={charakter.image} alt={charakter.name} fill sizes="(min-width: 768px) 33vw, 100vw" priority className="object-cover" />
                 : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={180} height={180} className="object-contain opacity-20" /></div>
               }
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.6) 0%, transparent 60%)" }} />
@@ -168,7 +168,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
                   <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Notizen</h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}>
                     <RenderMentions text={charakter.notizen} />
                   </p>
                 </div>
@@ -183,7 +183,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
                   </h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", whiteSpace: "pre-wrap" }}>
                     {charakter.privateNotizen}
                   </p>
                 </div>

@@ -74,7 +74,7 @@ export default function QuestObjectivesChecklist({ questId, initialObjectives, c
             className="text-sm flex-1"
             style={{
               color: obj.done ? "var(--dnd-text-muted)" : "var(--dnd-text)",
-              fontFamily: "'Roboto', sans-serif",
+              fontFamily: "var(--font-roboto), sans-serif",
               textDecoration: obj.done ? "line-through" : "none",
             }}
           >
@@ -106,7 +106,7 @@ export default function QuestObjectivesChecklist({ questId, initialObjectives, c
               background: "#0A0A0A",
               border: "1px solid #2A2A2A",
               color: "var(--dnd-text)",
-              fontFamily: "'Roboto', sans-serif",
+              fontFamily: "var(--font-roboto), sans-serif",
             }}
           />
           <button

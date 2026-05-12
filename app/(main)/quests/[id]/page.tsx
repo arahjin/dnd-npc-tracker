@@ -123,7 +123,7 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
 
         {/* Summary */}
         {quest.summary && (
-          <p className="text-base italic leading-relaxed" style={{ color: "var(--dnd-text-muted)", fontFamily: "'Roboto', sans-serif" }}>
+          <p className="text-base italic leading-relaxed" style={{ color: "var(--dnd-text-muted)", fontFamily: "var(--font-roboto), sans-serif" }}>
             {quest.summary}
           </p>
         )}
@@ -142,7 +142,7 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
         {/* Description */}
         {quest.description && (
           <SectionBox title="Beschreibung">
-            <p className="text-sm leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", whiteSpace: "pre-wrap" }}>
               {quest.description}
             </p>
           </SectionBox>
@@ -151,7 +151,7 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
         {/* Reward */}
         {quest.reward && (
           <SectionBox title="Belohnung">
-            <p className="text-sm leading-relaxed" style={{ color: "var(--dnd-gold)", fontFamily: "'Roboto', sans-serif" }}>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--dnd-gold)", fontFamily: "var(--font-roboto), sans-serif" }}>
               {quest.reward}
             </p>
           </SectionBox>
@@ -166,7 +166,7 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
               </h2>
             </div>
             <div className="px-4 py-3">
-              <p className="text-sm leading-relaxed" style={{ color: "#FCA5A5", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+              <p className="text-sm leading-relaxed" style={{ color: "#FCA5A5", fontFamily: "var(--font-roboto), sans-serif", whiteSpace: "pre-wrap" }}>
                 {quest.gmNotes}
               </p>
             </div>

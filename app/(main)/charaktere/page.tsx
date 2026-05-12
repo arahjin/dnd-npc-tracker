@@ -74,7 +74,7 @@ function CharCard({ c }: { c: { id: string; name: string; image: string | null; 
       <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
       <div className="relative h-52 w-full overflow-hidden" style={{ background: "#0A0A0A" }}>
         {c.image
-          ? <Image src={c.image} alt={c.name} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
+          ? <Image src={c.image} alt={c.name} fill sizes="(min-width: 1024px) 280px, (min-width: 768px) 33vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
           : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={150} height={150} className="object-contain opacity-20" /></div>
         }
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 50%)" }} />

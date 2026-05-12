@@ -81,7 +81,7 @@ export default function QuestCard({
 
         {/* Summary */}
         {summary && (
-          <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
+          <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}>
             {summary}
           </p>
         )}

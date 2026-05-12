@@ -40,7 +40,7 @@ function Field({ label, value }: { label: string; value: string | null }) {
       <span className="font-cinzel text-xs tracking-widest uppercase w-40 shrink-0 pt-0.5" style={{ color: "var(--dnd-label)" }}>
         {label}
       </span>
-      <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>
+      <span className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}>
         {value}
       </span>
     </div>
@@ -129,7 +129,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
               <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 z-10" style={{ borderColor: "var(--dnd-gold)" }} />
 
               {npc.image ? (
-                <Image src={npc.image} alt={npc.name} fill className="object-cover" />
+                <Image src={npc.image} alt={npc.name} fill sizes="(min-width: 768px) 33vw, 100vw" priority className="object-cover" />
               ) : (
                 <div className="flex h-full items-center justify-center" style={{ background: "#0A0A0A" }}>
                   <Image src="/lorehub_icon.png" alt="Kein Bild" width={180} height={180} className="object-contain opacity-20" />
@@ -229,7 +229,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                   </h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", fontSize: "1.1rem" }}>
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "1.1rem" }}>
                     <RenderMentions text={npc.notizen} />
                   </p>
                 </div>
@@ -266,7 +266,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                   </h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", whiteSpace: "pre-wrap" }}>
                     {npc.privateNotizen}
                   </p>
                 </div>

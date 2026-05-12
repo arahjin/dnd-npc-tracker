@@ -144,7 +144,7 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
               </h2>
             </div>
             <div className="px-4 py-4">
-              <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif", whiteSpace: "pre-wrap" }}>
+              <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", whiteSpace: "pre-wrap" }}>
                 {location.privateNotizen}
               </p>
             </div>

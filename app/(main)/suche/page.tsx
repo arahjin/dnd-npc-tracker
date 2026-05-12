@@ -239,7 +239,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                 <Link key={npc.id} href={`/npc/${npc.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                   <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#0A0A0A" }}>
-                    {npc.image ? <Image src={npc.image} alt={npc.name} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={52} height={52} className="object-contain opacity-20" /></div>}
+                    {npc.image ? <Image src={npc.image} alt={npc.name} fill sizes="40px" className="object-cover" /> : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={52} height={52} className="object-contain opacity-20" /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{npc.name}</p>
@@ -284,7 +284,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                 <Link key={c.id} href={`/charaktere/${c.id}`} className="flex items-center gap-4 p-3 transition-all group"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                   <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#0A0A0A" }}>
-                    {c.image ? <Image src={c.image} alt={c.name} fill className="object-cover" /> : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={52} height={52} className="object-contain opacity-20" /></div>}
+                    {c.image ? <Image src={c.image} alt={c.name} fill sizes="40px" className="object-cover" /> : <div className="flex h-full items-center justify-center"><Image src="/lorehub_icon.png" alt="" width={52} height={52} className="object-contain opacity-20" /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{c.name}</p>
@@ -334,7 +334,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                       {" · "}{new Date(entry.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" })}
                     </p>
                     {entry.titel && <p className="font-cinzel text-sm font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>{entry.titel}</p>}
-                    <p className="text-sm leading-relaxed line-clamp-3" style={{ color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif" }}>{stripMentions(entry.inhalt)}</p>
+                    <p className="text-sm leading-relaxed line-clamp-3" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}>{stripMentions(entry.inhalt)}</p>
                     {entry.tags.length > 0 && (
                       <div className="mt-2 flex flex-wrap gap-1">
                         {entry.tags.map((tag) => {

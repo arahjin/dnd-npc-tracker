@@ -92,7 +92,7 @@ export default function KampagnenPage() {
 
   const inputStyle = {
     background: "#0A0A0A", border: "1px solid #2A2A2A",
-    color: "var(--dnd-text)", fontFamily: "'Roboto', sans-serif",
+    color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif",
   };
 
   return (

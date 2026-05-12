@@ -34,7 +34,7 @@ function ResetForm() {
 
   const inputStyle = {
     background: "#0A0A0A", border: "1px solid #2A2A2A",
-    color: "#D8D0C8", fontFamily: "'Roboto', sans-serif",
+    color: "#D8D0C8", fontFamily: "var(--font-roboto), sans-serif",
   };
 
   if (!token) {
