@@ -15,6 +15,7 @@ export default async function Home() {
         id: true, name: true, image: true, status: true, beziehung: true,
         rasse: true, aktuellePosition: true,
         organisationen: { select: { organisation: { select: { id: true, name: true } } } },
+        locations: { select: { id: true } },
       },
     }),
     prisma.organisation.findMany({
@@ -38,7 +39,7 @@ export default async function Home() {
           </p>
           <NPCCreateButton availableOrgs={orgs} availableLocations={locations} />
         </div>
-        <NPCGrid npcs={npcs} availableOrgs={orgs} />
+        <NPCGrid npcs={npcs} availableOrgs={orgs} availableLocations={locations} />
       </div>
       <footer className="mt-auto py-6 text-center">
         <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>✦ {ctx.kampagneName.toUpperCase()} ✦</p>

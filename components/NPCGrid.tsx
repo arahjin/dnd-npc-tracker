@@ -15,6 +15,7 @@ type NPC = {
   rasse: string | null;
   aktuellePosition: string | null;
   organisationen: { organisation: { id: string; name: string } }[];
+  locations: { id: string }[];
 };
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -43,18 +44,28 @@ function Badge({ label, colors }: { label: string; colors: { bg: string; text: s
   );
 }
 
-export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; availableOrgs?: { id: string; name: string }[] }) {
+export default function NPCGrid({
+  npcs,
+  availableOrgs = [],
+  availableLocations = [],
+}: {
+  npcs: NPC[];
+  availableOrgs?: { id: string; name: string }[];
+  availableLocations?: { id: string; name: string }[];
+}) {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterBeziehung, setFilterBeziehung] = useState("");
   const [filterOrg, setFilterOrg] = useState("");
+  const [filterLocation, setFilterLocation] = useState("");
 
   const filtered = npcs.filter((n) => {
     const matchSearch = n.name.toLowerCase().includes(search.toLowerCase());
     const matchStatus = filterStatus ? n.status === filterStatus : true;
     const matchBeziehung = filterBeziehung ? n.beziehung === filterBeziehung : true;
     const matchOrg = filterOrg ? n.organisationen.some((m) => m.organisation.id === filterOrg) : true;
-    return matchSearch && matchStatus && matchBeziehung && matchOrg;
+    const matchLocation = filterLocation ? n.locations.some((l) => l.id === filterLocation) : true;
+    return matchSearch && matchStatus && matchBeziehung && matchOrg && matchLocation;
   });
 
   const selectClass = "font-cinzel text-sm px-3 py-2 outline-none tracking-wide transition-colors";
@@ -104,6 +115,17 @@ export default function NPCGrid({ npcs, availableOrgs = [] }: { npcs: NPC[]; ava
           >
             <option value="">Alle Organisationen</option>
             {availableOrgs.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
+          </select>
+        )}
+        {availableLocations.length > 0 && (
+          <select
+            value={filterLocation}
+            onChange={(e) => setFilterLocation(e.target.value)}
+            className={selectClass}
+            style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
+          >
+            <option value="">Alle Locations</option>
+            {availableLocations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
           </select>
         )}
       </div>
