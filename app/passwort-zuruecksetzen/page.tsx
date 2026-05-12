@@ -21,7 +21,7 @@ function ResetForm() {
     if (password !== password2) { setError("Passwörter stimmen nicht überein."); return; }
     setLoading(true);
     setError("");
-    const res = await fetch("/api/auth/passwort-zuruecksetzen", {
+    const res = await fetch("/api/account/passwort-zuruecksetzen", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ token, password }),

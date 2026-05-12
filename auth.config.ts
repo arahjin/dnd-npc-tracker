@@ -19,8 +19,9 @@ export const authConfig = {
         pathname.startsWith("/api/setup") ||
         pathname.startsWith("/api/registrieren") ||
         pathname.startsWith("/api/invite/check") ||
-        pathname.startsWith("/api/auth/passwort-vergessen") ||
-        pathname.startsWith("/api/auth/passwort-zuruecksetzen") ||
+        pathname.startsWith("/api/account/passwort-vergessen") ||
+        pathname.startsWith("/api/account/passwort-zuruecksetzen") ||
+        pathname.startsWith("/api/account/email-bestaetigen") ||
         (pathname === "/api/site-settings" && request.method === "GET");
 
       if (isPublic) return true;

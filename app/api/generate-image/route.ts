@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { put } from "@vercel/blob";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { logError } from "@/lib/errorLog";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -89,7 +90,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url, remaining: DAILY_LIMIT - usedToday - 1 });
 
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unbekannter Fehler";
-    return NextResponse.json({ error: message }, { status: 500 });
+    await logError("generate-image failed", err, userId);
+    return NextResponse.json(
+      { error: "Bildgenerierung fehlgeschlagen. Admins wurden informiert." },
+      { status: 500 },
+    );
   }
 }

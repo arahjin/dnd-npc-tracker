@@ -44,7 +44,7 @@ function heading(text: string) {
 // ── Email Verification ─────────────────────────────────────
 
 export async function sendVerificationEmail(to: string, token: string) {
-  const link = `${BASE_URL()}/api/auth/email-bestaetigen?token=${token}`;
+  const link = `${BASE_URL()}/api/account/email-bestaetigen?token=${token}`;
   await getResend().emails.send({
     from: FROM(),
     to,

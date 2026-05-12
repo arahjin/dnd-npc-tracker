@@ -62,6 +62,19 @@ model BildGenerierung {
   @@index([userId, createdAt])
 }
 
+// Server-side error log surfaced to admins via /dm/admin.
+// Cleanup is manual (admins mark entries as resolved).
+model ErrorLog {
+  id        String   @id @default(cuid())
+  message   String
+  context   String?
+  userId    String?
+  createdAt DateTime @default(now())
+  resolved  Boolean  @default(false)
+
+  @@index([resolved, createdAt])
+}
+
 // Generic rate-limit ledger. One row per state-changing API call.
 // Cleanup is opportunistic (purgeOldRateLimitEvents() in lib/rateLimit.ts).
 model RateLimitEvent {

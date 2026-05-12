@@ -11,7 +11,7 @@ export default function EmailWartenPage() {
   async function resend() {
     setResending(true);
     setError(null);
-    const res = await fetch("/api/auth/email-bestaetigen-erneut", { method: "POST" });
+    const res = await fetch("/api/account/email-bestaetigen-erneut", { method: "POST" });
     const data = await res.json();
     if (!res.ok) setError(data.error);
     else setResent(true);

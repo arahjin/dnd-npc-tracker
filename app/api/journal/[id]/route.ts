@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
+import { journalUpdateSchema, parseOrError } from "@/lib/entitySchemas";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -26,22 +27,19 @@ export async function PUT(req: NextRequest, { params }: Params) {
   if (error) return error;
   void entry;
 
-  const { titel, inhalt, tags } = await req.json();
-  if (!inhalt?.trim()) return NextResponse.json({ error: "Inhalt darf nicht leer sein." }, { status: 400 });
+  const parsed = parseOrError(journalUpdateSchema, await req.json());
+  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  const { titel, inhalt, tags } = parsed.data;
 
   const updated = await prisma.$transaction(async (tx) => {
     await tx.journalTag.deleteMany({ where: { entryId: id } });
     return tx.journalEntry.update({
       where: { id },
       data: {
-        titel: titel?.trim() || null,
-        inhalt: inhalt.trim(),
-        ...(tags?.length > 0 && {
-          tags: {
-            create: tags.map((t: { tagTyp: string; referenzId: string }) => ({
-              tagTyp: t.tagTyp, referenzId: t.referenzId,
-            })),
-          },
+        titel,
+        inhalt,
+        ...(tags && tags.length > 0 && {
+          tags: { create: tags.map((t) => ({ tagTyp: t.tagTyp, referenzId: t.referenzId })) },
         }),
       },
       include: { user: { select: { id: true, name: true } }, tags: true },

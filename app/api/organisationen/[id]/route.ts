@@ -33,10 +33,12 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
   const existing = await prisma.organisation.findUnique({
     where: { id },
-    select: { erstellerId: true, kampagneId: true },
+    select: { erstellerId: true, kampagneId: true, sichtbarkeit: true },
   });
   if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
   if (existing.kampagneId && existing.kampagneId !== ctx.kampagneId)
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (existing.sichtbarkeit === "privat" && !canSeePrivate(ctx, existing.erstellerId))
     return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
 
   const parsed = parseOrError(organisationUpdateSchema, await req.json());

@@ -1,62 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireKampagne } from "@/lib/kampagne";
+import { requireKampagneApi } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
+import { locationCreateSchema, parseOrError } from "@/lib/entitySchemas";
 import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function GET() {
-  try {
-    const ctx = await requireKampagne();
-    const locations = await prisma.location.findMany({
-      where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
-      orderBy: { name: "asc" },
-      include: {
-        npcs: { select: { id: true, name: true } },
-        organisationen: { select: { id: true, name: true } },
-        charaktere: { select: { id: true, name: true } },
-      },
-    });
-    return NextResponse.json(locations);
-  } catch {
-    return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 });
-  }
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const locations = await prisma.location.findMany({
+    where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
+    orderBy: { name: "asc" },
+    include: {
+      npcs: { select: { id: true, name: true } },
+      organisationen: { select: { id: true, name: true } },
+      charaktere: { select: { id: true, name: true } },
+    },
+  });
+  return NextResponse.json(locations);
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const ctx = await requireKampagne();
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    if (!(await checkPresetLimit(ctx.userId, "location.create")))
-      return rateLimitResponse(RATE_LIMITS["location.create"].windowSeconds);
+  if (!(await checkPresetLimit(ctx.userId, "location.create")))
+    return rateLimitResponse(RATE_LIMITS["location.create"].windowSeconds);
 
-    const { name, art, land, region, population, klima, floraFauna, wissenswertes, sichtbarkeit, privateNotizen, npcIds = [], orgIds = [], charakterIds = [] } = await req.json();
+  const parsed = parseOrError(locationCreateSchema, await req.json());
+  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  const { npcIds, orgIds, charakterIds, ...rest } = parsed.data;
 
-    if (!name?.trim()) {
-      return NextResponse.json({ error: "Name ist erforderlich." }, { status: 400 });
-    }
+  const location = await prisma.location.create({
+    data: {
+      ...rest,
+      kampagneId: ctx.kampagneId,
+      erstellerId: ctx.userId,
+      ...(npcIds && npcIds.length > 0 && { npcs: { connect: npcIds.map((id) => ({ id })) } }),
+      ...(orgIds && orgIds.length > 0 && { organisationen: { connect: orgIds.map((id) => ({ id })) } }),
+      ...(charakterIds && charakterIds.length > 0 && { charaktere: { connect: charakterIds.map((id) => ({ id })) } }),
+    },
+  });
 
-    const location = await prisma.location.create({
-      data: {
-        kampagneId: ctx.kampagneId,
-        name: name.trim(),
-        art: art || null,
-        land: land || null,
-        region: region || null,
-        population: population != null && population !== "" ? Number(population) : null,
-        klima: klima || null,
-        floraFauna: floraFauna || null,
-        wissenswertes: wissenswertes || null,
-        sichtbarkeit: sichtbarkeit || "public",
-        privateNotizen: privateNotizen || null,
-        erstellerId: ctx.userId,
-        npcs: { connect: (npcIds as string[]).map((id) => ({ id })) },
-        organisationen: { connect: (orgIds as string[]).map((id) => ({ id })) },
-        charaktere: { connect: (charakterIds as string[]).map((id) => ({ id })) },
-      },
-    });
-
-    return NextResponse.json(location, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Fehler beim Erstellen." }, { status: 500 });
-  }
+  return NextResponse.json(location, { status: 201 });
 }

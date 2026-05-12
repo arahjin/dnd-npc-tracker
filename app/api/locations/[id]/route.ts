@@ -1,77 +1,73 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireKampagne } from "@/lib/kampagne";
+import { requireKampagneApi } from "@/lib/kampagne";
 import { canSeePrivate } from "@/lib/visibility";
+import { locationUpdateSchema, parseOrError } from "@/lib/entitySchemas";
 
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
-    const ctx = await requireKampagne();
-    const location = await prisma.location.findFirst({
-      where: { id, kampagneId: ctx.kampagneId },
-      include: {
-        npcs: { select: { id: true, name: true }, orderBy: { name: "asc" } },
-        organisationen: { select: { id: true, name: true }, orderBy: { name: "asc" } },
-        charaktere: { select: { id: true, name: true }, orderBy: { name: "asc" } },
-      },
-    });
-    if (!location) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
-    return NextResponse.json(location);
-  } catch {
-    return NextResponse.json({ error: "Nicht autorisiert" }, { status: 401 });
-  }
+type Params = { params: Promise<{ id: string }> };
+
+export async function GET(_req: NextRequest, { params }: Params) {
+  const { id } = await params;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const location = await prisma.location.findFirst({
+    where: { id, kampagneId: ctx.kampagneId },
+    include: {
+      npcs: { select: { id: true, name: true }, orderBy: { name: "asc" } },
+      organisationen: { select: { id: true, name: true }, orderBy: { name: "asc" } },
+      charaktere: { select: { id: true, name: true }, orderBy: { name: "asc" } },
+    },
+  });
+  if (!location) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (location.sichtbarkeit === "privat" && !canSeePrivate(ctx, location.erstellerId))
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  return NextResponse.json(location);
 }
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
-    const ctx = await requireKampagne();
-    const existing = await prisma.location.findFirst({ where: { id, kampagneId: ctx.kampagneId } });
-    if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+export async function PUT(req: NextRequest, { params }: Params) {
+  const { id } = await params;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { name, art, land, region, population, klima, floraFauna, wissenswertes, sichtbarkeit, privateNotizen, npcIds = [], orgIds = [], charakterIds = [] } = await req.json();
+  const existing = await prisma.location.findFirst({
+    where: { id, kampagneId: ctx.kampagneId },
+    select: { erstellerId: true, sichtbarkeit: true },
+  });
+  if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (existing.sichtbarkeit === "privat" && !canSeePrivate(ctx, existing.erstellerId))
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
 
-    if (!name?.trim()) {
-      return NextResponse.json({ error: "Name ist erforderlich." }, { status: 400 });
-    }
+  const parsed = parseOrError(locationUpdateSchema, await req.json());
+  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  const { npcIds, orgIds, charakterIds, privateNotizen, ...rest } = parsed.data;
 
-    const allowPrivate = canSeePrivate({ userId: ctx.userId, isDM: ctx.isDM, isAdmin: ctx.isAdmin }, existing.erstellerId);
+  const allowPrivate = canSeePrivate(ctx, existing.erstellerId);
+  const data: Record<string, unknown> = { ...rest };
+  if (allowPrivate && privateNotizen !== undefined) data.privateNotizen = privateNotizen;
+  if (npcIds !== undefined) data.npcs = { set: npcIds.map((nId) => ({ id: nId })) };
+  if (orgIds !== undefined) data.organisationen = { set: orgIds.map((oId) => ({ id: oId })) };
+  if (charakterIds !== undefined) data.charaktere = { set: charakterIds.map((cId) => ({ id: cId })) };
 
-    // Disconnect all existing, then reconnect selected
-    const location = await prisma.location.update({
-      where: { id },
-      data: {
-        name: name.trim(),
-        art: art || null,
-        land: land || null,
-        region: region || null,
-        population: population != null && population !== "" ? Number(population) : null,
-        klima: klima || null,
-        floraFauna: floraFauna || null,
-        wissenswertes: wissenswertes || null,
-        sichtbarkeit: sichtbarkeit || "public",
-        ...(allowPrivate && privateNotizen !== undefined && { privateNotizen: privateNotizen || null }),
-        npcs: { set: (npcIds as string[]).map((npcId) => ({ id: npcId })) },
-        organisationen: { set: (orgIds as string[]).map((orgId) => ({ id: orgId })) },
-        charaktere: { set: (charakterIds as string[]).map((cId) => ({ id: cId })) },
-      },
-    });
-
-    return NextResponse.json(location);
-  } catch {
-    return NextResponse.json({ error: "Fehler beim Speichern." }, { status: 500 });
-  }
+  const location = await prisma.location.update({ where: { id }, data });
+  return NextResponse.json(location);
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  try {
-    const { id } = await params;
-    const ctx = await requireKampagne();
-    const existing = await prisma.location.findFirst({ where: { id, kampagneId: ctx.kampagneId } });
-    if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
-    await prisma.location.delete({ where: { id } });
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Fehler beim Löschen." }, { status: 500 });
-  }
+export async function DELETE(_req: NextRequest, { params }: Params) {
+  const { id } = await params;
+  const ctx = await requireKampagneApi();
+  if (!ctx) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const existing = await prisma.location.findFirst({
+    where: { id, kampagneId: ctx.kampagneId },
+    select: { erstellerId: true, sichtbarkeit: true },
+  });
+  if (!existing) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (existing.sichtbarkeit === "privat" && !canSeePrivate(ctx, existing.erstellerId))
+    return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });
+  if (!ctx.isDM && !ctx.isAdmin && existing.erstellerId !== ctx.userId)
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  await prisma.location.delete({ where: { id } });
+  return NextResponse.json({ ok: true });
 }

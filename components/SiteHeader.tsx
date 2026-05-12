@@ -16,6 +16,11 @@ export default async function SiteHeader() {
   let kampagneSelector: React.ReactNode = null;
   let isDMofActive = false;
   let kampagneNavData: { aktiveId: string; aktiveKampagne: string; kampagnen: { id: string; name: string }[] } | undefined;
+  let errorCount = 0;
+
+  if (user?.role === "ADMIN") {
+    errorCount = await prisma.errorLog.count({ where: { resolved: false } });
+  }
 
   if (user?.id) {
     const cookieStore = await cookies();
@@ -99,7 +104,7 @@ export default async function SiteHeader() {
           <div className="hidden md:flex" style={{ alignItems: "center", gap: "10px" }}>
             <NavSearch />
             {kampagneSelector}
-            {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} isDM={isDMofActive} />}
+            {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} isDM={isDMofActive} errorCount={errorCount} />}
           </div>
 
           {/* Mobile: hamburger */}

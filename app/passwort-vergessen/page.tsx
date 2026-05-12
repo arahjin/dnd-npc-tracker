@@ -13,7 +13,7 @@ export default function PasswortVergessenPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const res = await fetch("/api/auth/passwort-vergessen", {
+    const res = await fetch("/api/account/passwort-vergessen", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

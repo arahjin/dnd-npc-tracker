@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
+import { journalCreateSchema, parseOrError } from "@/lib/entitySchemas";
 
 export async function GET(req: NextRequest) {
   const ctx = await requireKampagneApi();
@@ -36,25 +37,19 @@ export async function POST(req: NextRequest) {
   if (!(await checkPresetLimit(ctx.userId, "journal.create")))
     return rateLimitResponse(RATE_LIMITS["journal.create"].windowSeconds);
 
-  const { titel, inhalt, typ, tags } = await req.json();
-
-  if (!inhalt?.trim()) return NextResponse.json({ error: "Inhalt darf nicht leer sein." }, { status: 400 });
-  if (!["TAGEBUCH", "GESCHICHTE"].includes(typ))
-    return NextResponse.json({ error: "Ungültiger Typ." }, { status: 400 });
+  const parsed = parseOrError(journalCreateSchema, await req.json());
+  if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
+  const { titel, inhalt, typ, tags } = parsed.data;
 
   const entry = await prisma.journalEntry.create({
     data: {
       userId: ctx.userId,
       kampagneId: ctx.kampagneId,
       typ,
-      titel: titel?.trim() || null,
-      inhalt: inhalt.trim(),
-      ...(tags?.length > 0 && {
-        tags: {
-          create: tags.map((t: { tagTyp: string; referenzId: string }) => ({
-            tagTyp: t.tagTyp, referenzId: t.referenzId,
-          })),
-        },
+      titel,
+      inhalt,
+      ...(tags && tags.length > 0 && {
+        tags: { create: tags.map((t) => ({ tagTyp: t.tagTyp, referenzId: t.referenzId })) },
       }),
     },
     include: { user: { select: { id: true, name: true } }, tags: true },

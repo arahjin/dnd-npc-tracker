@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { IconAdmin, IconSword, IconDice } from "@/components/Icons";
 
-type Props = { name: string; role: string; isDM?: boolean };
+type Props = { name: string; role: string; isDM?: boolean; errorCount?: number };
 
 const ROLE_LABEL: Record<string, string> = {
   ADMIN: "Admin",
@@ -19,10 +19,11 @@ function RoleIcon({ role }: { role: string }) {
   return <IconDice {...props} />;
 }
 
-export default function UserMenu({ name, role, isDM = false }: Props) {
+export default function UserMenu({ name, role, isDM = false, errorCount = 0 }: Props) {
   const [open, setOpen] = useState(false);
   const isAdmin = role === "ADMIN";
   const canManageInvites = isDM || isAdmin;
+  const showErrorBadge = isAdmin && errorCount > 0;
 
   const menuItem = (href: string, label: string) => (
     <a href={href} className="block px-4 py-2 font-cinzel text-xs transition-colors"
@@ -39,12 +40,23 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
     <div style={{ position: "relative" }}>
       <button
         onClick={() => setOpen((p) => !p)}
-        className="font-cinzel text-xs tracking-wide flex items-center gap-2 px-3 py-1.5 transition-all"
+        className="font-cinzel text-xs tracking-wide flex items-center gap-2 px-3 py-1.5 transition-all relative"
         style={{ border: "1px solid #333", color: "#C8B8A8", background: "#1A1A1A" }}
       >
         <RoleIcon role={role} />
         {name}
         <span style={{ fontSize: "0.6rem", opacity: 0.6 }}>▾</span>
+        {showErrorBadge && (
+          <span aria-label={`${errorCount} ungelöste Fehler`}
+            style={{
+              position: "absolute", top: -6, right: -6, minWidth: 18, height: 18,
+              padding: "0 5px", borderRadius: 9, background: "#991B1B", color: "#fff",
+              fontSize: "0.65rem", display: "flex", alignItems: "center", justifyContent: "center",
+              border: "1px solid #FCA5A5",
+            }}>
+            {errorCount > 99 ? "99+" : errorCount}
+          </span>
+        )}
       </button>
 
       {open && (
@@ -72,7 +84,20 @@ export default function UserMenu({ name, role, isDM = false }: Props) {
             {/* Admin section */}
             {isAdmin && (
               <>
-                {menuItem("/dm/admin", "Admin-Bereich")}
+                <a href="/dm/admin" className="flex items-center justify-between px-4 py-2 font-cinzel text-xs transition-colors"
+                  style={{ color: "#C8B8A8" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#F5EDD6")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#C8B8A8")}>
+                  <span>Admin-Bereich</span>
+                  {errorCount > 0 && (
+                    <span style={{
+                      background: "#991B1B", color: "#fff", fontSize: "0.65rem",
+                      padding: "1px 6px", border: "1px solid #FCA5A5",
+                    }}>
+                      {errorCount > 99 ? "99+" : errorCount}
+                    </span>
+                  )}
+                </a>
                 {divider}
               </>
             )}

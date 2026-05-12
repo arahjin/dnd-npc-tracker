@@ -101,6 +101,55 @@ export const charakterUpdateSchema = z.object({
   sichtbarkeit: sichtbarkeit.optional(),
 }).partial();
 
+// ─── Location ───────────────────────────────────────────
+const idArray = z.array(z.string().min(1)).optional();
+const locationBase = {
+  name: z.string().trim().min(1, "Name erforderlich.").max(200),
+  art: optStr(100),
+  land: optStr(200),
+  region: optStr(200),
+  population: z
+    .union([z.number().int().nonnegative(), z.string(), z.null()])
+    .optional()
+    .transform((v) => {
+      if (v === null || v === undefined || v === "") return null;
+      const n = typeof v === "number" ? v : Number(v);
+      return Number.isFinite(n) && n >= 0 ? Math.trunc(n) : null;
+    }),
+  klima: optStr(200),
+  floraFauna: optStr(10000),
+  wissenswertes: optStr(20000),
+  sichtbarkeit: sichtbarkeit.default("public"),
+  privateNotizen: optStr(20000),
+  npcIds: idArray,
+  orgIds: idArray,
+  charakterIds: idArray,
+};
+export const locationCreateSchema = z.object(locationBase);
+export const locationUpdateSchema = z.object({
+  ...locationBase,
+  name: locationBase.name.optional(),
+  sichtbarkeit: sichtbarkeit.optional(),
+}).partial();
+
+// ─── Journal ────────────────────────────────────────────
+const journalTagSchema = z.object({
+  tagTyp: z.enum(["PERSON", "ORGANISATION", "CHARAKTER", "SPIELER", "LOCATION"]),
+  referenzId: z.string().min(1).max(100),
+});
+const journalBase = {
+  titel: optStr(300),
+  inhalt: z.string().trim().min(1, "Inhalt darf nicht leer sein.").max(50000),
+  typ: z.enum(["TAGEBUCH", "GESCHICHTE"]),
+  tags: z.array(journalTagSchema).max(200).optional(),
+};
+export const journalCreateSchema = z.object(journalBase);
+export const journalUpdateSchema = z.object({
+  titel: optStr(300),
+  inhalt: z.string().trim().min(1).max(50000),
+  tags: z.array(journalTagSchema).max(200).optional(),
+});
+
 /** Convenience helper: parse a body, return either the data or a NextResponse-friendly error string. */
 export function parseOrError<T>(schema: z.ZodType<T>, body: unknown): { ok: true; data: T } | { ok: false; error: string } {
   const r = schema.safeParse(body);
