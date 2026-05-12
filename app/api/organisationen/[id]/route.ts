@@ -3,6 +3,7 @@ import { requireKampagneApi } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 import { organisationUpdateSchema, parseOrError } from "@/lib/entitySchemas";
+import { validateImageUrl } from "@/lib/imageUrl";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -43,11 +44,15 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
   const parsed = parseOrError(organisationUpdateSchema, await req.json());
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
-  const { privateNotizen, ...rest } = parsed.data;
+  const { privateNotizen, image, ...rest } = parsed.data;
 
   const allowPrivate = canSeePrivate(ctx, existing.erstellerId);
   const data: Record<string, unknown> = { ...rest };
   if (allowPrivate && privateNotizen !== undefined) data.privateNotizen = privateNotizen;
+  if (image !== undefined) {
+    try { data.image = validateImageUrl(image); }
+    catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
+  }
 
   const org = await prisma.organisation.update({ where: { id }, data });
   return NextResponse.json(org);

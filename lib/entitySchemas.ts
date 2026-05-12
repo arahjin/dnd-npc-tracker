@@ -60,6 +60,7 @@ export const npcUpdateSchema = z.object({
 const orgBase = {
   name: z.string().trim().min(1, "Name erforderlich.").max(200),
   beschreibung: optStr(10000),
+  image: optStr(2000),
   typ: optEnum(ORGANISATION_TYP_OPTIONS),
   region: optStr(200),
   alignment: optEnum(ALIGNMENT_OPTIONS),
@@ -105,6 +106,7 @@ export const charakterUpdateSchema = z.object({
 const idArray = z.array(z.string().min(1)).optional();
 const locationBase = {
   name: z.string().trim().min(1, "Name erforderlich.").max(200),
+  image: optStr(2000),
   art: optStr(100),
   land: optStr(200),
   region: optStr(200),

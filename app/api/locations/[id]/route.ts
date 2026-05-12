@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { canSeePrivate } from "@/lib/visibility";
 import { locationUpdateSchema, parseOrError } from "@/lib/entitySchemas";
+import { validateImageUrl } from "@/lib/imageUrl";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -40,11 +41,15 @@ export async function PUT(req: NextRequest, { params }: Params) {
 
   const parsed = parseOrError(locationUpdateSchema, await req.json());
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
-  const { npcIds, orgIds, charakterIds, privateNotizen, ...rest } = parsed.data;
+  const { npcIds, orgIds, charakterIds, privateNotizen, image, ...rest } = parsed.data;
 
   const allowPrivate = canSeePrivate(ctx, existing.erstellerId);
   const data: Record<string, unknown> = { ...rest };
   if (allowPrivate && privateNotizen !== undefined) data.privateNotizen = privateNotizen;
+  if (image !== undefined) {
+    try { data.image = validateImageUrl(image); }
+    catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
+  }
   if (npcIds !== undefined) data.npcs = { set: npcIds.map((nId) => ({ id: nId })) };
   if (orgIds !== undefined) data.organisationen = { set: orgIds.map((oId) => ({ id: oId })) };
   if (charakterIds !== undefined) data.charaktere = { set: charakterIds.map((cId) => ({ id: cId })) };

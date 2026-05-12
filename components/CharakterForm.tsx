@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS } from "@/lib/constants";
 import MentionTextarea from "./MentionTextarea";
+import ImageGeneratorField from "./ImageGeneratorField";
 
 type OrgMembership = { organisationId: string; rolle: string };
 
@@ -96,16 +96,13 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
           placeholder="Charaktername" className={inputClass} style={inputStyle} />
       </div>
 
-      <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Bild-URL (optional)</label>
-        <input type="url" value={form.image} onChange={(e) => set("image", e.target.value)}
-          placeholder="https://..." className={inputClass} style={inputStyle} />
-        {form.image && (
-          <div className="mt-2 relative w-20 h-20 overflow-hidden" style={{ border: "1px solid var(--dnd-border)" }}>
-            <Image src={form.image} alt="Vorschau" fill sizes="80px" className="object-cover" />
-          </div>
-        )}
-      </div>
+      <ImageGeneratorField
+        value={form.image}
+        onChange={(url) => set("image", url)}
+        kind="character"
+        label="Charakterbild"
+        generatorPlaceholder="z.B. Human paladin, silver armor, blue cloak, holy aura"
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>

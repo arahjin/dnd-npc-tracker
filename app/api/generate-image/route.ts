@@ -33,8 +33,10 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Input validation ──────────────────────────────────────────────────────
-  const { prompt: rawPrompt } = await req.json();
+  const { prompt: rawPrompt, kind: rawKind } = await req.json();
   const prompt = typeof rawPrompt === "string" ? rawPrompt.trim() : "";
+  const kind: "character" | "location" | "organisation" =
+    rawKind === "location" || rawKind === "organisation" ? rawKind : "character";
   if (!prompt) {
     return NextResponse.json({ error: "Beschreibung fehlt." }, { status: 400 });
   }
@@ -64,7 +66,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const enhancedPrompt = `Fantasy RPG character portrait, Dungeons and Dragons style, detailed illustration: ${prompt}. Dark fantasy art, dramatic lighting, painterly style.`;
+    const templates = {
+      character:    `Fantasy RPG character portrait, Dungeons and Dragons style, detailed illustration: ${prompt}. Dark fantasy art, dramatic lighting, painterly style.`,
+      location:     `Fantasy RPG location landscape, Dungeons and Dragons style, detailed illustration: ${prompt}. Atmospheric environment, dramatic lighting, painterly style.`,
+      organisation: `Fantasy RPG heraldic crest or banner, Dungeons and Dragons style, ornate emblem on dark background: ${prompt}. Detailed symbolic design, painterly style.`,
+    } as const;
+    const enhancedPrompt = templates[kind];
 
     const response = await openai.images.generate({
       model: "dall-e-3",
@@ -81,7 +88,7 @@ export async function POST(req: NextRequest) {
     if (!imageRes.ok) return NextResponse.json({ error: "Bild konnte nicht von DALL-E heruntergeladen werden." }, { status: 500 });
     const imageBlob = await imageRes.blob();
 
-    const filename = `npc-${Date.now()}.png`;
+    const filename = `${kind}-${Date.now()}.png`;
     const { url } = await put(filename, imageBlob, { access: "public" });
 
     // ── Record usage ──────────────────────────────────────────────────────

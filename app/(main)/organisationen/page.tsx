@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
@@ -26,7 +27,7 @@ export default async function OrganisationenPage() {
       where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
       orderBy: { name: "asc" },
       select: {
-        id: true, name: true, typ: true, region: true, alignment: true, beschreibung: true,
+        id: true, name: true, image: true, typ: true, region: true, alignment: true, beschreibung: true,
         _count: { select: { mitglieder: true } },
       },
     }),
@@ -60,6 +61,11 @@ export default async function OrganisationenPage() {
                   className="group card-hover transition-all duration-300 block"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                   <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
+                  {org.image && (
+                    <div className="relative w-full h-40 overflow-hidden" style={{ background: "#0A0A0A" }}>
+                      <Image src={org.image} alt={org.name} fill sizes="(min-width: 1024px) 280px, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </div>
+                  )}
                   <div className="p-5">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <h2 className="font-cinzel font-semibold text-lg leading-tight" style={{ color: "var(--dnd-heading)" }}>{org.name}</h2>

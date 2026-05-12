@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS } from "@/lib/constants";
 import MentionTextarea from "./MentionTextarea";
+import ImageGeneratorField from "./ImageGeneratorField";
 import { randomFantasyName } from "@/lib/nameGenerator";
 
 type NPCData = {
@@ -51,43 +51,8 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Image generator state
-  const [imagePrompt, setImagePrompt] = useState("");
-  const [generating, setGenerating] = useState(false);
-  const [generatedImage, setGeneratedImage] = useState("");
-  const [genError, setGenError] = useState("");
-
   function set(key: keyof NPCData, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  async function handleGenerate() {
-    if (!imagePrompt.trim()) return;
-    setGenerating(true);
-    setGenError("");
-    setGeneratedImage("");
-
-    const res = await fetch("/api/generate-image", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: imagePrompt }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      setGenError(data.error ?? "Fehler beim Generieren. Bitte erneut versuchen.");
-      setGenerating(false);
-      return;
-    }
-
-    setGeneratedImage(data.url);
-    setGenerating(false);
-  }
-
-  function acceptGeneratedImage() {
-    set("image", generatedImage);
-    setGeneratedImage("");
-    setImagePrompt("");
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -175,92 +140,13 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
         </div>
       </div>
 
-      {/* Bild + Generator */}
-      <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
-        {/* Section Header */}
-        <div className="px-4 py-2 flex items-center gap-2" style={{ borderBottom: "1px solid #2A2A2A", background: "var(--dnd-red-dark)" }}>
-          <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-heading)" }}>
-            Charakterbild
-          </span>
-        </div>
-
-        <div className="p-4 space-y-4">
-          {/* Manual URL */}
-          <div>
-            <label className={labelStyle} style={{ color: "var(--dnd-text-muted)" }}>Bild-URL (optional)</label>
-            <input type="url" value={form.image} onChange={(e) => set("image", e.target.value)}
-              placeholder="https://..." className={inputClass} style={inputStyle} />
-          </div>
-
-          {/* Current image preview */}
-          {form.image && (
-            <div className="relative w-32 h-32 overflow-hidden" style={{ border: "1px solid var(--dnd-border)" }}>
-              <Image src={form.image} alt="Vorschau" fill sizes="80px" className="object-cover" />
-            </div>
-          )}
-
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1" style={{ background: "#2A2A2A" }} />
-            <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>oder mit KI generieren</span>
-            <div className="h-px flex-1" style={{ background: "#2A2A2A" }} />
-          </div>
-
-          {/* AI Generator */}
-          <div>
-            <label className={labelStyle} style={{ color: "var(--dnd-text-muted)" }}>Beschreibung für DALL-E 3</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={imagePrompt}
-                onChange={(e) => setImagePrompt(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleGenerate())}
-                placeholder="z.B. Elven rogue, dark hood, scarred face, mysterious"
-                className={inputClass + " flex-1"}
-                style={inputStyle}
-              />
-              <button
-                type="button"
-                onClick={handleGenerate}
-                disabled={generating || !imagePrompt.trim()}
-                className="font-cinzel text-xs tracking-widest px-4 py-2.5 transition-all disabled:opacity-40 shrink-0"
-                style={{ background: "var(--dnd-gold)", color: "#0A0A0A", border: "1px solid #A07830" }}
-              >
-                {generating ? "..." : "GENERIEREN"}
-              </button>
-            </div>
-            {generating && (
-              <p className="mt-2 font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-gold)" }}>
-                ✦ DALL-E 3 zeichnet deinen Charakter... (ca. 10 Sekunden)
-              </p>
-            )}
-            {genError && (
-              <p className="mt-2 text-xs" style={{ color: "#F87171" }}>{genError}</p>
-            )}
-          </div>
-
-          {/* Generated Image Preview */}
-          {generatedImage && (
-            <div className="space-y-3">
-              <div className="relative w-full aspect-square overflow-hidden" style={{ border: "1px solid var(--dnd-gold)", maxWidth: "300px" }}>
-                <Image src={generatedImage} alt="Generiertes Bild" fill className="object-cover" />
-              </div>
-              <div className="flex gap-2">
-                <button type="button" onClick={acceptGeneratedImage}
-                  className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
-                  style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
-                  ✓ ÜBERNEHMEN
-                </button>
-                <button type="button" onClick={handleGenerate}
-                  className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
-                  style={{ border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>
-                  ↺ NEU GENERIEREN
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+      <ImageGeneratorField
+        value={form.image}
+        onChange={(url) => set("image", url)}
+        kind="character"
+        label="Charakterbild"
+        generatorPlaceholder="z.B. Elven rogue, dark hood, scarred face, mysterious"
+      />
 
       {/* Status + Beziehung */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

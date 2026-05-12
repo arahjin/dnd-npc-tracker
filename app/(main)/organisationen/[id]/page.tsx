@@ -85,18 +85,25 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
 
       <div className="mx-auto max-w-5xl px-4 md:px-6 py-10 space-y-8">
         {/* Header */}
-        <div>
-          <div className="flex flex-wrap items-start gap-4 mb-2">
-            <h1 className="font-cinzel text-4xl font-bold" style={{ color: "var(--dnd-heading)" }}>{org.name}</h1>
-            {alignColors && org.alignment && (
-              <span className="font-cinzel text-sm px-3 py-1 mt-1" style={{ background: alignColors.bg, color: alignColors.text, border: `1px solid ${alignColors.border}` }}>
-                {org.alignment}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
-            <span style={{ color: "var(--dnd-red)" }}>✦</span>
+        <div className="flex flex-wrap items-start gap-6">
+          {org.image && (
+            <div className="relative shrink-0 w-40 h-40 overflow-hidden" style={{ border: "1px solid var(--dnd-border)" }}>
+              <Image src={org.image} alt={org.name} fill sizes="160px" priority className="object-cover" />
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-start gap-4 mb-2">
+              <h1 className="font-cinzel text-4xl font-bold" style={{ color: "var(--dnd-heading)" }}>{org.name}</h1>
+              {alignColors && org.alignment && (
+                <span className="font-cinzel text-sm px-3 py-1 mt-1" style={{ background: alignColors.bg, color: alignColors.text, border: `1px solid ${alignColors.border}` }}>
+                  {org.alignment}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
+              <span style={{ color: "var(--dnd-red)" }}>✦</span>
+            </div>
           </div>
         </div>
 

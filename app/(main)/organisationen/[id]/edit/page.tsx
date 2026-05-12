@@ -40,7 +40,7 @@ export default async function EditOrganisation({ params }: { params: Promise<{ i
           </div>
         </div>
         <OrgForm id={id} availableLocations={locations} canSeePrivate={showPrivate} initial={{
-          name: org.name, beschreibung: org.beschreibung ?? "", typ: org.typ ?? "",
+          name: org.name, image: org.image ?? "", beschreibung: org.beschreibung ?? "", typ: org.typ ?? "",
           region: org.region ?? "", alignment: org.alignment ?? "", beziehungZurGruppe: org.beziehungZurGruppe ?? "",
           gottheit: org.gottheit ?? "", sichtbarkeit: org.sichtbarkeit ?? "public",
           ...(showPrivate && { privateNotizen: org.privateNotizen ?? "" }),

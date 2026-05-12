@@ -11,7 +11,7 @@ type Props = {
   availableLocations?: { id: string; name: string }[];
   canSeePrivate?: boolean;
   initial?: {
-    name?: string; beschreibung?: string; typ?: string; region?: string;
+    name?: string; image?: string; beschreibung?: string; typ?: string; region?: string;
     alignment?: string; beziehungZurGruppe?: string; gottheit?: string;
     sichtbarkeit?: string; privateNotizen?: string;
   };

@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ALIGNMENT_OPTIONS, ORGANISATION_TYP_OPTIONS } from "@/lib/constants";
 import MentionTextarea from "./MentionTextarea";
+import ImageGeneratorField from "./ImageGeneratorField";
 
 type OrgData = {
   name: string;
+  image: string;
   beschreibung: string;
   typ: string;
   region: string;
@@ -18,7 +20,7 @@ type OrgData = {
 };
 
 const EMPTY: OrgData = {
-  name: "", beschreibung: "", typ: "", region: "", alignment: "", beziehungZurGruppe: "", gottheit: "",
+  name: "", image: "", beschreibung: "", typ: "", region: "", alignment: "", beziehungZurGruppe: "", gottheit: "",
   sichtbarkeit: "public", privateNotizen: "",
 };
 
@@ -39,6 +41,7 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
     setError("");
     const payload = {
       name: form.name.trim(),
+      image: form.image.trim() || null,
       beschreibung: form.beschreibung.trim() || null,
       typ: form.typ || null,
       region: form.region || null,
@@ -75,6 +78,14 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Name *</label>
         <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="z.B. Die Scharlachroten Klingen" className={inputClass} style={inputStyle} />
       </div>
+
+      <ImageGeneratorField
+        value={form.image}
+        onChange={(url) => set("image", url)}
+        kind="organisation"
+        label="Wappen / Bild"
+        generatorPlaceholder="z.B. Crimson dagger crossed with golden chalice, black banner"
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>

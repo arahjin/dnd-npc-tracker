@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
@@ -89,6 +90,11 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
       <div className="mx-auto max-w-5xl px-4 md:px-6 py-10 space-y-8">
         {/* Title */}
         <div>
+          {location.image && (
+            <div className="relative w-full overflow-hidden mb-6" style={{ aspectRatio: "16 / 9", border: "1px solid var(--dnd-border)" }}>
+              <Image src={location.image} alt={location.name} fill sizes="(min-width: 1024px) 1024px, 100vw" priority className="object-cover" />
+            </div>
+          )}
           <div className="flex flex-wrap items-center gap-4 mb-2">
             <span className="text-4xl"><LocationArtIcon art={location.art} size={20} color="var(--dnd-text-muted)" /></span>
             <div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
@@ -44,6 +45,11 @@ export default async function LocationsPage() {
                   className="group card-hover transition-all duration-300 block"
                   style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
                   <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
+                  {loc.image && (
+                    <div className="relative w-full h-40 overflow-hidden" style={{ background: "#0A0A0A" }}>
+                      <Image src={loc.image} alt={loc.name} fill sizes="(min-width: 1024px) 280px, (min-width: 640px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </div>
+                  )}
                   <div className="p-5">
                     <div className="flex items-start gap-3 mb-3">
                       <span className="shrink-0 flex items-center mt-0.5"><LocationArtIcon art={loc.art} size={20} color="var(--dnd-text-muted)" /></span>

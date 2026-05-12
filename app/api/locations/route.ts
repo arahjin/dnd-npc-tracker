@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { locationCreateSchema, parseOrError } from "@/lib/entitySchemas";
+import { validateImageUrl } from "@/lib/imageUrl";
 import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function GET() {
@@ -30,11 +31,16 @@ export async function POST(req: NextRequest) {
 
   const parsed = parseOrError(locationCreateSchema, await req.json());
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
-  const { npcIds, orgIds, charakterIds, ...rest } = parsed.data;
+  const { npcIds, orgIds, charakterIds, image, ...rest } = parsed.data;
+
+  let validatedImage: string | null;
+  try { validatedImage = validateImageUrl(image); }
+  catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
 
   const location = await prisma.location.create({
     data: {
       ...rest,
+      image: validatedImage,
       kampagneId: ctx.kampagneId,
       erstellerId: ctx.userId,
       ...(npcIds && npcIds.length > 0 && { npcs: { connect: npcIds.map((id) => ({ id })) } }),

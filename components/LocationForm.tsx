@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MentionTextarea from "./MentionTextarea";
+import ImageGeneratorField from "./ImageGeneratorField";
 
 const ART_OPTIONS = ["Kontinent", "Land", "Region", "Stadt", "Dorf", "Besonderer Ort", "Wald", "Gewässer"];
 
@@ -11,7 +12,7 @@ type LinkedItem = { id: string; name: string };
 type Props = {
   id?: string;
   initial?: {
-    name?: string; art?: string; land?: string; region?: string;
+    name?: string; image?: string; art?: string; land?: string; region?: string;
     population?: number | null; klima?: string; floraFauna?: string; wissenswertes?: string;
     sichtbarkeit?: string; privateNotizen?: string;
   };
@@ -250,6 +251,7 @@ export default function LocationForm({
 }: Props) {
   const router = useRouter();
   const [name, setName] = useState(initial.name ?? "");
+  const [image, setImage] = useState(initial.image ?? "");
   const [art, setArt] = useState(initial.art ?? "");
   const [land, setLand] = useState(initial.land ?? "");
   const [region, setRegion] = useState(initial.region ?? "");
@@ -282,7 +284,7 @@ export default function LocationForm({
     setError("");
 
     const body = {
-      name, art, land, region,
+      name, image: image.trim() || null, art, land, region,
       population: population !== "" ? Number(population) : null,
       klima, floraFauna, wissenswertes,
       sichtbarkeit,
@@ -331,6 +333,14 @@ export default function LocationForm({
           style={inputStyle}
         />
       </div>
+
+      <ImageGeneratorField
+        value={image}
+        onChange={setImage}
+        kind="location"
+        label="Bild"
+        generatorPlaceholder="z.B. Misty mountain village, snowy peaks, glowing windows at dusk"
+      />
 
       {/* Art */}
       <div>

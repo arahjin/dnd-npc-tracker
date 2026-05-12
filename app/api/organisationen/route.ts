@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { visibilityWhere } from "@/lib/visibility";
 import { organisationCreateSchema, parseOrError } from "@/lib/entitySchemas";
+import { validateImageUrl } from "@/lib/imageUrl";
 import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
 
 export async function GET() {
@@ -27,8 +28,12 @@ export async function POST(req: NextRequest) {
   const parsed = parseOrError(organisationCreateSchema, await req.json());
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
 
+  let validatedImage: string | null;
+  try { validatedImage = validateImageUrl(parsed.data.image); }
+  catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
+
   const org = await prisma.organisation.create({
-    data: { ...parsed.data, kampagneId: ctx.kampagneId, erstellerId: ctx.userId },
+    data: { ...parsed.data, image: validatedImage, kampagneId: ctx.kampagneId, erstellerId: ctx.userId },
   });
   return NextResponse.json(org, { status: 201 });
 }

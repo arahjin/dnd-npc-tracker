@@ -47,6 +47,7 @@ export default async function EditLocationPage({ params }: { params: Promise<{ i
           canSeePrivate={showPrivate}
           initial={{
             name: location.name,
+            image: location.image ?? "",
             art: location.art ?? "",
             land: location.land ?? "",
             region: location.region ?? "",

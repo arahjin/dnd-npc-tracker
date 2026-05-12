@@ -167,6 +167,7 @@ model Organisation {
   kampagneId          String
   kampagne            Kampagne                @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
   name                String
+  image               String?
   beschreibung        String?
   typ                 String?
   region              String?
@@ -248,6 +249,7 @@ model Location {
   kampagneId    String
   kampagne      Kampagne       @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
   name          String
+  image         String?
   art           String?
   land          String?
   region        String?
