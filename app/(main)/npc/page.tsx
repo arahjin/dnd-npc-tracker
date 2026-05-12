@@ -11,7 +11,11 @@ export default async function Home() {
     prisma.nPC.findMany({
       where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
       orderBy: { name: "asc" },
-      include: { organisationen: { include: { organisation: { select: { id: true, name: true } } } } },
+      select: {
+        id: true, name: true, image: true, status: true, beziehung: true,
+        rasse: true, aktuellePosition: true,
+        organisationen: { select: { organisation: { select: { id: true, name: true } } } },
+      },
     }),
     prisma.organisation.findMany({
       where: { kampagneId: ctx.kampagneId },

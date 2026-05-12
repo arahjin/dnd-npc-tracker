@@ -56,7 +56,7 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
     prisma.nPC.findUnique({
       where: { id },
       include: {
-        organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } },
+        organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
         locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
         quests: { include: { quest: { select: { id: true, title: true, status: true, typ: true } } } },
       },

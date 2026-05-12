@@ -30,7 +30,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
       where: { id },
       include: {
         user: { select: { id: true, name: true } },
-        organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } },
+        organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
         locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
         quests: { include: { quest: { select: { id: true, title: true, status: true, typ: true } } } },
       },

@@ -44,10 +44,10 @@ export default async function OrganisationModal({ params }: { params: Promise<{ 
   const org = await prisma.organisation.findUnique({
     where: { id },
     include: {
-      mitglieder: { include: { npc: true }, orderBy: { createdAt: "asc" } },
+      mitglieder: { include: { npc: true }, orderBy: { npc: { name: "asc" } } },
       charakterMitglieder: {
         include: { charakter: { include: { user: { select: { id: true, name: true } } } } },
-        orderBy: { createdAt: "asc" },
+        orderBy: { charakter: { name: "asc" } },
       },
       locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
     },

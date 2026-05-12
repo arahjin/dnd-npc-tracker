@@ -13,6 +13,10 @@ export async function GET() {
   const npcs = await prisma.nPC.findMany({
     where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
     orderBy: { name: "asc" },
+    select: {
+      id: true, name: true, image: true, status: true, beziehung: true,
+      rasse: true, region: true, aktuellePosition: true,
+    },
   });
   return NextResponse.json(npcs);
 }

@@ -54,7 +54,7 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
   const npc = await prisma.nPC.findUnique({
     where: { id },
     include: {
-      organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } },
+      organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
       locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
     },
   });

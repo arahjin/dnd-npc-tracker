@@ -18,7 +18,7 @@ export async function GET(_: NextRequest, { params }: Params) {
     where: { id },
     include: {
       user: { select: { id: true, name: true } },
-      organisationen: { include: { organisation: true }, orderBy: { createdAt: "asc" } },
+      organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
     },
   });
   if (!charakter) return NextResponse.json({ error: "Nicht gefunden." }, { status: 404 });

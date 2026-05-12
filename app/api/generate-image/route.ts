@@ -8,6 +8,8 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 /** Max DALL-E 3 generations per user per 24 hours */
 const DAILY_LIMIT = 5;
+/** Max characters for the user prompt before our wrapper is added. */
+const MAX_PROMPT_LENGTH = 500;
 
 export async function POST(req: NextRequest) {
   // ── Auth check ────────────────────────────────────────────────────────────
@@ -30,9 +32,16 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Input validation ──────────────────────────────────────────────────────
-  const { prompt } = await req.json();
-  if (!prompt?.trim()) {
+  const { prompt: rawPrompt } = await req.json();
+  const prompt = typeof rawPrompt === "string" ? rawPrompt.trim() : "";
+  if (!prompt) {
     return NextResponse.json({ error: "Beschreibung fehlt." }, { status: 400 });
+  }
+  if (prompt.length > MAX_PROMPT_LENGTH) {
+    return NextResponse.json(
+      { error: `Beschreibung ist zu lang (max. ${MAX_PROMPT_LENGTH} Zeichen).` },
+      { status: 400 },
+    );
   }
 
   if (!process.env.OPENAI_API_KEY) {
@@ -44,6 +53,16 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // Moderation guard: cheap pre-check so we don't pay for DALL-E when the
+    // prompt would be rejected by OpenAI policy anyway.
+    const moderation = await openai.moderations.create({ input: prompt });
+    if (moderation.results[0]?.flagged) {
+      return NextResponse.json(
+        { error: "Die Beschreibung verstößt gegen die Richtlinien und kann nicht verwendet werden." },
+        { status: 400 },
+      );
+    }
+
     const enhancedPrompt = `Fantasy RPG character portrait, Dungeons and Dragons style, detailed illustration: ${prompt}. Dark fantasy art, dramatic lighting, painterly style.`;
 
     const response = await openai.images.generate({

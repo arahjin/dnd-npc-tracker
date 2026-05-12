@@ -181,7 +181,6 @@ model NPCOrganisation {
   organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   organisationId String
   rolle          String?
-  createdAt      DateTime     @default(now())
 
   @@unique([npcId, organisationId])
 }
@@ -225,7 +224,6 @@ model CharakterOrganisation {
   organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
   organisationId String
   rolle          String?
-  createdAt      DateTime     @default(now())
 
   @@unique([charakterId, organisationId])
 }
