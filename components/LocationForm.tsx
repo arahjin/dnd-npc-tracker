@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import MentionTextarea from "./MentionTextarea";
 import ImageGeneratorField from "./ImageGeneratorField";
 
-const ART_OPTIONS = ["Kontinent", "Land", "Region", "Stadt", "Dorf", "Besonderer Ort", "Wald", "Gewässer"];
+const ART_OPTIONS = ["Kontinent", "Land", "Region", "Stadt", "Dorf", "Besonderer Ort", "Wald", "Gewässer", "Insel"];
 
 type LinkedItem = { id: string; name: string };
 
