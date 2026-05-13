@@ -75,6 +75,7 @@ export default function UserMenu({ name, role, isDM = false, errorCount = 0 }: P
             {/* Kampagnen section */}
             {menuItem("/kampagnen", "Kampagnen")}
             {canManageInvites && menuItem("/dm/einladungen", "Einladungen verwalten")}
+            {canManageInvites && menuItem("/dm/export", "Kampagne exportieren")}
             {divider}
 
             {/* Account */}
