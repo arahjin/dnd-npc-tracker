@@ -17,10 +17,12 @@ function PermanentInvitePanel() {
   const [invite, setInvite] = useState<PermanentInvite>(undefined as unknown as PermanentInvite);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
 
   const load = useCallback(async () => {
     const res = await fetch("/api/invite/permanent");
-    setInvite(res.ok ? await res.json() : null);
+    if (!res.ok) { setError("Fehler beim Laden des Links."); return; }
+    setInvite(await res.json());
   }, []);
 
   useEffect(() => { load(); }, [load]);
@@ -37,14 +39,18 @@ function PermanentInvitePanel() {
 
   async function generate() {
     setLoading(true);
-    await fetch("/api/invite/permanent", { method: "POST" });
+    setError("");
+    const res = await fetch("/api/invite/permanent", { method: "POST" });
+    if (!res.ok) { const d = await res.json(); setError(d.error ?? "Fehler beim Generieren."); setLoading(false); return; }
     await load();
     setLoading(false);
   }
 
   async function deactivate() {
     setLoading(true);
-    await fetch("/api/invite/permanent", { method: "DELETE" });
+    setError("");
+    const res = await fetch("/api/invite/permanent", { method: "DELETE" });
+    if (!res.ok) { const d = await res.json(); setError(d.error ?? "Fehler beim Deaktivieren."); setLoading(false); return; }
     await load();
     setLoading(false);
   }
@@ -64,6 +70,7 @@ function PermanentInvitePanel() {
       <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
         <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
         <div className="px-4 py-4">
+          {error && <p className="mb-3 text-xs" style={{ color: "#F87171" }}>{error}</p>}
           {invite ? (
             <div className="space-y-3">
               <div className="flex items-center gap-2">
