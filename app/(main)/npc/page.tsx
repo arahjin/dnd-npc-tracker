@@ -13,7 +13,7 @@ export default async function Home() {
       orderBy: { name: "asc" },
       select: {
         id: true, name: true, image: true, status: true, beziehung: true,
-        rasse: true, aktuellePosition: true,
+        rasse: true, aktuellePosition: true, sichtbarkeit: true,
         organisationen: { select: { organisation: { select: { id: true, name: true } } } },
         locations: { select: { id: true } },
       },
@@ -39,7 +39,7 @@ export default async function Home() {
           </p>
           <NPCCreateButton availableOrgs={orgs} availableLocations={locations} />
         </div>
-        <NPCGrid npcs={npcs} availableOrgs={orgs} availableLocations={locations} />
+        <NPCGrid npcs={npcs} availableOrgs={orgs} availableLocations={locations} isDM={ctx.isDM} />
       </div>
       <footer className="mt-auto py-6 text-center">
         <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>✦ {ctx.kampagneName.toUpperCase()} ✦</p>

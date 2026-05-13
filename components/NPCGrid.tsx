@@ -14,6 +14,7 @@ type NPC = {
   beziehung: string;
   rasse: string | null;
   aktuellePosition: string | null;
+  sichtbarkeit: string;
   organisationen: { organisation: { id: string; name: string } }[];
   locations: { id: string }[];
 };
@@ -48,16 +49,19 @@ export default function NPCGrid({
   npcs,
   availableOrgs = [],
   availableLocations = [],
+  isDM = false,
 }: {
   npcs: NPC[];
   availableOrgs?: { id: string; name: string }[];
   availableLocations?: { id: string; name: string }[];
+  isDM?: boolean;
 }) {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterBeziehung, setFilterBeziehung] = useState("");
   const [filterOrg, setFilterOrg] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
+  const [filterVisibility, setFilterVisibility] = useState("");
 
   const filtered = npcs.filter((n) => {
     const matchSearch = n.name.toLowerCase().includes(search.toLowerCase());
@@ -65,7 +69,8 @@ export default function NPCGrid({
     const matchBeziehung = filterBeziehung ? n.beziehung === filterBeziehung : true;
     const matchOrg = filterOrg ? n.organisationen.some((m) => m.organisation.id === filterOrg) : true;
     const matchLocation = filterLocation ? n.locations.some((l) => l.id === filterLocation) : true;
-    return matchSearch && matchStatus && matchBeziehung && matchOrg && matchLocation;
+    const matchVisibility = filterVisibility ? n.sichtbarkeit === filterVisibility : true;
+    return matchSearch && matchStatus && matchBeziehung && matchOrg && matchLocation && matchVisibility;
   });
 
   const selectClass = "font-cinzel text-sm px-3 py-2 outline-none tracking-wide transition-colors";
@@ -126,6 +131,18 @@ export default function NPCGrid({
           >
             <option value="">Alle Locations</option>
             {availableLocations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+          </select>
+        )}
+        {isDM && (
+          <select
+            value={filterVisibility}
+            onChange={(e) => setFilterVisibility(e.target.value)}
+            className={selectClass}
+            style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
+          >
+            <option value="">Alle Sichtbarkeiten</option>
+            <option value="public">Öffentlich</option>
+            <option value="privat">Privat</option>
           </select>
         )}
       </div>

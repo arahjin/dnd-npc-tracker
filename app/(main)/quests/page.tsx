@@ -30,7 +30,7 @@ export default async function QuestsPage() {
             </p>
           </div>
         ) : (
-          <QuestGrid quests={quests} />
+          <QuestGrid quests={quests} isDM={ctx.isDM} />
         )}
       </div>
       <footer className="mt-auto py-6 text-center">

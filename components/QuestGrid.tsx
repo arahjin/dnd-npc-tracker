@@ -12,6 +12,7 @@ type Quest = {
   typ: string;
   prioritaet: string | null;
   summary: string | null;
+  sichtbarkeit: string;
   objectives: Objective[];
 };
 
@@ -29,10 +30,15 @@ const PRIORITAET_COLORS: Record<string, string> = {
   Niedrig: "#9CA3AF",
 };
 
-export default function QuestGrid({ quests }: { quests: Quest[] }) {
+export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; isDM?: boolean }) {
   const [filterStatus, setFilterStatus] = useState("");
+  const [filterVisibility, setFilterVisibility] = useState("");
 
-  const filtered = filterStatus ? quests.filter((q) => q.status === filterStatus) : quests;
+  const filtered = quests.filter((q) => {
+    const matchStatus = filterStatus ? q.status === filterStatus : true;
+    const matchVisibility = filterVisibility ? q.sichtbarkeit === filterVisibility : true;
+    return matchStatus && matchVisibility;
+  });
 
   const selectClass = "font-cinzel text-sm px-3 py-2 outline-none tracking-wide transition-colors";
   const selectStyle = { background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" };
@@ -49,6 +55,18 @@ export default function QuestGrid({ quests }: { quests: Quest[] }) {
           <option value="">Alle Status</option>
           {QUEST_STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
+        {isDM && (
+          <select
+            value={filterVisibility}
+            onChange={(e) => setFilterVisibility(e.target.value)}
+            className={selectClass}
+            style={selectStyle}
+          >
+            <option value="">Alle Sichtbarkeiten</option>
+            <option value="public">Öffentlich</option>
+            <option value="privat">Privat</option>
+          </select>
+        )}
         <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
           {filtered.length} {filtered.length === 1 ? "QUEST" : "QUESTS"} GEFUNDEN
         </p>
