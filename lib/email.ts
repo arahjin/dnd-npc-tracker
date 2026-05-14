@@ -41,22 +41,21 @@ function heading(text: string) {
   return `<p style="color:#B8860B;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;margin:0 0 16px;">✦ ${text} ✦</p>`;
 }
 
-// ── Email Verification ─────────────────────────────────────
+// ── Welcome / Registration Confirmation ───────────────────
 
-export async function sendVerificationEmail(to: string, token: string) {
-  const link = `${BASE_URL()}/api/account/email-bestaetigen?token=${token}`;
+export async function sendWelcomeEmail(to: string, name: string) {
+  const link = `${BASE_URL()}/login`;
   await getResend().emails.send({
     from: FROM(),
     to,
-    subject: "E-Mail-Adresse bestätigen",
+    subject: "Willkommen bei Lorehub",
     html: layout(`
-      ${heading("E-Mail bestätigen")}
-      <h1 style="color:#F5EDD6;font-family:'Cinzel',serif;font-size:22px;margin:0 0 12px;">Willkommen!</h1>
+      ${heading("Registrierung erfolgreich")}
+      <h1 style="color:#F5EDD6;font-family:'Cinzel',serif;font-size:22px;margin:0 0 12px;">Willkommen, ${name}!</h1>
       <p style="color:#C8B8A8;font-size:14px;line-height:1.6;margin:0 0 8px;">
-        Bitte bestätige deine E-Mail-Adresse, um deinen Account zu aktivieren.
+        Dein Account bei Lorehub wurde erfolgreich erstellt. Du kannst dich ab sofort einloggen und deine Kampagnen verwalten.
       </p>
-      <p style="color:#6A6A6A;font-size:12px;margin:0;">Der Link ist 24 Stunden gültig.</p>
-      ${btn(link, "E-Mail bestätigen")}
+      ${btn(link, "Zu Lorehub")}
       <p style="color:#4A4A4A;font-size:11px;margin-top:20px;">
         Falls du diesen Account nicht erstellt hast, kannst du diese E-Mail ignorieren.
       </p>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendWelcomeEmail } from "@/lib/email";
 import crypto from "crypto";
 
 // POST — resend verification email for the currently logged-in user
@@ -18,7 +18,7 @@ export async function POST() {
   await prisma.user.update({ where: { id: userId }, data: { emailVerifyToken: token } });
 
   try {
-    await sendVerificationEmail(user.email, token);
+    await sendWelcomeEmail(user.email, user.name);
   } catch {
     return NextResponse.json({ error: "E-Mail konnte nicht gesendet werden." }, { status: 500 });
   }
