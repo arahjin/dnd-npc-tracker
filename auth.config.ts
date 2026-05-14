@@ -28,6 +28,12 @@ export const authConfig = {
       if (isPublic) return true;
       if (!isLoggedIn) return false;
 
+      // Logged in but email not yet verified → hold at verification waiting page
+      const emailVerified = (auth?.user as { emailVerified?: boolean })?.emailVerified ?? true;
+      if (!emailVerified && !pathname.startsWith("/email-bestaetigen")) {
+        return Response.redirect(new URL("/email-bestaetigen/warten", request.url));
+      }
+
       return true;
     },
   },
