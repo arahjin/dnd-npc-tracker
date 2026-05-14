@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { IconMail } from "@/components/Icons";
 
 export default function EmailWartenPage() {
   const [resending, setResending] = useState(false);
@@ -34,7 +35,9 @@ export default function EmailWartenPage() {
         <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
           <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
           <div className="p-8">
-            <p className="text-4xl mb-4">✉️</p>
+            <div className="flex justify-center mb-4">
+              <IconMail size={48} color="var(--dnd-gold)" />
+            </div>
             <h1 className="font-cinzel text-xl font-bold mb-3" style={{ color: "var(--dnd-heading)" }}>
               E-Mail bestätigen
             </h1>
