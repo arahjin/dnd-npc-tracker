@@ -52,8 +52,9 @@ function LinkedList({ items, baseHref }: { items: { id: string; name: string }[]
 export default async function LocationModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const session = await auth();
-  const userId = session!.user.id;
-  const role = session!.user.role;
+  if (!session?.user) notFound();
+  const userId = session.user.id;
+  const role = session.user.role;
   const isDM = role === "DUNGEON_MASTER";
   const isAdmin = role === "ADMIN";
 
