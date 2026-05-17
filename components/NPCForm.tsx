@@ -6,6 +6,7 @@ import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS } from "@/lib/con
 import MentionTextarea from "./MentionTextarea";
 import ImageGeneratorField from "./ImageGeneratorField";
 import { randomFantasyName } from "@/lib/nameGenerator";
+import { useTranslations } from "next-intl";
 
 type NPCData = {
   name: string;
@@ -46,6 +47,7 @@ const EMPTY: NPCData = {
 
 export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: Props) {
   const router = useRouter();
+  const t = useTranslations("form");
   const [form, setForm] = useState<NPCData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
   const [saving, setSaving] = useState(false);
@@ -57,7 +59,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim()) { setError("Name ist erforderlich."); return; }
+    if (!form.name.trim()) { setError(t("nameRequired")); return; }
     setSaving(true);
     setError("");
 
@@ -122,20 +124,20 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
 
       {/* Name */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Name *</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("nameLabel")}</label>
         <div style={{ display: "flex", gap: "8px" }}>
           <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)}
-            placeholder="z.B. Thandrel Nachtschatten" className={inputClass} style={{ ...inputStyle, flex: 1 }} />
+            placeholder={t("npcNamePlaceholder")} className={inputClass} style={{ ...inputStyle, flex: 1 }} />
           <button
             type="button"
-            title="Zufälligen Fantasy-Namen generieren"
+            title={t("rollName")}
             onClick={() => set("name", randomFantasyName(form.geschlecht as "männlich" | "weiblich" | "divers" | ""))}
             className="font-cinzel text-xs px-3 py-2 transition-all shrink-0"
             style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-gold)" }}
             onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--dnd-gold)"; }}
             onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#2A2A2A"; }}
           >
-            ⚄ Namen würfeln
+            {t("rollName")}
           </button>
         </div>
       </div>
@@ -144,21 +146,21 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
         value={form.image}
         onChange={(url) => set("image", url)}
         kind="character"
-        label="Charakterbild"
+        label={t("charImageLabel")}
         generatorPlaceholder="z.B. Elven rogue, dark hood, scarred face, mysterious"
       />
 
       {/* Status + Beziehung */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Status</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("statusLabel")}</label>
           <select value={form.status} onChange={(e) => set("status", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Beziehung</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("beziehungLabel")}</label>
           <select value={form.beziehung} onChange={(e) => set("beziehung", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
@@ -169,18 +171,18 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       {/* Geschlecht + Region */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Geschlecht</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("geschlechtLabel")}</label>
           <select value={form.geschlecht} onChange={(e) => set("geschlecht", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {GESCHLECHT_OPTIONS.map((g) => <option key={g}>{g}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Region</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("regionLabel")}</label>
           <select value={form.region} onChange={(e) => set("region", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
@@ -189,32 +191,32 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       {/* Rasse + Alter */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Rasse</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("rasseLabel")}</label>
           <input type="text" value={form.rasse} onChange={(e) => set("rasse", e.target.value)}
-            placeholder="z.B. Elf, Mensch, Zwerg..." className={inputClass} style={inputStyle} />
+            placeholder={t("rasseAlterPlaceholder")} className={inputClass} style={inputStyle} />
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Alter</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("alterLabel")}</label>
           <input type="text" value={form.alter} onChange={(e) => set("alter", e.target.value)}
-            placeholder="z.B. 47" className={inputClass} style={inputStyle} />
+            placeholder={t("alterPlaceholder")} className={inputClass} style={inputStyle} />
         </div>
       </div>
 
       {/* Herkunft + Aktuelle Position */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Herkunft</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("herkunftLabel")}</label>
           <select value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Aktuelle Position</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("aktuellePositionLabel")}</label>
           <select value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
@@ -223,16 +225,16 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       {/* Organisationen */}
       {/* Gottheit */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Gottheit</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("gottheitLabel")}</label>
         <input type="text" value={form.gottheit} onChange={(e) => set("gottheit", e.target.value)}
-          placeholder="Verehrte Gottheit(en)" className={inputClass} style={inputStyle} />
+          placeholder={t("gottheitPlaceholder")} className={inputClass} style={inputStyle} />
       </div>
 
       {availableOrgs.length > 0 && (
         <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
           <div className="px-4 py-2" style={{ borderBottom: "1px solid #2A2A2A", background: "var(--dnd-red-dark)" }}>
             <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-heading)" }}>
-              Organisationen
+              {t("orgsLabel")}
             </span>
           </div>
           <div className="p-4 space-y-2">
@@ -259,7 +261,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
                   {checked && (
                     <input
                       type="text"
-                      placeholder="Rolle (optional)"
+                      placeholder={t("rollePlaceholder")}
                       value={member?.rolle ?? ""}
                       onChange={(e) => setSelectedOrgs((prev) =>
                         prev.map((o) => o.organisationId === org.id ? { ...o, rolle: e.target.value } : o)
@@ -278,20 +280,20 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       {/* Notizen */}
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
-          Notizen <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+          {t("notizenLabel")} <span className="normal-case tracking-normal font-sans text-xs opacity-50">{t("mentionHint")}</span>
         </label>
         <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
-          placeholder={"Hintergrundgeschichte, Quests, wichtige Infos...\n\n@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
+          placeholder={t("notizenPlaceholder")}
           rows={6} className={inputClass + " resize-none"} style={inputStyle} />
       </div>
 
       {/* Sichtbarkeit */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Sichtbarkeit</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("visibilityLabel")}</label>
         <select value={form.sichtbarkeit} onChange={(e) => setForm(f => ({ ...f, sichtbarkeit: e.target.value }))}
           className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-          <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
-          <option value="privat">Privat – nur Ersteller & DM</option>
+          <option value="public">{t("visibilityPublic")}</option>
+          <option value="privat">{t("visibilityPrivate")}</option>
         </select>
       </div>
 
@@ -299,10 +301,10 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       {canSeePrivate && (
         <div>
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller & DM sichtbar</span>
+            {t("privateNotesLabel")} <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>{t("privateNotesHint")}</span>
           </label>
           <textarea value={form.privateNotizen} onChange={(e) => setForm(f => ({ ...f, privateNotizen: e.target.value }))}
-            placeholder="Geheime Infos, DM-Notizen..." rows={4}
+            placeholder={t("privateNotesPlaceholder")} rows={4}
             className={inputClass + " resize-none"}
             style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
         </div>
@@ -319,12 +321,12 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
         <button type="submit" disabled={saving}
           className="font-cinzel text-sm tracking-widest px-8 py-3 transition-all disabled:opacity-50"
           style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
-          {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "NPC ERSTELLEN"}
+          {saving ? t("saving") : id ? t("saveChanges") : t("npcCreateButton")}
         </button>
         <button type="button" onClick={() => onCancel ? onCancel() : router.push(id ? `/npc/${id}` : "/npc")}
           className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-          ABBRECHEN
+          {t("cancel")}
         </button>
       </div>
     </form>

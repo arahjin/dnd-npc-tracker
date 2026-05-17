@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { STATUS_OPTIONS, BEZIEHUNG_OPTIONS, GESCHLECHT_OPTIONS } from "@/lib/constants";
 import MentionTextarea from "./MentionTextarea";
 import ImageGeneratorField from "./ImageGeneratorField";
+import { useTranslations } from "next-intl";
 
 type OrgMembership = { organisationId: string; rolle: string };
 
@@ -35,6 +36,7 @@ const EMPTY: CharData = {
 
 export default function CharakterForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: Props) {
   const router = useRouter();
+  const t = useTranslations("form");
   const [form, setForm] = useState<CharData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
   const [saving, setSaving] = useState(false);
@@ -46,7 +48,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim()) { setError("Name ist erforderlich."); return; }
+    if (!form.name.trim()) { setError(t("nameRequired")); return; }
     setSaving(true); setError("");
 
     const payload: Record<string, unknown> = {
@@ -91,28 +93,28 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
       )}
 
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Name *</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("nameLabel")}</label>
         <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)}
-          placeholder="Charaktername" className={inputClass} style={inputStyle} />
+          placeholder={t("charNamePlaceholder")} className={inputClass} style={inputStyle} />
       </div>
 
       <ImageGeneratorField
         value={form.image}
         onChange={(url) => set("image", url)}
         kind="character"
-        label="Charakterbild"
+        label={t("charImageLabel")}
         generatorPlaceholder="z.B. Human paladin, silver armor, blue cloak, holy aura"
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Status</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("statusLabel")}</label>
           <select value={form.status} onChange={(e) => set("status", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Beziehung</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("beziehungLabel")}</label>
           <select value={form.beziehung} onChange={(e) => set("beziehung", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
           </select>
@@ -121,16 +123,16 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Geschlecht</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("geschlechtLabel")}</label>
           <select value={form.geschlecht} onChange={(e) => set("geschlecht", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {GESCHLECHT_OPTIONS.map((g) => <option key={g}>{g}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Region</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("regionLabel")}</label>
           <select value={form.region} onChange={(e) => set("region", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
@@ -138,44 +140,44 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Rasse</label>
-          <input type="text" value={form.rasse} onChange={(e) => set("rasse", e.target.value)} placeholder="z.B. Elf, Mensch..." className={inputClass} style={inputStyle} />
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("rasseLabel")}</label>
+          <input type="text" value={form.rasse} onChange={(e) => set("rasse", e.target.value)} placeholder={t("charRassePlaceholder")} className={inputClass} style={inputStyle} />
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Alter</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("alterLabel")}</label>
           <input type="text" value={form.alter} onChange={(e) => set("alter", e.target.value)} className={inputClass} style={inputStyle} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Herkunft</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("herkunftLabel")}</label>
           <select value={form.herkunft} onChange={(e) => set("herkunft", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Aktuelle Position</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("aktuellePositionLabel")}</label>
           <select value={form.aktuellePosition} onChange={(e) => set("aktuellePosition", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
       </div>
 
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Gottheit</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("gottheitLabel")}</label>
         <input type="text" value={form.gottheit} onChange={(e) => set("gottheit", e.target.value)}
-          placeholder="Verehrte Gottheit(en)" className={inputClass} style={inputStyle} />
+          placeholder={t("gottheitPlaceholder")} className={inputClass} style={inputStyle} />
       </div>
 
       {availableOrgs.length > 0 && (
         <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
           <div className="px-4 py-2" style={{ borderBottom: "1px solid #2A2A2A", background: "var(--dnd-red-dark)" }}>
-            <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-heading)" }}>Organisationen</span>
+            <span className="font-cinzel text-xs tracking-[0.15em] uppercase" style={{ color: "var(--dnd-heading)" }}>{t("orgsLabel")}</span>
           </div>
           <div className="p-4 space-y-2">
             {availableOrgs.map((org) => {
@@ -190,7 +192,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
                     }} />
                   <span className="font-cinzel text-sm shrink-0" style={{ color: checked ? "var(--dnd-heading)" : "var(--dnd-text-muted)" }}>{org.name}</span>
                   {checked && (
-                    <input type="text" placeholder="Rolle (optional)" value={member?.rolle ?? ""}
+                    <input type="text" placeholder={t("rollePlaceholder")} value={member?.rolle ?? ""}
                       onChange={(e) => setSelectedOrgs((p) => p.map((o) => o.organisationId === org.id ? { ...o, rolle: e.target.value } : o))}
                       className="flex-1 px-3 py-1.5 text-sm outline-none"
                       style={{ background: "#0A0A0A", border: "1px solid #3A2A2A", color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }} />
@@ -204,20 +206,20 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
 
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
-          Notizen <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+          {t("notizenLabel")} <span className="normal-case tracking-normal font-sans text-xs opacity-50">{t("mentionHint")}</span>
         </label>
         <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
           rows={6} className={inputClass + " resize-none"} style={inputStyle}
-          placeholder="@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen" />
+          placeholder={t("notizenPlaceholder")} />
       </div>
 
       {/* Sichtbarkeit */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Sichtbarkeit</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("visibilityLabel")}</label>
         <select value={form.sichtbarkeit} onChange={(e) => setForm(f => ({ ...f, sichtbarkeit: e.target.value }))}
           className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-          <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
-          <option value="privat">Privat – nur Ersteller & DM</option>
+          <option value="public">{t("visibilityPublic")}</option>
+          <option value="privat">{t("visibilityPrivate")}</option>
         </select>
       </div>
 
@@ -225,10 +227,10 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
       {canSeePrivate && (
         <div>
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller & DM sichtbar</span>
+            {t("privateNotesLabel")} <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>{t("privateNotesHint")}</span>
           </label>
           <textarea value={form.privateNotizen} onChange={(e) => setForm(f => ({ ...f, privateNotizen: e.target.value }))}
-            placeholder="Geheime Infos, DM-Notizen..." rows={4}
+            placeholder={t("privateNotesPlaceholder")} rows={4}
             className={inputClass + " resize-none"}
             style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
         </div>
@@ -241,11 +243,11 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
 
       <div className="flex gap-3">
         <button type="submit" disabled={saving} className="ddb-cta py-3 px-8">
-          {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "CHARAKTER ERSTELLEN"}
+          {saving ? t("saving") : id ? t("saveChanges") : t("charCreateButton")}
         </button>
         <button type="button" onClick={() => onCancel ? onCancel() : router.back()} className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-          ABBRECHEN
+          {t("cancel")}
         </button>
       </div>
     </form>

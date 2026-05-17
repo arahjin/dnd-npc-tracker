@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import JournalView from "@/components/JournalView";
+import { getTranslations } from "next-intl/server";
 
 export default async function GeschichtePage() {
   const ctx = await requireKampagne();
+  const t = await getTranslations("geschichte");
 
   const [npcs, orgs, chars, locations] = await Promise.all([
     prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
@@ -23,13 +25,13 @@ export default async function GeschichtePage() {
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
       <div className="mx-auto max-w-3xl px-4 md:px-6 py-8 md:py-10">
         <div className="mb-8">
-          <h1 className="font-cinzel text-2xl font-bold" style={{ color: "var(--dnd-heading)" }}>Geschichte</h1>
+          <h1 className="font-cinzel text-2xl font-bold" style={{ color: "var(--dnd-heading)" }}>{t("title")}</h1>
           <div className="mt-3 flex items-center gap-3">
             <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
             <span style={{ color: "var(--dnd-red)" }}>✦</span>
           </div>
           <p className="mt-2 font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
-            Öffentlich · Alle Spieler können lesen und schreiben
+            {t("subtitle")}
           </p>
         </div>
         <JournalView typ="GESCHICHTE" userId={ctx.userId} isDM={ctx.isDM} tagOptions={tagOptions} />

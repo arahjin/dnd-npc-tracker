@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ALIGNMENT_OPTIONS, ORGANISATION_TYP_OPTIONS } from "@/lib/constants";
 import MentionTextarea from "./MentionTextarea";
 import ImageGeneratorField from "./ImageGeneratorField";
+import { useTranslations } from "next-intl";
 
 type OrgData = {
   name: string;
@@ -26,6 +27,7 @@ const EMPTY: OrgData = {
 
 export default function OrgForm({ initial, id, availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: { initial?: Partial<OrgData & { sichtbarkeit?: string; privateNotizen?: string }>; id?: string; availableLocations?: { id: string; name: string }[]; onSuccess?: () => void; onCancel?: () => void; canSeePrivate?: boolean }) {
   const router = useRouter();
+  const t = useTranslations("form");
   const [form, setForm] = useState<OrgData>({ ...EMPTY, ...initial });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -36,7 +38,7 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim()) { setError("Name ist erforderlich."); return; }
+    if (!form.name.trim()) { setError(t("nameRequired")); return; }
     setSaving(true);
     setError("");
     const payload = {
@@ -75,71 +77,71 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
       {error && <div className="font-cinzel text-sm px-4 py-3" style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>{error}</div>}
 
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Name *</label>
-        <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="z.B. Die Scharlachroten Klingen" className={inputClass} style={inputStyle} />
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("nameLabel")}</label>
+        <input type="text" value={form.name} onChange={(e) => set("name", e.target.value)} placeholder={t("orgNamePlaceholder")} className={inputClass} style={inputStyle} />
       </div>
 
       <ImageGeneratorField
         value={form.image}
         onChange={(url) => set("image", url)}
         kind="organisation"
-        label="Wappen / Bild"
+        label={t("orgImageLabel")}
         generatorPlaceholder="z.B. Crimson dagger crossed with golden chalice, black banner"
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Typ</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("typLabel")}</label>
           <select value={form.typ} onChange={(e) => set("typ", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
-            {ORGANISATION_TYP_OPTIONS.map((t) => <option key={t}>{t}</option>)}
+            <option value="">{t("selectPlaceholder")}</option>
+            {ORGANISATION_TYP_OPTIONS.map((o) => <option key={o}>{o}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Region</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("regionLabel")}</label>
           <select value={form.region} onChange={(e) => set("region", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Wählen —</option>
+            <option value="">{t("selectPlaceholder")}</option>
             {availableLocations.map((l) => <option key={l.id} value={l.name}>{l.name}</option>)}
           </select>
         </div>
       </div>
 
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Alignment</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("alignmentLabel")}</label>
         <select value={form.alignment} onChange={(e) => set("alignment", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-          <option value="">— Wählen —</option>
+          <option value="">{t("selectPlaceholder")}</option>
           {ALIGNMENT_OPTIONS.map((a) => <option key={a}>{a}</option>)}
         </select>
       </div>
 
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Beziehung zur Gruppe</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("beziehungZurGruppeLabel")}</label>
         <textarea value={form.beziehungZurGruppe} onChange={(e) => set("beziehungZurGruppe", e.target.value)}
-          placeholder="Wie verhält sich die Organisation zur Spielergruppe?" rows={3} className={inputClass + " resize-none"} style={inputStyle} />
+          placeholder={t("beziehungZurGruppePlaceholder")} rows={3} className={inputClass + " resize-none"} style={inputStyle} />
       </div>
 
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Gottheit</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("gottheitLabel")}</label>
         <input type="text" value={form.gottheit} onChange={(e) => set("gottheit", e.target.value)}
-          placeholder="Verehrte oder schützende Gottheit(en)" className={inputClass} style={inputStyle} />
+          placeholder={t("gottheitOrgPlaceholder")} className={inputClass} style={inputStyle} />
       </div>
 
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
-          Beschreibung <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+          {t("beschreibungLabel")} <span className="normal-case tracking-normal font-sans text-xs opacity-50">{t("mentionHint")}</span>
         </label>
         <MentionTextarea value={form.beschreibung} onChange={(v) => set("beschreibung", v)}
-          placeholder={"Geschichte, Ziele, Aktivitäten...\n\n@ tippen um NPCs, Orgs, Chars oder Locations zu verknüpfen"}
+          placeholder={t("orgBeschreibungPlaceholder")}
           rows={5} className={inputClass + " resize-none"} style={inputStyle} />
       </div>
 
       {/* Sichtbarkeit */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Sichtbarkeit</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("visibilityLabel")}</label>
         <select value={form.sichtbarkeit} onChange={(e) => setForm(f => ({ ...f, sichtbarkeit: e.target.value }))}
           className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-          <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
-          <option value="privat">Privat – nur Ersteller & DM</option>
+          <option value="public">{t("visibilityPublic")}</option>
+          <option value="privat">{t("visibilityPrivate")}</option>
         </select>
       </div>
 
@@ -147,10 +149,10 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
       {canSeePrivate && (
         <div>
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller & DM sichtbar</span>
+            {t("privateNotesLabel")} <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>{t("privateNotesHint")}</span>
           </label>
           <textarea value={form.privateNotizen} onChange={(e) => set("privateNotizen", e.target.value)}
-            placeholder="Geheime Infos, DM-Notizen..." rows={4}
+            placeholder={t("privateNotesPlaceholder")} rows={4}
             className={inputClass + " resize-none"}
             style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
         </div>
@@ -164,11 +166,11 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
       <div className="flex gap-3">
         <button type="submit" disabled={saving} className="font-cinzel text-sm tracking-widest px-8 py-3 transition-all disabled:opacity-50"
           style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
-          {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "ORGANISATION ERSTELLEN"}
+          {saving ? t("saving") : id ? t("saveChanges") : t("orgCreateButton")}
         </button>
         <button type="button" onClick={() => onCancel ? onCancel() : router.back()} className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-          ABBRECHEN
+          {t("cancel")}
         </button>
       </div>
     </form>

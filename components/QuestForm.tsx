@@ -11,6 +11,7 @@ import {
   QUEST_ORG_ROLLEN,
   QUEST_CHAR_ROLLEN,
 } from "@/lib/constants";
+import { useTranslations } from "next-intl";
 
 type QuestData = {
   title: string;
@@ -72,6 +73,7 @@ export default function QuestForm({
   canSeePrivate = true,
 }: Props) {
   const router = useRouter();
+  const t = useTranslations("form");
   const [form, setForm] = useState<QuestData>({ ...EMPTY, ...initial });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -129,7 +131,7 @@ export default function QuestForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.title.trim()) { setError("Titel ist erforderlich."); return; }
+    if (!form.title.trim()) { setError(t("titleRequired")); return; }
     setSaving(true);
     setError("");
 
@@ -210,12 +212,12 @@ export default function QuestForm({
 
       {/* Title */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Titel *</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("questTitleLabel")}</label>
         <input
           type="text"
           value={form.title}
           onChange={(e) => set("title", e.target.value)}
-          placeholder="z.B. Die verlorene Klinge des Königs"
+          placeholder={t("questTitlePlaceholder")}
           className={inputClass}
           style={inputStyle}
         />
@@ -224,17 +226,17 @@ export default function QuestForm({
       {/* Status + Typ */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Status</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("statusLabel")}</label>
           <select value={form.status} onChange={(e) => set("status", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             {QUEST_STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Typ</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("typLabel")}</label>
           <select value={form.typ} onChange={(e) => set("typ", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            {QUEST_TYP_OPTIONS.map((t) => <option key={t}>{t}</option>)}
+            {QUEST_TYP_OPTIONS.map((o) => <option key={o}>{o}</option>)}
           </select>
         </div>
       </div>
@@ -242,31 +244,31 @@ export default function QuestForm({
       {/* Priorität + Sichtbarkeit */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Priorität</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("prioritaetLabel")}</label>
           <select value={form.prioritaet} onChange={(e) => set("prioritaet", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="">— Keine —</option>
+            <option value="">{t("noPriorityOption")}</option>
             {QUEST_PRIORITAET_OPTIONS.map((p) => <option key={p}>{p}</option>)}
           </select>
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Sichtbarkeit</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("visibilityLabel")}</label>
           <select value={form.sichtbarkeit} onChange={(e) => set("sichtbarkeit", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
-            <option value="privat">Privat – nur DM</option>
+            <option value="public">{t("visibilityPublic")}</option>
+            <option value="privat">{t("visibilityPrivateDM")}</option>
           </select>
         </div>
       </div>
 
       {/* Deadline */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Deadline</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("deadlineLabel")}</label>
         <input
           type="text"
           value={form.deadline}
           onChange={(e) => set("deadline", e.target.value)}
-          placeholder="z.B. Vor der Mondfinsternis"
+          placeholder={t("deadlinePlaceholder")}
           className={inputClass}
           style={inputStyle}
         />
@@ -274,11 +276,11 @@ export default function QuestForm({
 
       {/* Summary */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Zusammenfassung</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("summaryLabel")}</label>
         <textarea
           value={form.summary}
           onChange={(e) => set("summary", e.target.value)}
-          placeholder="Kurze Zusammenfassung der Quest..."
+          placeholder={t("summaryPlaceholder")}
           rows={2}
           className={inputClass + " resize-none"}
           style={inputStyle}
@@ -287,11 +289,11 @@ export default function QuestForm({
 
       {/* Description */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Beschreibung</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("beschreibungLabel")}</label>
         <textarea
           value={form.description}
           onChange={(e) => set("description", e.target.value)}
-          placeholder="Detaillierte Beschreibung der Quest, Hintergrund, Kontext..."
+          placeholder={t("questDescriptionPlaceholder")}
           rows={5}
           className={inputClass + " resize-none"}
           style={inputStyle}
@@ -300,12 +302,12 @@ export default function QuestForm({
 
       {/* Reward */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Belohnung</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("rewardLabel")}</label>
         <input
           type="text"
           value={form.reward}
           onChange={(e) => set("reward", e.target.value)}
-          placeholder="z.B. 500 GM, magischer Gegenstand..."
+          placeholder={t("rewardPlaceholder")}
           className={inputClass}
           style={inputStyle}
         />
@@ -315,12 +317,12 @@ export default function QuestForm({
       {canSeePrivate && (
         <div>
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-            GM-Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für DM sichtbar</span>
+            {t("gmNotesLabel")} <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>{t("gmNotesHint")}</span>
           </label>
           <textarea
             value={form.gmNotes}
             onChange={(e) => set("gmNotes", e.target.value)}
-            placeholder="Geheime Infos, DM-Hinweise, versteckte Handlungsstränge..."
+            placeholder={t("gmNotesPlaceholder")}
             rows={3}
             className={inputClass + " resize-none"}
             style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }}
@@ -346,6 +348,8 @@ export default function QuestForm({
           onRolleChange={(npcId, rolle) =>
             setSelectedNpcs((prev) => prev.map((n) => n.npcId === npcId ? { ...n, rolle } : n))
           }
+          rolleOptionLabel={t("rolleOption")}
+          addItemLabel={t("addItem", { title: "NPCs" })}
         />
       )}
 
@@ -365,13 +369,15 @@ export default function QuestForm({
           onRolleChange={(locationId, rolle) =>
             setSelectedLocations((prev) => prev.map((l) => l.locationId === locationId ? { ...l, rolle } : l))
           }
+          rolleOptionLabel={t("rolleOption")}
+          addItemLabel={t("addItem", { title: "Locations" })}
         />
       )}
 
       {/* Organisationen */}
       {availableOrgs.length > 0 && (
         <AssociationSection
-          title="Organisationen"
+          title={t("orgsLabel")}
           items={availableOrgs}
           selected={selectedOrgs}
           idKey="organisationId"
@@ -384,13 +390,15 @@ export default function QuestForm({
           onRolleChange={(organisationId, rolle) =>
             setSelectedOrgs((prev) => prev.map((o) => o.organisationId === organisationId ? { ...o, rolle } : o))
           }
+          rolleOptionLabel={t("rolleOption")}
+          addItemLabel={t("addItem", { title: t("orgsLabel") })}
         />
       )}
 
       {/* Charaktere */}
       {availableChars.length > 0 && (
         <AssociationSection
-          title="Charaktere"
+          title={t("charaktereLabel")}
           items={availableChars}
           selected={selectedChars}
           idKey="charakterId"
@@ -403,6 +411,8 @@ export default function QuestForm({
           onRolleChange={(charakterId, rolle) =>
             setSelectedChars((prev) => prev.map((c) => c.charakterId === charakterId ? { ...c, rolle } : c))
           }
+          rolleOptionLabel={t("rolleOption")}
+          addItemLabel={t("addItem", { title: t("charaktereLabel") })}
         />
       )}
 
@@ -420,7 +430,7 @@ export default function QuestForm({
           className="font-cinzel text-sm tracking-widest px-8 py-3 transition-all disabled:opacity-50"
           style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}
         >
-          {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "QUEST ERSTELLEN"}
+          {saving ? t("saving") : id ? t("saveChanges") : t("questCreateButton")}
         </button>
         <button
           type="button"
@@ -428,7 +438,7 @@ export default function QuestForm({
           className="font-cinzel text-sm tracking-widest px-6 py-3 transition-all"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}
         >
-          ABBRECHEN
+          {t("cancel")}
         </button>
       </div>
     </form>
@@ -446,6 +456,8 @@ type AssocSectionProps<K extends string> = {
   onAdd: (id: string) => void;
   onRemove: (id: string) => void;
   onRolleChange: (id: string, rolle: string) => void;
+  rolleOptionLabel: string;
+  addItemLabel: string;
 };
 
 function AssociationSection<K extends string>({
@@ -457,6 +469,8 @@ function AssociationSection<K extends string>({
   onAdd,
   onRemove,
   onRolleChange,
+  rolleOptionLabel,
+  addItemLabel,
 }: AssocSectionProps<K>) {
   const selectedIds = selected.map((s) => s[idKey] as string);
   const available = items.filter((i) => !selectedIds.includes(i.id));
@@ -490,7 +504,7 @@ function AssociationSection<K extends string>({
                 className="flex-1 px-3 py-1.5 text-sm outline-none font-cinzel"
                 style={inputStyle}
               >
-                <option value="">— Rolle —</option>
+                <option value="">{rolleOptionLabel}</option>
                 {rolleOptions.map((r) => <option key={r}>{r}</option>)}
               </select>
               <button
@@ -511,7 +525,7 @@ function AssociationSection<K extends string>({
             className="w-full px-3 py-2 text-sm outline-none font-cinzel"
             style={{ ...inputStyle, border: "1px solid #3A2A2A" }}
           >
-            <option value="">+ {title} hinzufügen</option>
+            <option value="">{addItemLabel}</option>
             {available.map((item) => (
               <option key={item.id} value={item.id}>{item.name}</option>
             ))}

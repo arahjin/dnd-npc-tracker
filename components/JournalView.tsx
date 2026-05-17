@@ -5,6 +5,7 @@ import MentionTextarea from "./MentionTextarea";
 import RenderMentions from "./RenderMentions";
 import { extractTagsFromText, type MentionOption } from "@/lib/mentions";
 import { IconPerson, IconOrganisation, IconSword, IconPin, IconBook } from "@/components/Icons";
+import { useTranslations } from "next-intl";
 
 function MentionTypeIcon({ typ }: { typ: string }) {
   const p = { size: 12 };
@@ -29,6 +30,7 @@ type Props = {
 };
 
 export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
+  const t = useTranslations("journal");
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -75,7 +77,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Eintrag löschen?")) return;
+    if (!confirm(t("deleteConfirm"))) return;
     await fetch(`/api/journal/${id}`, { method: "DELETE" });
     setEntries((prev) => prev.filter((e) => e.id !== id));
   }
@@ -134,7 +136,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
           ) : (
             <div className="relative flex-1">
               <input type="text" value={filterSearch} onChange={(e) => setFilterSearch(e.target.value)}
-                placeholder="Nach NPC, Org oder Charakter filtern..."
+                placeholder={t("filterPlaceholder")}
                 className="w-full px-3 py-1.5 text-sm outline-none" style={inputStyle} />
               {filterSearch && filterTagOptions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 z-20"
@@ -155,7 +157,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
           )}
           {filterTag && (
             <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
-              {visibleEntries.length} {visibleEntries.length === 1 ? "Eintrag" : "Einträge"}
+              {t("entryCount", { count: visibleEntries.length })}
             </span>
           )}
         </div>
@@ -163,7 +165,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
 
       {/* ── New Entry Button ── */}
       {!showForm && (
-        <button onClick={() => setShowForm(true)} className="ddb-cta mb-8">+ Neuer Eintrag</button>
+        <button onClick={() => setShowForm(true)} className="ddb-cta mb-8">{t("newEntry")}</button>
       )}
 
       {/* ── New Entry Form ── */}
@@ -171,36 +173,36 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
         <form onSubmit={handleSubmit} className="mb-8 p-5 space-y-4" style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
           <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
           <div>
-            <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Titel (optional)</label>
+            <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("titleLabel")}</label>
             <input type="text" value={titel} onChange={(e) => setTitel(e.target.value)}
-              placeholder="Titel des Eintrags" className="w-full px-4 py-2 outline-none" style={inputStyle} />
+              placeholder={t("titlePlaceholder")} className="w-full px-4 py-2 outline-none" style={inputStyle} />
           </div>
           <div>
             <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
-              Inhalt * <span className="normal-case tracking-normal opacity-60">— @ tippen zum Verknüpfen</span>
+              {t("contentLabel")} <span className="normal-case tracking-normal opacity-60">{t("contentMention")}</span>
             </label>
             <MentionTextarea
               value={inhalt} onChange={setInhalt} tagOptions={tagOptions} rows={6} required
-              placeholder={"Was ist passiert...\n\nTipp: @ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
+              placeholder={t("contentPlaceholder")}
               className="w-full px-4 py-2 outline-none resize-none" style={inputStyle}
             />
           </div>
           <div className="flex gap-3">
-            <button type="submit" disabled={saving} className="ddb-cta">{saving ? "SPEICHERN..." : "EINTRAG SPEICHERN"}</button>
+            <button type="submit" disabled={saving} className="ddb-cta">{saving ? t("saving") : t("saveEntry")}</button>
             <button type="button" onClick={() => setShowForm(false)} className="font-cinzel text-sm px-4 py-2"
-              style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>ABBRECHEN</button>
+              style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>{t("cancel")}</button>
           </div>
         </form>
       )}
 
       {/* ── Entries ── */}
       {loading ? (
-        <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>Lade Einträge...</p>
+        <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>{t("loading")}</p>
       ) : visibleEntries.length === 0 ? (
         <div className="flex flex-col items-center py-20">
           <div className="mb-4" style={{ opacity: 0.3 }}><IconBook size={52} color="var(--dnd-text-muted)" /></div>
           <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-            {filterTag ? `Keine Einträge mit @${filterTag.label}.` : "Noch keine Einträge."}
+            {filterTag ? t("emptyFiltered", { name: filterTag.label }) : t("empty")}
           </p>
         </div>
       ) : (
@@ -215,13 +217,13 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                 {isEditing ? (
                   <form onSubmit={(e) => handleEdit(e, entry.id)} className="px-5 py-4 space-y-4">
                     <div>
-                      <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Titel (optional)</label>
+                      <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("titleLabel")}</label>
                       <input type="text" value={editTitel} onChange={(e) => setEditTitel(e.target.value)}
                         className="w-full px-4 py-2 outline-none" style={inputStyle} />
                     </div>
                     <div>
                       <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
-                        Inhalt * <span className="normal-case tracking-normal opacity-60">— @ tippen zum Verknüpfen</span>
+                        {t("contentLabel")} <span className="normal-case tracking-normal opacity-60">{t("contentMention")}</span>
                       </label>
                       <MentionTextarea
                         value={editInhalt} onChange={setEditInhalt} tagOptions={tagOptions} rows={6} required
@@ -230,10 +232,10 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                     </div>
                     <div className="flex gap-3">
                       <button type="submit" disabled={editSaving} className="ddb-cta">
-                        {editSaving ? "SPEICHERN..." : "ÄNDERUNGEN SPEICHERN"}
+                        {editSaving ? t("saving") : t("saveChanges")}
                       </button>
                       <button type="button" onClick={cancelEdit} className="font-cinzel text-sm px-4 py-2"
-                        style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>ABBRECHEN</button>
+                        style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>{t("cancel")}</button>
                     </div>
                   </form>
                 ) : (

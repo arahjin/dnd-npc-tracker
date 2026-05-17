@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MentionTextarea from "./MentionTextarea";
 import ImageGeneratorField from "./ImageGeneratorField";
+import { useTranslations } from "next-intl";
 
 const ART_OPTIONS = ["Kontinent", "Land", "Region", "Stadt", "Dorf", "Besonderer Ort", "Wald", "Gewässer", "Insel"];
 
@@ -41,12 +42,18 @@ function MultiSelect({
   selected,
   onToggle,
   placeholder,
+  noItemsText,
+  noResultsText,
+  searchPlaceholder,
 }: {
   label: string;
   items: LinkedItem[];
   selected: Set<string>;
   onToggle: (id: string) => void;
   placeholder: string;
+  noItemsText: string;
+  noResultsText: string;
+  searchPlaceholder: string;
 }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -157,7 +164,7 @@ function MultiSelect({
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Suchen…"
+            placeholder={searchPlaceholder}
             autoFocus
             onClick={(e) => e.stopPropagation()}
             className="text-sm outline-none"
@@ -174,11 +181,11 @@ function MultiSelect({
           <div style={{ overflowY: "auto" }}>
             {items.length === 0 ? (
               <p className="px-3 py-2 text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-                Keine verfügbar
+                {noItemsText}
               </p>
             ) : filtered.length === 0 ? (
               <p className="px-3 py-2 text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-                Keine Treffer
+                {noResultsText}
               </p>
             ) : (
               filtered.map((item) => {
@@ -250,6 +257,7 @@ export default function LocationForm({
   onCancel,
 }: Props) {
   const router = useRouter();
+  const t = useTranslations("form");
   const [name, setName] = useState(initial.name ?? "");
   const [image, setImage] = useState(initial.image ?? "");
   const [art, setArt] = useState(initial.art ?? "");
@@ -279,7 +287,7 @@ export default function LocationForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!name.trim()) { setError("Name ist erforderlich."); return; }
+    if (!name.trim()) { setError(t("nameRequired")); return; }
     setSaving(true);
     setError("");
 
@@ -304,7 +312,7 @@ export default function LocationForm({
 
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error ?? "Fehler beim Speichern.");
+      setError(data.error ?? t("locationSaveError"));
       setSaving(false);
       return;
     }
@@ -325,10 +333,10 @@ export default function LocationForm({
 
       {/* Name */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Name *</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("nameLabel")}</label>
         <input
           type="text" value={name} onChange={(e) => setName(e.target.value)}
-          placeholder="z.B. Silberstadt" autoFocus
+          placeholder={t("locationNamePlaceholder")} autoFocus
           className="w-full px-4 py-2.5 text-base outline-none"
           style={inputStyle}
         />
@@ -338,19 +346,19 @@ export default function LocationForm({
         value={image}
         onChange={setImage}
         kind="location"
-        label="Bild"
+        label={t("artLabel")}
         generatorPlaceholder="z.B. Misty mountain village, snowy peaks, glowing windows at dusk"
       />
 
       {/* Art */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Art</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("artLabel")}</label>
         <select
           value={art} onChange={(e) => setArt(e.target.value)}
           className="w-full px-4 py-2.5 text-sm outline-none"
           style={inputStyle}
         >
-          <option value="">– Art wählen –</option>
+          <option value="">{t("artSelectPlaceholder")}</option>
           {ART_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
         </select>
       </div>
@@ -358,19 +366,19 @@ export default function LocationForm({
       {/* Land + Region row */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Land</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("landLabel")}</label>
           <input
             type="text" value={land} onChange={(e) => setLand(e.target.value)}
-            placeholder="z.B. Königreich Valoria"
+            placeholder={t("landPlaceholder")}
             className="w-full px-4 py-2.5 text-sm outline-none"
             style={inputStyle}
           />
         </div>
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Region</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("regionLabel")}</label>
           <input
             type="text" value={region} onChange={(e) => setRegion(e.target.value)}
-            placeholder="z.B. Nordmark"
+            placeholder={t("regionPlaceholder")}
             className="w-full px-4 py-2.5 text-sm outline-none"
             style={inputStyle}
           />
@@ -379,7 +387,7 @@ export default function LocationForm({
 
       {/* Population – no spinner */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Population</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("populationLabel")}</label>
         <input
           type="number" value={population} onChange={(e) => setPopulation(e.target.value)}
           placeholder="z.B. 5000" min={0}
@@ -390,10 +398,10 @@ export default function LocationForm({
 
       {/* Klima */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Klima</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("klimaLabel")}</label>
         <input
           type="text" value={klima} onChange={(e) => setKlima(e.target.value)}
-          placeholder="z.B. Gemäßigt, feucht"
+          placeholder={t("klimaPlaceholder")}
           className="w-full px-4 py-2.5 text-sm outline-none"
           style={inputStyle}
         />
@@ -402,11 +410,11 @@ export default function LocationForm({
       {/* Flora & Fauna */}
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
-          Flora &amp; Fauna <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+          {t("floraFaunaLabel")} <span className="normal-case tracking-normal font-sans text-xs opacity-50">{t("mentionHint")}</span>
         </label>
         <MentionTextarea
           value={floraFauna} onChange={(v) => setFloraFauna(v)}
-          rows={3} placeholder={"Typische Pflanzen und Tiere...\n\n@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
+          rows={3} placeholder={t("floraFaunaPlaceholder")}
           className="w-full px-4 py-2.5 text-sm outline-none resize-none"
           style={inputStyle}
         />
@@ -415,11 +423,11 @@ export default function LocationForm({
       {/* Wissenswertes */}
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>
-          Wissenswertes <span className="normal-case tracking-normal font-sans text-xs opacity-50">— @ tippen zum Verknüpfen</span>
+          {t("wissenswertesLabel")} <span className="normal-case tracking-normal font-sans text-xs opacity-50">{t("mentionHint")}</span>
         </label>
         <MentionTextarea
           value={wissenswertes} onChange={(v) => setWissenswertes(v)}
-          rows={6} placeholder={"Geschichte, Besonderheiten, Geheimnisse...\n\n@ tippen um NPCs, Orgs oder Charaktere zu verknüpfen"}
+          rows={6} placeholder={t("wissenswertesPlaceholder")}
           className="w-full px-4 py-2.5 text-sm outline-none resize-none"
           style={inputStyle}
         />
@@ -427,12 +435,12 @@ export default function LocationForm({
 
       {/* Sichtbarkeit */}
       <div>
-        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>Sichtbarkeit</label>
+        <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("visibilityLabel")}</label>
         <select value={sichtbarkeit} onChange={(e) => setSichtbarkeit(e.target.value)}
           className="w-full px-4 py-2.5 text-sm outline-none font-cinzel"
           style={inputStyle}>
-          <option value="public">Öffentlich – alle Kampagnenmitglieder</option>
-          <option value="privat">Privat – nur Ersteller & DM</option>
+          <option value="public">{t("visibilityPublic")}</option>
+          <option value="privat">{t("visibilityPrivate")}</option>
         </select>
       </div>
 
@@ -440,10 +448,10 @@ export default function LocationForm({
       {canSeePrivate && (
         <div>
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
-            Private Notizen <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>— nur für Ersteller & DM sichtbar</span>
+            {t("privateNotesLabel")} <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>{t("privateNotesHint")}</span>
           </label>
           <textarea value={privateNotizen} onChange={(e) => setPrivateNotizen(e.target.value)}
-            placeholder="Geheime Infos, DM-Notizen..." rows={4}
+            placeholder={t("privateNotesPlaceholder")} rows={4}
             className="w-full px-4 py-2.5 text-sm outline-none resize-none"
             style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }} />
         </div>
@@ -452,7 +460,7 @@ export default function LocationForm({
       {/* Divider */}
       <div className="flex items-center gap-3 pt-2">
         <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
-        <span className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-label)" }}>VERKNÜPFUNGEN</span>
+        <span className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-label)" }}>{t("verknuepfungenLabel")}</span>
         <div className="h-px flex-1" style={{ background: "linear-gradient(270deg, var(--dnd-red), transparent)" }} />
       </div>
 
@@ -462,33 +470,42 @@ export default function LocationForm({
         items={availableNpcs}
         selected={npcIds}
         onToggle={(itemId) => toggle(npcIds, setNpcIds, itemId)}
-        placeholder="NPCs auswählen…"
+        placeholder={t("npcsSelectPlaceholder")}
+        noItemsText={t("multiSelectNoItems")}
+        noResultsText={t("multiSelectNoResults")}
+        searchPlaceholder={t("multiSelectSearch")}
       />
       <MultiSelect
-        label="Organisationen"
+        label={t("orgsLabel")}
         items={availableOrgs}
         selected={orgIds}
         onToggle={(itemId) => toggle(orgIds, setOrgIds, itemId)}
-        placeholder="Organisationen auswählen…"
+        placeholder={t("orgsSelectPlaceholder")}
+        noItemsText={t("multiSelectNoItems")}
+        noResultsText={t("multiSelectNoResults")}
+        searchPlaceholder={t("multiSelectSearch")}
       />
       <MultiSelect
-        label="Charaktere"
+        label={t("charaktereLabel")}
         items={availableChars}
         selected={charIds}
         onToggle={(itemId) => toggle(charIds, setCharIds, itemId)}
-        placeholder="Charaktere auswählen…"
+        placeholder={t("charsSelectPlaceholder")}
+        noItemsText={t("multiSelectNoItems")}
+        noResultsText={t("multiSelectNoResults")}
+        searchPlaceholder={t("multiSelectSearch")}
       />
 
       {/* Submit */}
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={saving} className="ddb-cta py-3 px-8">
-          {saving ? "SPEICHERN..." : id ? "ÄNDERUNGEN SPEICHERN" : "LOCATION ERSTELLEN"}
+          {saving ? t("saving") : id ? t("saveChanges") : t("locationCreateButton")}
         </button>
         <button
           type="button" onClick={() => onCancel ? onCancel() : router.back()}
           className="font-cinzel text-sm tracking-widest px-6 py-3"
           style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-          ABBRECHEN
+          {t("cancel")}
         </button>
       </div>
     </form>
