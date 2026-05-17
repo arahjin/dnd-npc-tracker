@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { LocationArtIcon, IconPin, IconMap, IconGlobe, IconPeople } from "@/components/Icons";
+import { stripMentions } from "@/lib/mentions";
 
 type Location = {
   id: string;
@@ -83,7 +84,7 @@ export default function LocationGrid({ locations, isDM = false }: { locations: L
                     {loc.population != null && <span className="text-xs flex items-center gap-1" style={{ color: "var(--dnd-text-muted)" }}><IconPeople size={11} /> {loc.population.toLocaleString("de-DE")}</span>}
                   </div>
                   {loc.wissenswertes && (
-                    <p className="text-sm leading-relaxed line-clamp-2 mb-3" style={{ color: "var(--dnd-text)" }}>{loc.wissenswertes}</p>
+                    <p className="text-sm leading-relaxed line-clamp-2 mb-3" style={{ color: "var(--dnd-text)" }}>{stripMentions(loc.wissenswertes)}</p>
                   )}
                   {linked > 0 && (
                     <p className="font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-red-light)" }}>
