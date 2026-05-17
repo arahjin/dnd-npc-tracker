@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function ExportButton() {
+  const t = useTranslations("dmExport");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -13,7 +15,7 @@ export default function ExportButton() {
     const res = await fetch("/api/kampagnen/export");
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error ?? "Export fehlgeschlagen.");
+      setError(data.error ?? t("error"));
       setLoading(false);
       return;
     }
@@ -40,7 +42,7 @@ export default function ExportButton() {
         disabled={loading}
         className="ddb-cta disabled:opacity-50"
         style={{ padding: "12px 32px", fontSize: "0.8rem" }}>
-        {loading ? "⏳ Wird exportiert…" : "↓ KAMPAGNE EXPORTIEREN"}
+        {loading ? t("loading") : t("button")}
       </button>
       {error && <p className="mt-3 text-sm" style={{ color: "#F87171" }}>{error}</p>}
     </div>

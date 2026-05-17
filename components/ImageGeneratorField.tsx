@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 type Kind = "character" | "location" | "organisation";
 
@@ -16,24 +17,12 @@ type Props = {
   generatorPlaceholder?: string;
 };
 
-const KIND_HINT: Record<Kind, string> = {
-  character:    "DALL-E 3 zeichnet deinen Charakter…",
-  location:     "DALL-E 3 zeichnet deine Location…",
-  organisation: "DALL-E 3 zeichnet das Wappen…",
-};
-
 const inputClass = "w-full px-4 py-2.5 text-base outline-none transition-colors";
 const inputStyle = { background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" };
 const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
-const divider = (text: string) => (
-  <div className="flex items-center gap-3">
-    <div className="h-px flex-1" style={{ background: "#2A2A2A" }} />
-    <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>{text}</span>
-    <div className="h-px flex-1" style={{ background: "#2A2A2A" }} />
-  </div>
-);
 
 export default function ImageGeneratorField({ value, onChange, kind, label, generatorPlaceholder }: Props) {
+  const t = useTranslations("image");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -42,6 +31,14 @@ export default function ImageGeneratorField({ value, onChange, kind, label, gene
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState("");
   const [genError, setGenError] = useState("");
+
+  const divider = (text: string) => (
+    <div className="flex items-center gap-3">
+      <div className="h-px flex-1" style={{ background: "#2A2A2A" }} />
+      <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>{text}</span>
+      <div className="h-px flex-1" style={{ background: "#2A2A2A" }} />
+    </div>
+  );
 
   async function handleUpload(file: File) {
     setUploading(true);
@@ -55,7 +52,7 @@ export default function ImageGeneratorField({ value, onChange, kind, label, gene
     setUploading(false);
 
     if (!res.ok) {
-      setUploadError(data.error ?? "Upload fehlgeschlagen.");
+      setUploadError(data.error ?? t("uploadError"));
       return;
     }
     onChange(data.url);
@@ -76,7 +73,7 @@ export default function ImageGeneratorField({ value, onChange, kind, label, gene
     setGenerating(false);
 
     if (!res.ok) {
-      setGenError(data.error ?? "Fehler beim Generieren.");
+      setGenError(data.error ?? t("errorGenerating"));
       return;
     }
     setGenerated(data.url);
@@ -99,27 +96,27 @@ export default function ImageGeneratorField({ value, onChange, kind, label, gene
       <div className="p-4 space-y-4">
         {/* URL input */}
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-text-muted)" }}>Bild-URL (optional)</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-text-muted)" }}>{t("urlLabel")}</label>
           <input type="url" value={value} onChange={(e) => onChange(e.target.value)}
-            placeholder="https://..." className={inputClass} style={inputStyle} />
+            placeholder={t("urlPlaceholder")} className={inputClass} style={inputStyle} />
         </div>
 
         {/* Preview */}
         {value && (
           <div className="flex items-start gap-3">
             <div className="relative w-32 h-32 overflow-hidden shrink-0" style={{ border: "1px solid var(--dnd-border)" }}>
-              <Image src={value} alt="Vorschau" fill sizes="128px" className="object-cover" />
+              <Image src={value} alt={t("preview")} fill sizes="128px" className="object-cover" />
             </div>
             <button type="button" onClick={() => onChange("")}
               className="font-cinzel text-xs tracking-wide px-3 py-1.5 transition-all"
               style={{ border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>
-              ✕ Entfernen
+              {t("remove")}
             </button>
           </div>
         )}
 
         {/* Upload */}
-        {divider("oder hochladen")}
+        {divider(t("uploadDivider"))}
         <div>
           <input
             ref={fileInputRef}
@@ -136,18 +133,18 @@ export default function ImageGeneratorField({ value, onChange, kind, label, gene
             disabled={uploading}
             className="font-cinzel text-xs tracking-widest px-4 py-2.5 transition-all disabled:opacity-40"
             style={{ border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>
-            {uploading ? "⏳ Wird hochgeladen…" : "↑ DATEI WÄHLEN"}
+            {uploading ? t("uploading") : t("uploadButton")}
           </button>
           <p className="mt-1 text-xs" style={{ color: "var(--dnd-text-muted)", fontFamily: "var(--font-roboto), sans-serif" }}>
-            JPG, PNG, WebP, GIF · max. 5 MB
+            {t("uploadHint")}
           </p>
           {uploadError && <p className="mt-2 text-xs" style={{ color: "#F87171" }}>{uploadError}</p>}
         </div>
 
         {/* DALL-E */}
-        {divider("oder mit KI generieren")}
+        {divider(t("aiDivider"))}
         <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-text-muted)" }}>Beschreibung für DALL-E 3</label>
+          <label className={labelStyle} style={{ color: "var(--dnd-text-muted)" }}>{t("aiLabel")}</label>
           <div className="flex gap-2">
             <input
               type="text"
@@ -162,12 +159,12 @@ export default function ImageGeneratorField({ value, onChange, kind, label, gene
               disabled={generating || !prompt.trim()}
               className="font-cinzel text-xs tracking-widest px-4 py-2.5 transition-all disabled:opacity-40 shrink-0"
               style={{ background: "var(--dnd-gold)", color: "#0A0A0A", border: "1px solid #A07830" }}>
-              {generating ? "..." : "GENERIEREN"}
+              {generating ? t("generating") : t("generateButton")}
             </button>
           </div>
           {generating && (
             <p className="mt-2 font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-gold)" }}>
-              ✦ {KIND_HINT[kind]} (ca. 10 Sekunden)
+              ✦ {t(`hints.${kind}` as Parameters<typeof t>[0])} ({t("generatingHint")})
             </p>
           )}
           {genError && <p className="mt-2 text-xs" style={{ color: "#F87171" }}>{genError}</p>}
@@ -176,18 +173,18 @@ export default function ImageGeneratorField({ value, onChange, kind, label, gene
         {generated && (
           <div className="space-y-3">
             <div className="relative w-full aspect-square overflow-hidden" style={{ border: "1px solid var(--dnd-gold)", maxWidth: "300px" }}>
-              <Image src={generated} alt="Generiertes Bild" fill sizes="300px" className="object-cover" />
+              <Image src={generated} alt={t("preview")} fill sizes="300px" className="object-cover" />
             </div>
             <div className="flex gap-2">
               <button type="button" onClick={accept}
                 className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
                 style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
-                ✓ ÜBERNEHMEN
+                {t("accept")}
               </button>
               <button type="button" onClick={handleGenerate}
                 className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all"
                 style={{ border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>
-                ↺ NEU GENERIEREN
+                {t("regenerate")}
               </button>
             </div>
           </div>
