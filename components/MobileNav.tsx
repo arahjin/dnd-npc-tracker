@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { IconAdmin, IconSword, IconDice } from "@/components/Icons";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 type Kampagne = { id: string; name: string };
 
@@ -12,17 +14,8 @@ type Props = {
   userRole?: string;
   isDM?: boolean;
   kampagneData?: { aktiveId: string; aktiveKampagne: string; kampagnen: Kampagne[] };
+  initialLocale?: string;
 };
-
-const NAV = [
-  { href: "/npc",            label: "NPCs",           key: "npcs" },
-  { href: "/organisationen", label: "Organisationen", key: "organisationen" },
-  { href: "/locations",      label: "Locations",      key: "locations" },
-  { href: "/charaktere",     label: "Charaktere",     key: "charaktere" },
-  { href: "/geschichte",     label: "Geschichte",     key: "geschichte" },
-  { href: "/tagebuch",       label: "Tagebuch",       key: "tagebuch" },
-  { href: "/quests",         label: "Quests",         key: "quests" },
-];
 
 function RoleIcon({ role }: { role: string }) {
   const p = { size: 13, color: "var(--dnd-gold)" };
@@ -31,14 +24,27 @@ function RoleIcon({ role }: { role: string }) {
   return <IconDice {...p} />;
 }
 
-export default function MobileNav({ userName, userRole, isDM, kampagneData }: Props) {
+export default function MobileNav({ userName, userRole, isDM, kampagneData, initialLocale = "de" }: Props) {
   const [open, setOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const tNav = useTranslations("nav");
+  const tMobile = useTranslations("mobileNav");
+  const tUser = useTranslations("userMenu");
 
   const isAdmin = userRole === "ADMIN";
   const canManageInvites = isDM || isAdmin;
+
+  const NAV = [
+    { href: "/npc",            label: tNav("npcs"),           key: "npcs" },
+    { href: "/organisationen", label: tNav("organisationen"), key: "organisationen" },
+    { href: "/locations",      label: tNav("locations"),      key: "locations" },
+    { href: "/charaktere",     label: tNav("charaktere"),     key: "charaktere" },
+    { href: "/geschichte",     label: tNav("geschichte"),     key: "geschichte" },
+    { href: "/tagebuch",       label: tNav("tagebuch"),       key: "tagebuch" },
+    { href: "/quests",         label: tNav("quests"),         key: "quests" },
+  ];
 
   async function switchKampagne(id: string) {
     if (id === kampagneData?.aktiveId) { setOpen(false); return; }
@@ -55,7 +61,7 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData }: Pr
       {/* Hamburger button */}
       <button
         onClick={() => setOpen(true)}
-        aria-label="Menü öffnen"
+        aria-label={tMobile("open")}
         style={{
           width: 40, height: 40, display: "flex", alignItems: "center",
           justifyContent: "center", color: "#9A8A78", flexShrink: 0, background: "none", border: "none", cursor: "pointer",
@@ -92,7 +98,7 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData }: Pr
               padding: "16px 20px", borderBottom: "1px solid #1A1A1A", flexShrink: 0,
             }}>
               <span className="font-cinzel" style={{ fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--dnd-gold)" }}>
-                Navigation
+                {tMobile("navigation")}
               </span>
               <button
                 onClick={() => setOpen(false)}
@@ -130,7 +136,7 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData }: Pr
               <div style={{ borderBottom: "1px solid #1A1A1A" }}>
                 <div style={{ padding: "12px 20px 8px" }}>
                   <p className="font-cinzel" style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--dnd-text-muted)", marginBottom: "8px" }}>
-                    Kampagne
+                    {tMobile("kampagne")}
                   </p>
                   {kampagneData.kampagnen.map((k) => (
                     <button
@@ -158,11 +164,16 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData }: Pr
                       fontSize: "0.7rem", color: "var(--dnd-text-muted)", textDecoration: "none",
                     }}
                   >
-                    + Neue Kampagne
+                    {tMobile("neueKampagne")}
                   </a>
                 </div>
               </div>
             )}
+
+            {/* Language switcher */}
+            <div style={{ padding: "12px 20px", borderBottom: "1px solid #1A1A1A" }}>
+              <LanguageSwitcher initialLocale={initialLocale} />
+            </div>
 
             {/* User section - pushed to bottom */}
             {userName && (
@@ -174,9 +185,9 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData }: Pr
                 </div>
 
                 {[
-                  { href: "/kampagnen", label: "Kampagnen", show: true },
-                  { href: "/dm/einladungen", label: "Einladungen verwalten", show: canManageInvites },
-                  { href: "/dm/admin", label: "Admin-Bereich", show: isAdmin },
+                  { href: "/kampagnen", label: tUser("kampagnen"), show: true },
+                  { href: "/dm/einladungen", label: tUser("einladungen"), show: canManageInvites },
+                  { href: "/dm/admin", label: tUser("adminBereich"), show: isAdmin },
                 ].filter(i => i.show).map(item => (
                   <a
                     key={item.href}
@@ -201,7 +212,7 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData }: Pr
                     fontSize: "0.7rem", color: "#F87171", background: "none", border: "none", cursor: "pointer",
                   }}
                 >
-                  Abmelden
+                  {tUser("abmelden")}
                 </button>
               </div>
             )}

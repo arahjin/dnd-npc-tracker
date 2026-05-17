@@ -8,6 +8,7 @@ import NavSearch from "./NavSearch";
 import UserMenu from "./UserMenu";
 import KampagneSelector from "./KampagneSelector";
 import MobileNav from "./MobileNav";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default async function SiteHeader() {
   const session = await auth();
@@ -22,8 +23,10 @@ export default async function SiteHeader() {
     errorCount = await prisma.errorLog.count({ where: { resolved: false } });
   }
 
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get("locale")?.value ?? "de";
+
   if (user?.id) {
-    const cookieStore = await cookies();
     const aktiveId = cookieStore.get("aktiveKampagne")?.value ?? null;
     if (aktiveId) {
       const isAdmin = user.role === "ADMIN";
@@ -100,10 +103,11 @@ export default async function SiteHeader() {
 
           <div style={{ flex: 1 }} />
 
-          {/* Desktop: search + campaign + user */}
+          {/* Desktop: search + campaign + language + user */}
           <div className="hidden md:flex" style={{ alignItems: "center", gap: "10px" }}>
             <NavSearch />
             {kampagneSelector}
+            <LanguageSwitcher initialLocale={localeCookie} />
             {user && <UserMenu name={user.name ?? "Spieler"} role={user.role ?? "SPIELER"} isDM={isDMofActive} errorCount={errorCount} />}
           </div>
 
@@ -115,6 +119,7 @@ export default async function SiteHeader() {
               userRole={user?.role}
               isDM={isDMofActive}
               kampagneData={kampagneNavData}
+              initialLocale={localeCookie}
             />
           </div>
         </div>

@@ -2,19 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const NAV = [
-  { href: "/npc",            label: "NPCs",           prefix: "/npc" },
-  { href: "/organisationen", label: "Organisationen", prefix: "/organisationen" },
-  { href: "/locations",      label: "Locations",      prefix: "/locations" },
-  { href: "/charaktere",     label: "Charaktere",     prefix: "/charaktere" },
-  { href: "/geschichte",     label: "Geschichte",     prefix: "/geschichte" },
-  { href: "/tagebuch",       label: "Tagebuch",       prefix: "/tagebuch" },
-  { href: "/quests",         label: "Quests",         prefix: "/quests" },
-];
+import { useTranslations } from "next-intl";
 
 export default function NavLinks() {
   const pathname = usePathname();
+  const t = useTranslations("nav");
+
+  const NAV = [
+    { href: "/npc",            label: t("npcs"),           prefix: "/npc" },
+    { href: "/organisationen", label: t("organisationen"), prefix: "/organisationen" },
+    { href: "/locations",      label: t("locations"),      prefix: "/locations" },
+    { href: "/charaktere",     label: t("charaktere"),     prefix: "/charaktere" },
+    { href: "/geschichte",     label: t("geschichte"),     prefix: "/geschichte" },
+    { href: "/tagebuch",       label: t("tagebuch"),       prefix: "/tagebuch" },
+    { href: "/quests",         label: t("quests"),         prefix: "/quests" },
+  ];
+
   return (
     <>
       {NAV.map((item) => (
