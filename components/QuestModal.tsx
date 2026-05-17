@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import QuestForm from "./QuestForm";
 
 type Props = {
@@ -29,6 +30,7 @@ export default function QuestModal({
   availableNpcs, availableLocations, availableOrgs, availableChars,
   canSeePrivate, initial, initialNpcs, initialLocations, initialOrgs, initialChars,
 }: Props) {
+  const tc = useTranslations("common");
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
@@ -62,7 +64,7 @@ export default function QuestModal({
                 className="font-cinzel text-xs tracking-widest px-3 py-1.5 transition-all"
                 style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}
               >
-                ✕ SCHLIESSEN
+                {tc("closeUpper")}
               </button>
             </div>
           </div>

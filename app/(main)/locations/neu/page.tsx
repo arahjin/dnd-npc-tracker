@@ -2,9 +2,12 @@ import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import LocationForm from "@/components/LocationForm";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
 export default async function NewLocationPage() {
   const ctx = await requireKampagne();
+  const t = await getTranslations("form");
+  const tn = await getTranslations("nav");
 
   const [npcs, orgs, chars] = await Promise.all([
     prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
@@ -18,10 +21,10 @@ export default async function NewLocationPage() {
         <div className="mb-8">
           <Link href="/locations" className="font-cinzel text-xs tracking-widest uppercase"
             style={{ color: "var(--dnd-text-muted)" }}>
-            ← Locations
+            ← {tn("locations")}
           </Link>
           <h1 className="font-cinzel text-3xl font-bold mt-4" style={{ color: "var(--dnd-heading)" }}>
-            Neue Location
+            {t("createLocationTitleShort")}
           </h1>
           <div className="mt-3 flex items-center gap-3">
             <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />

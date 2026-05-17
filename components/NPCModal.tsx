@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import NPCForm from "./NPCForm";
 
 type OrgMembership = { organisationId: string; rolle: string };
@@ -23,6 +24,7 @@ type Props = {
 };
 
 export default function NPCModal({ isOpen, onClose, title, id, availableOrgs, initialOrgs, availableLocations, initial, canSeePrivate }: Props) {
+  const tc = useTranslations("common");
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
@@ -54,7 +56,7 @@ export default function NPCModal({ isOpen, onClose, title, id, availableOrgs, in
                 className="font-cinzel text-xs tracking-widest px-3 py-1.5 transition-all"
                 style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}
               >
-                ✕ SCHLIESSEN
+                {tc("closeUpper")}
               </button>
             </div>
           </div>

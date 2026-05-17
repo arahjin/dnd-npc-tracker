@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import OrgForm from "./OrgForm";
 
 type Props = {
@@ -18,6 +19,7 @@ type Props = {
 };
 
 export default function OrgModal({ isOpen, onClose, title, id, availableLocations, initial, canSeePrivate }: Props) {
+  const tc = useTranslations("common");
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
@@ -43,7 +45,7 @@ export default function OrgModal({ isOpen, onClose, title, id, availableLocation
               <h2 className="font-cinzel text-xl font-bold" style={{ color: "var(--dnd-heading)" }}>{title}</h2>
               <button onClick={onClose} className="font-cinzel text-xs tracking-widest px-3 py-1.5 transition-all"
                 style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-                ✕ SCHLIESSEN
+                {tc("closeUpper")}
               </button>
             </div>
           </div>

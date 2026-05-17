@@ -62,7 +62,9 @@
     "allVisibilities": "All Visibilities",
     "found": "FOUND",
     "searchPlaceholder": "Search...",
-    "closeButton": "✕ Close"
+    "closeButton": "✕ Close",
+    "closeUpper": "✕ CLOSE",
+    "back": "← Back"
   },
   "loading": {
     "default": "Loading…",
@@ -418,7 +420,15 @@
     "aiPromptNPC": "e.g. Elven rogue, dark hood, scarred face, mysterious",
     "aiPromptChar": "e.g. Human paladin, silver armor, blue cloak, holy aura",
     "aiPromptLoc": "e.g. Misty mountain village, snowy peaks, glowing windows at dusk",
-    "aiPromptOrg": "e.g. Crimson dagger crossed with golden chalice, black banner"
+    "aiPromptOrg": "e.g. Crimson dagger crossed with golden chalice, black banner",
+    "createNPCTitle": "Create New NPC",
+    "createCharTitle": "Create New Character",
+    "createOrgTitle": "Create New Organisation",
+    "createOrgTitleShort": "New Organisation",
+    "createLocationTitle": "Create New Location",
+    "createLocationTitleShort": "New Location",
+    "createQuestTitle": "Create New Quest",
+    "createKampagneTitle": "New Campaign"
   },
   "constants": {
     "statusLebendig": "Alive",

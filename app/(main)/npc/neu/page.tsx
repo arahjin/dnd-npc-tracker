@@ -2,9 +2,12 @@ import Link from "next/link";
 import NPCForm from "@/components/NPCForm";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
+import { getTranslations } from "next-intl/server";
 
 export default async function NewNPC() {
   const ctx = await requireKampagne();
+  const t = await getTranslations("form");
+  const tc = await getTranslations("common");
   const [orgs, locations] = await Promise.all([
     prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
     prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
@@ -16,7 +19,7 @@ export default async function NewNPC() {
         <div className="mx-auto max-w-2xl px-4 md:px-6 py-4">
           <Link href="/npc" className="font-cinzel text-xs tracking-widest uppercase transition-colors"
             style={{ color: "var(--dnd-text-muted)" }}>
-            ← Zurück
+            {tc("back")}
           </Link>
         </div>
       </header>
@@ -24,7 +27,7 @@ export default async function NewNPC() {
       <div className="mx-auto max-w-2xl px-4 md:px-6 py-10">
         <div className="mb-8">
           <h1 className="font-cinzel text-3xl font-bold" style={{ color: "var(--dnd-heading)" }}>
-            Neuen NPC erstellen
+            {t("createNPCTitle")}
           </h1>
           <div className="mt-3 flex items-center gap-3">
             <div className="h-px flex-1" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />

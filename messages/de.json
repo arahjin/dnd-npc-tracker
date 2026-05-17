@@ -62,7 +62,9 @@
     "allVisibilities": "Alle Sichtbarkeiten",
     "found": "GEFUNDEN",
     "searchPlaceholder": "Suchen...",
-    "closeButton": "✕ Schließen"
+    "closeButton": "✕ Schließen",
+    "closeUpper": "✕ SCHLIESSEN",
+    "back": "← Zurück"
   },
   "loading": {
     "default": "Lädt…",
@@ -418,7 +420,15 @@
     "aiPromptNPC": "z.B. Elfischer Schurke, dunkle Kapuze, vernarbtes Gesicht, geheimnisvoll",
     "aiPromptChar": "z.B. Menschlicher Paladin, silberne Rüstung, blauer Umhang, heilige Aura",
     "aiPromptLoc": "z.B. Nebliges Bergdorf, verschneite Gipfel, leuchtende Fenster in der Dämmerung",
-    "aiPromptOrg": "z.B. Blutroter Dolch gekreuzt mit goldenem Kelch, schwarzes Banner"
+    "aiPromptOrg": "z.B. Blutroter Dolch gekreuzt mit goldenem Kelch, schwarzes Banner",
+    "createNPCTitle": "Neuen NPC erstellen",
+    "createCharTitle": "Neuen Charakter erstellen",
+    "createOrgTitle": "Neue Organisation erstellen",
+    "createOrgTitleShort": "Neue Organisation",
+    "createLocationTitle": "Neue Location erstellen",
+    "createLocationTitleShort": "Neue Location",
+    "createQuestTitle": "Neue Quest erstellen",
+    "createKampagneTitle": "Neue Kampagne"
   },
   "constants": {
     "statusLebendig": "Lebendig",

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const OrgModal = dynamic(() => import("./OrgModal"));
 
@@ -11,6 +12,7 @@ type Props = {
 
 export default function OrgCreateButton({ availableLocations = [] }: Props) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("form");
 
   return (
     <>
@@ -21,7 +23,7 @@ export default function OrgCreateButton({ availableLocations = [] }: Props) {
         <OrgModal
           isOpen={open}
           onClose={() => setOpen(false)}
-          title="Neue Organisation erstellen"
+          title={t("createOrgTitle")}
           availableLocations={availableLocations}
         />
       )}

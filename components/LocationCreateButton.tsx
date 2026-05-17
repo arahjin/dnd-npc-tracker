@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const LocationModal = dynamic(() => import("./LocationModal"));
 
@@ -15,6 +16,7 @@ type Props = {
 
 export default function LocationCreateButton({ availableNpcs = [], availableOrgs = [], availableChars = [] }: Props) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("form");
 
   return (
     <>
@@ -25,7 +27,7 @@ export default function LocationCreateButton({ availableNpcs = [], availableOrgs
         <LocationModal
           isOpen={open}
           onClose={() => setOpen(false)}
-          title="Neue Location erstellen"
+          title={t("createLocationTitle")}
           availableNpcs={availableNpcs}
           availableOrgs={availableOrgs}
           availableChars={availableChars}

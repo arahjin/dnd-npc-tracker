@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const QuestModal = dynamic(() => import("./QuestModal"));
 
 export default function QuestCreateButton() {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("form");
 
   return (
     <>
@@ -17,7 +19,7 @@ export default function QuestCreateButton() {
         <QuestModal
           isOpen={open}
           onClose={() => setOpen(false)}
-          title="Neue Quest erstellen"
+          title={t("createQuestTitle")}
           canSeePrivate={true}
         />
       )}

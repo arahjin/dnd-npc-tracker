@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const NPCModal = dynamic(() => import("./NPCModal"));
 
@@ -12,6 +13,7 @@ type Props = {
 
 export default function NPCCreateButton({ availableOrgs, availableLocations = [] }: Props) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("form");
 
   return (
     <>
@@ -26,7 +28,7 @@ export default function NPCCreateButton({ availableOrgs, availableLocations = []
         <NPCModal
           isOpen={open}
           onClose={() => setOpen(false)}
-          title="Neuen NPC erstellen"
+          title={t("createNPCTitle")}
           availableOrgs={availableOrgs}
           availableLocations={availableLocations}
         />

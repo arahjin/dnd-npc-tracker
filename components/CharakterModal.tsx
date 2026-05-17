@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import CharakterForm from "./CharakterForm";
 
 type OrgMembership = { organisationId: string; rolle: string };
@@ -16,6 +17,7 @@ type Props = {
 };
 
 export default function CharakterModal({ isOpen, onClose, title, id, availableOrgs, initialOrgs, availableLocations, initial, canSeePrivate }: Props) {
+  const tc = useTranslations("common");
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = "hidden";
@@ -36,7 +38,7 @@ export default function CharakterModal({ isOpen, onClose, title, id, availableOr
             <div className="px-6 py-4 flex items-center justify-between">
               <h2 className="font-cinzel text-xl font-bold" style={{ color: "var(--dnd-heading)" }}>{title}</h2>
               <button onClick={onClose} className="font-cinzel text-xs tracking-widest px-3 py-1.5 transition-all"
-                style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>✕ SCHLIESSEN</button>
+                style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>{tc("closeUpper")}</button>
             </div>
           </div>
           <div className="px-6 py-8">
