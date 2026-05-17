@@ -204,5 +204,75 @@
     "de": "DE",
     "en": "EN",
     "label": "Language"
+  },
+  "landing": {
+    "nav": {
+      "toApp": "Go to App →",
+      "signIn": "Sign In",
+      "startFree": "Start for Free"
+    },
+    "hero": {
+      "toApp": "Go to App →",
+      "startFree": "Start for Free"
+    },
+    "features": {
+      "title": "What Lorehub Offers",
+      "sub": "Everything you need for an unforgettable campaign — in one place.",
+      "card1Title": "Objects & World Elements",
+      "card1Desc": "Manage NPCs, organisations, player characters and locations with detailed profiles, images, status and private notes — visible only to the DM.",
+      "card2Title": "Connections & Networks",
+      "card2Desc": "Link characters to places, assign NPCs to organisations, and tag any object with @-mentions. See the whole picture at a glance.",
+      "card3Title": "Journal & History",
+      "card3Desc": "Players keep personal journals, the DM writes the official campaign history. Entries can be linked to NPCs, locations and organisations.",
+      "card4Title": "Campaigns & Teams",
+      "card4Desc": "Create multiple campaigns and invite your team. Each campaign has its own space with its own data, players and Dungeon Masters."
+    },
+    "how": {
+      "title": "How Lorehub Works",
+      "sub": "Three steps to a living, shared world.",
+      "step1Title": "Create a campaign & invite your team",
+      "step1Text": "Create a new campaign and invite your players via invite link. Each person gets their role — Dungeon Master or Player.",
+      "step2Title": "Build your world & create objects",
+      "step2Text": "Create NPCs, locations, organisations and characters. Link them together, add images and backstories — the world takes shape.",
+      "step3Title": "Write & live the story",
+      "step3Text": "Players keep their journal after each session, the DM adds to the official history. Everything stays findable via full-text search — including @-mentions."
+    },
+    "roles": {
+      "title": "For Dungeon Masters & Players",
+      "dmTitle": "Dungeon Masters",
+      "dm1": "Manage hundreds of NPCs with status, race and private notes",
+      "dm2": "Build your world with locations, regions and organisations",
+      "dm3": "Write the official history of the campaign",
+      "dm4": "Keep private DM notes — invisible to players",
+      "dm5": "Full-text search across all objects, entries and @-mentions",
+      "playerTitle": "Players",
+      "player1": "Keep a personal journal of your adventures",
+      "player2": "Manage your character with image and backstory",
+      "player3": "Explore the world — NPCs, locations and organisations",
+      "player4": "Link journal entries to people and places",
+      "player5": "Stay on top of all campaign events"
+    },
+    "faq": {
+      "title": "FAQ",
+      "sub": "Frequently asked questions about Lorehub.",
+      "q1": "What is Lorehub?",
+      "a1": "Lorehub is a digital campaign archive for tabletop roleplaying games like Dungeons & Dragons. It helps Dungeon Masters and players manage their campaign world — with NPCs, locations, organisations, characters, a journal system and more.",
+      "q2": "Which roleplaying games is Lorehub suitable for?",
+      "a2": "Lorehub is system-agnostic and works with any tabletop RPG: D&D 5e, Pathfinder, Das Schwarze Auge, Shadowrun, Vampire: The Masquerade and many more.",
+      "q3": "Can players and the DM use Lorehub at the same time?",
+      "a3": "Yes. The Dungeon Master manages the world and writes the official history. Players keep their own journals and can maintain their character. Private DM notes remain invisible to players.",
+      "q4": "How does the @-mention system work?",
+      "a4": "In journal entries, notes and descriptions, you can link any object using @Name — NPCs, locations, organisations or characters. These connections are searchable and displayed as clickable links.",
+      "q5": "Can I manage multiple campaigns?",
+      "a5": "Yes. You can create as many campaigns as you like. Each campaign has its own space with its own team, NPCs, locations and the complete journal.",
+      "q6": "Is Lorehub free?",
+      "a6": "Registration is free. You can start immediately and create your first campaign."
+    },
+    "cta": {
+      "title": "Ready to write your story?",
+      "text": "Create your free account and start your first campaign today.",
+      "toApp": "Go to App →",
+      "startFree": "Start for free"
+    }
   }
 }

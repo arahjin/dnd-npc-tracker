@@ -204,5 +204,75 @@
     "de": "DE",
     "en": "EN",
     "label": "Sprache"
+  },
+  "landing": {
+    "nav": {
+      "toApp": "Zur App →",
+      "signIn": "Anmelden",
+      "startFree": "Kostenlos starten"
+    },
+    "hero": {
+      "toApp": "Zur App →",
+      "startFree": "Kostenlos starten"
+    },
+    "features": {
+      "title": "Was Lorehub bietet",
+      "sub": "Alles, was ihr für eine unvergessliche Kampagne braucht – an einem Ort.",
+      "card1Title": "Objekte & Weltelemente",
+      "card1Desc": "Verwalte NPCs, Organisationen, Spielercharaktere und Locations mit detaillierten Profilen, Bildern, Statusangaben und privaten Notizen – nur für den DM sichtbar.",
+      "card2Title": "Verbindungen & Netzwerke",
+      "card2Desc": "Verknüpfe Charaktere mit Orten, ordne NPCs Organisationen zu und tagge beliebige Objekte gegenseitig per @-Erwähnung. Zusammenhänge auf einen Blick.",
+      "card3Title": "Tagebuch & Geschichte",
+      "card3Desc": "Spieler führen persönliche Tagebücher, der DM schreibt die offizielle Geschichte der Kampagne. Einträge lassen sich mit NPCs, Orten und Organisationen verknüpfen.",
+      "card4Title": "Kampagnen & Teams",
+      "card4Desc": "Erstelle mehrere Kampagnen und lade dein Team ein. Jede Kampagne hat ihren eigenen Bereich mit eigenen Daten, Spielern und Dungeon Masters."
+    },
+    "how": {
+      "title": "So funktioniert Lorehub",
+      "sub": "In drei Schritten zu einer lebendigen, gemeinsam erlebten Welt.",
+      "step1Title": "Kampagne erstellen & Team einladen",
+      "step1Text": "Lege eine neue Kampagne an und lade deine Mitspieler per Einladungslink ein. Jede Person bekommt ihre Rolle – Dungeon Master oder Spieler.",
+      "step2Title": "Welt aufbauen & Objekte anlegen",
+      "step2Text": "Erstelle NPCs, Locations, Organisationen und Charaktere. Verknüpfe sie miteinander, hinterlege Bilder und Hintergrundgeschichten – die Welt nimmt Form an.",
+      "step3Title": "Geschichte schreiben & erleben",
+      "step3Text": "Spieler führen nach jeder Session ihr Tagebuch, der DM ergänzt die offizielle Geschichte. Alles bleibt auffindbar über die Vollsuche – auch @-Erwähnungen."
+    },
+    "roles": {
+      "title": "Für Dungeon Masters & Spieler",
+      "dmTitle": "Dungeon Masters",
+      "dm1": "Verwalte hunderte NPCs mit Status, Rasse und privaten Notizen",
+      "dm2": "Baue deine Welt mit Locations, Reichen und Organisationen",
+      "dm3": "Schreibe die offizielle Geschichte der Kampagne",
+      "dm4": "Behalte private DM-Notizen – für Spieler unsichtbar",
+      "dm5": "Vollsuche über alle Objekte, Einträge und @-Erwähnungen",
+      "playerTitle": "Spieler",
+      "player1": "Führe ein persönliches Tagebuch deiner Abenteuer",
+      "player2": "Verwalte deinen Charakter mit Bild und Hintergrundgeschichte",
+      "player3": "Entdecke die Welt – NPCs, Orte und Organisationen",
+      "player4": "Verknüpfe Tagebucheinträge mit Personen und Orten",
+      "player5": "Behalte den Überblick über alle Geschehnisse"
+    },
+    "faq": {
+      "title": "FAQ",
+      "sub": "Häufig gestellte Fragen zu Lorehub.",
+      "q1": "Was ist Lorehub?",
+      "a1": "Lorehub ist ein digitales Kampagnen-Archiv für Pen-&-Paper-Rollenspiele wie Dungeons & Dragons. Es hilft Dungeon Masters und Spielern, ihre Kampagnenwelt zu verwalten – mit NPCs, Locations, Organisationen, Charakteren, einem Tagebuch-System und mehr.",
+      "q2": "Für welche Rollenspiele ist Lorehub geeignet?",
+      "a2": "Lorehub ist system-agnostisch und funktioniert mit jedem Pen-&-Paper-Rollenspiel: D&D 5e, Pathfinder, Das Schwarze Auge, Shadowrun, Vampire: The Masquerade und viele mehr.",
+      "q3": "Können Spieler und DM gleichzeitig Lorehub nutzen?",
+      "a3": "Ja. Der Dungeon Master verwaltet die Welt und schreibt die offizielle Geschichte. Spieler führen ihre eigenen Tagebücher und können ihren Charakter pflegen. Private DM-Notizen bleiben für Spieler unsichtbar.",
+      "q4": "Wie funktioniert das @-Erwähnungs-System?",
+      "a4": "In Tagebucheinträgen, Notizen und Beschreibungen kannst du mit @Name beliebige Objekte verknüpfen – NPCs, Orte, Organisationen oder Charaktere. Diese Verbindungen sind in der Vollsuche auffindbar und werden als klickbare Links angezeigt.",
+      "q5": "Kann ich mehrere Kampagnen verwalten?",
+      "a5": "Ja. Du kannst beliebig viele Kampagnen erstellen. Jede Kampagne hat ihren eigenen Bereich mit eigenem Team, eigenen NPCs, Locations und dem gesamten Tagebuch.",
+      "q6": "Ist Lorehub kostenlos?",
+      "a6": "Die Registrierung ist kostenlos. Du kannst sofort loslegen und deine erste Kampagne erstellen."
+    },
+    "cta": {
+      "title": "Bereit, deine Geschichte zu schreiben?",
+      "text": "Erstelle dein kostenloses Konto und starte noch heute mit deiner ersten Kampagne.",
+      "toApp": "Zur App →",
+      "startFree": "Jetzt kostenlos registrieren"
+    }
   }
 }

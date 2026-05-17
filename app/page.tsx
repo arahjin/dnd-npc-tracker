@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -214,6 +215,7 @@ function SectionTitle({ children, sub }: { children: React.ReactNode; sub?: stri
 export default async function StartPage() {
   const session = await auth();
   const isLoggedIn = !!session?.user;
+  const t = await getTranslations("landing");
 
   let settings = null;
   try {
@@ -241,15 +243,15 @@ export default async function StartPage() {
           </Link>
           <nav style={{ display: "flex", alignItems: "center", gap: 8 }}>
             {isLoggedIn ? (
-              <Link href="/npc" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>Zur App →</Link>
+              <Link href="/npc" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>{t("nav.toApp")}</Link>
             ) : (
               <>
                 <Link href="/login" className="font-cinzel text-xs tracking-widest uppercase"
                   style={{ color: "rgba(255,255,255,0.6)", padding: "8px 16px", textDecoration: "none" }}>
-                  Anmelden
+                  {t("nav.signIn")}
                 </Link>
                 <Link href="/registrieren" className="ddb-cta" style={{ padding: "8px 20px", fontSize: "0.75rem" }}>
-                  Kostenlos starten
+                  {t("nav.startFree")}
                 </Link>
               </>
             )}
@@ -303,11 +305,11 @@ export default async function StartPage() {
 
           {isLoggedIn ? (
             <Link href="/npc" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "13px 38px", marginTop: "8px" }}>
-              Zur App →
+              {t("hero.toApp")}
             </Link>
           ) : (
             <Link href="/registrieren" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "13px 38px", marginTop: "8px", display: "inline-block" }}>
-              Kostenlos starten
+              {t("hero.startFree")}
             </Link>
           )}
         </div>
@@ -316,31 +318,15 @@ export default async function StartPage() {
       {/* ── Features ────────────────────────────────────────────────────── */}
       <section style={{ padding: "80px 24px" }}>
         <div className="mx-auto max-w-6xl">
-          <SectionTitle sub="Alles, was ihr für eine unvergessliche Kampagne braucht – an einem Ort.">
-            Was Lorehub bietet
+          <SectionTitle sub={t("features.sub")}>
+            {t("features.title")}
           </SectionTitle>
 
           <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center" }}>
-            <FeatureCard
-              icon={<IconObjekte />}
-              title="Objekte & Weltelemente"
-              description="Verwalte NPCs, Organisationen, Spielercharaktere und Locations mit detaillierten Profilen, Bildern, Statusangaben und privaten Notizen – nur für den DM sichtbar."
-            />
-            <FeatureCard
-              icon={<IconVerbindungen />}
-              title="Verbindungen & Netzwerke"
-              description="Verknüpfe Charaktere mit Orten, ordne NPCs Organisationen zu und tagge beliebige Objekte gegenseitig per @-Erwähnung. Zusammenhänge auf einen Blick."
-            />
-            <FeatureCard
-              icon={<IconTagebuch />}
-              title="Tagebuch & Geschichte"
-              description="Spieler führen persönliche Tagebücher, der DM schreibt die offizielle Geschichte der Kampagne. Einträge lassen sich mit NPCs, Orten und Organisationen verknüpfen."
-            />
-            <FeatureCard
-              icon={<IconKampagnen />}
-              title="Kampagnen & Teams"
-              description="Erstelle mehrere Kampagnen und lade dein Team ein. Jede Kampagne hat ihren eigenen Bereich mit eigenen Daten, Spielern und Dungeon Masters."
-            />
+            <FeatureCard icon={<IconObjekte />} title={t("features.card1Title")} description={t("features.card1Desc")} />
+            <FeatureCard icon={<IconVerbindungen />} title={t("features.card2Title")} description={t("features.card2Desc")} />
+            <FeatureCard icon={<IconTagebuch />} title={t("features.card3Title")} description={t("features.card3Desc")} />
+            <FeatureCard icon={<IconKampagnen />} title={t("features.card4Title")} description={t("features.card4Desc")} />
           </div>
         </div>
       </section>
@@ -350,24 +336,15 @@ export default async function StartPage() {
       {/* ── How it works ────────────────────────────────────────────────── */}
       <section style={{ padding: "80px 24px" }}>
         <div className="mx-auto max-w-3xl">
-          <SectionTitle sub="In drei Schritten zu einer lebendigen, gemeinsam erlebten Welt.">
-            So funktioniert Lorehub
+          <SectionTitle sub={t("how.sub")}>
+            {t("how.title")}
           </SectionTitle>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
             {[
-              {
-                title: "Kampagne erstellen & Team einladen",
-                text: "Lege eine neue Kampagne an und lade deine Mitspieler per Einladungslink ein. Jede Person bekommt ihre Rolle – Dungeon Master oder Spieler.",
-              },
-              {
-                title: "Welt aufbauen & Objekte anlegen",
-                text: "Erstelle NPCs, Locations, Organisationen und Charaktere. Verknüpfe sie miteinander, hinterlege Bilder und Hintergrundgeschichten – die Welt nimmt Form an.",
-              },
-              {
-                title: "Geschichte schreiben & erleben",
-                text: "Spieler führen nach jeder Session ihr Tagebuch, der DM ergänzt die offizielle Geschichte. Alles bleibt auffindbar über die Vollsuche – auch @-Erwähnungen.",
-              },
+              { title: t("how.step1Title"), text: t("how.step1Text") },
+              { title: t("how.step2Title"), text: t("how.step2Text") },
+              { title: t("how.step3Title"), text: t("how.step3Text") },
             ].map((step, i) => (
               <div key={i} style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
                 <StepBadge n={i + 1} />
@@ -390,23 +367,17 @@ export default async function StartPage() {
       {/* ── For DMs & Players ───────────────────────────────────────────── */}
       <section style={{ padding: "80px 24px" }}>
         <div className="mx-auto max-w-5xl">
-          <SectionTitle>Für Dungeon Masters & Spieler</SectionTitle>
+          <SectionTitle>{t("roles.title")}</SectionTitle>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
             {/* DM */}
             <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", padding: "32px 28px" }}>
               <div style={{ marginBottom: "16px" }}><IconDM /></div>
               <h3 className="font-cinzel font-bold mb-4" style={{ color: "var(--dnd-heading)", fontSize: "1.1rem" }}>
-                Dungeon Masters
+                {t("roles.dmTitle")}
               </h3>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
-                {[
-                  "Verwalte hunderte NPCs mit Status, Rasse und privaten Notizen",
-                  "Baue deine Welt mit Locations, Reichen und Organisationen",
-                  "Schreibe die offizielle Geschichte der Kampagne",
-                  "Behalte private DM-Notizen – für Spieler unsichtbar",
-                  "Vollsuche über alle Objekte, Einträge und @-Erwähnungen",
-                ].map((item, i) => (
+                {[t("roles.dm1"), t("roles.dm2"), t("roles.dm3"), t("roles.dm4"), t("roles.dm5")].map((item, i) => (
                   <li key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
                     <span style={{ color: "var(--dnd-red)", marginTop: "2px", flexShrink: 0 }}>✦</span>
                     <span style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "0.9rem" }}>{item}</span>
@@ -419,16 +390,10 @@ export default async function StartPage() {
             <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", padding: "32px 28px" }}>
               <div style={{ marginBottom: "16px" }}><IconSpieler /></div>
               <h3 className="font-cinzel font-bold mb-4" style={{ color: "var(--dnd-heading)", fontSize: "1.1rem" }}>
-                Spieler
+                {t("roles.playerTitle")}
               </h3>
               <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: "10px" }}>
-                {[
-                  "Führe ein persönliches Tagebuch deiner Abenteuer",
-                  "Verwalte deinen Charakter mit Bild und Hintergrundgeschichte",
-                  "Entdecke die Welt – NPCs, Orte und Organisationen",
-                  "Verknüpfe Tagebucheinträge mit Personen und Orten",
-                  "Behalte den Überblick über alle Geschehnisse",
-                ].map((item, i) => (
+                {[t("roles.player1"), t("roles.player2"), t("roles.player3"), t("roles.player4"), t("roles.player5")].map((item, i) => (
                   <li key={i} style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
                     <span style={{ color: "var(--dnd-gold)", marginTop: "2px", flexShrink: 0 }}>✦</span>
                     <span style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "0.9rem" }}>{item}</span>
@@ -445,44 +410,23 @@ export default async function StartPage() {
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
       <section style={{ padding: "80px 24px" }}>
         <div className="mx-auto max-w-3xl">
-          <SectionTitle sub="Häufig gestellte Fragen zu Lorehub.">
-            FAQ
+          <SectionTitle sub={t("faq.sub")}>
+            {t("faq.title")}
           </SectionTitle>
 
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            {[
-              {
-                q: "Was ist Lorehub?",
-                a: "Lorehub ist ein digitales Kampagnen-Archiv für Pen-&-Paper-Rollenspiele wie Dungeons & Dragons. Es hilft Dungeon Masters und Spielern, ihre Kampagnenwelt zu verwalten – mit NPCs, Locations, Organisationen, Charakteren, einem Tagebuch-System und mehr.",
-              },
-              {
-                q: "Für welche Rollenspiele ist Lorehub geeignet?",
-                a: "Lorehub ist system-agnostisch und funktioniert mit jedem Pen-&-Paper-Rollenspiel: D&D 5e, Pathfinder, Das Schwarze Auge, Shadowrun, Vampire: The Masquerade und viele mehr.",
-              },
-              {
-                q: "Können Spieler und DM gleichzeitig Lorehub nutzen?",
-                a: "Ja. Der Dungeon Master verwaltet die Welt und schreibt die offizielle Geschichte. Spieler führen ihre eigenen Tagebücher und können ihren Charakter pflegen. Private DM-Notizen bleiben für Spieler unsichtbar.",
-              },
-              {
-                q: "Wie funktioniert das @-Erwähnungs-System?",
-                a: "In Tagebucheinträgen, Notizen und Beschreibungen kannst du mit @Name beliebige Objekte verknüpfen – NPCs, Orte, Organisationen oder Charaktere. Diese Verbindungen sind in der Vollsuche auffindbar und werden als klickbare Links angezeigt.",
-              },
-              {
-                q: "Kann ich mehrere Kampagnen verwalten?",
-                a: "Ja. Du kannst beliebig viele Kampagnen erstellen. Jede Kampagne hat ihren eigenen Bereich mit eigenem Team, eigenen NPCs, Locations und dem gesamten Tagebuch.",
-              },
-              {
-                q: "Ist Lorehub kostenlos?",
-                a: "Die Registrierung ist kostenlos. Du kannst sofort loslegen und deine erste Kampagne erstellen.",
-              },
-            ].map((faq, i) => (
+            {([1, 2, 3, 4, 5, 6] as const).map((n, i) => ({
+              q: t(`faq.q${n}` as Parameters<typeof t>[0]),
+              a: t(`faq.a${n}` as Parameters<typeof t>[0]),
+              i,
+            })).map(({ q, a, i }) => (
               <details key={i} style={{ borderBottom: "1px solid var(--dnd-border)" }}>
                 <summary className="font-cinzel" style={{
                   padding: "18px 0", cursor: "pointer", listStyle: "none",
                   color: "var(--dnd-heading)", fontSize: "0.95rem", letterSpacing: "0.02em",
                   display: "flex", justifyContent: "space-between", alignItems: "center",
                 }}>
-                  {faq.q}
+                  {q}
                   <span style={{ color: "var(--dnd-red)", fontSize: "1.2rem", flexShrink: 0, marginLeft: 16 }}>+</span>
                 </summary>
                 <p style={{
@@ -490,7 +434,7 @@ export default async function StartPage() {
                   color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif",
                   fontSize: "0.9rem", lineHeight: 1.7,
                 }}>
-                  {faq.a}
+                  {a}
                 </p>
               </details>
             ))}
@@ -504,18 +448,18 @@ export default async function StartPage() {
         <div style={{ position: "relative", zIndex: 1, textAlign: "center", maxWidth: 560, margin: "0 auto" }}>
           <div style={{ width: 48, height: 2, background: "var(--dnd-gold)", margin: "0 auto 28px", opacity: 0.7 }} />
           <h2 className="font-cinzel font-bold" style={{ color: "var(--dnd-heading)", fontSize: "clamp(1.4rem, 3vw, 2rem)", letterSpacing: "0.03em", marginBottom: "16px" }}>
-            Bereit, deine Geschichte zu schreiben?
+            {t("cta.title")}
           </h2>
           <p style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "1rem", lineHeight: 1.7, marginBottom: "36px" }}>
-            Erstelle dein kostenloses Konto und starte noch heute mit deiner ersten Kampagne.
+            {t("cta.text")}
           </p>
           {isLoggedIn ? (
             <Link href="/npc" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "14px 40px" }}>
-              Zur App →
+              {t("cta.toApp")}
             </Link>
           ) : (
             <Link href="/registrieren" className="ddb-cta" style={{ fontSize: "0.9rem", padding: "14px 40px" }}>
-              Jetzt kostenlos registrieren
+              {t("cta.startFree")}
             </Link>
           )}
         </div>
