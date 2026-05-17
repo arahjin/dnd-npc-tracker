@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { IconOrganisation, IconPin } from "@/components/Icons";
+import { stripMentions } from "@/lib/mentions";
 
 type Org = {
   id: string;
@@ -94,7 +95,7 @@ export default function OrgGrid({ orgs, isDM = false }: { orgs: Org[]; isDM?: bo
                     {org.region && <span className="text-xs" style={{ color: "var(--dnd-text-muted)" }}><><IconPin size={11} /> {org.region}</></span>}
                   </div>
                   {org.beschreibung && (
-                    <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)" }}>{org.beschreibung}</p>
+                    <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)" }}>{stripMentions(org.beschreibung)}</p>
                   )}
                   <p className="mt-3 font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-red-light)" }}>
                     {org._count.mitglieder} {org._count.mitglieder === 1 ? "Mitglied" : "Mitglieder"}
