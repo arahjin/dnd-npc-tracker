@@ -18,7 +18,7 @@ export default async function OrganisationenPage() {
       },
     }),
     prisma.location.findMany({
-      where: { kampagneId: ctx.kampagneId },
+      where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),

@@ -19,12 +19,12 @@ export default async function Home() {
       },
     }),
     prisma.organisation.findMany({
-      where: { kampagneId: ctx.kampagneId },
+      where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
     prisma.location.findMany({
-      where: { kampagneId: ctx.kampagneId },
+      where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),

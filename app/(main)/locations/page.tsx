@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
-import { visibilityWhere } from "@/lib/visibility";
+import { visibilityWhere, charakterVisibilityWhere } from "@/lib/visibility";
 import LocationCreateButton from "@/components/LocationCreateButton";
 import LocationGrid from "@/components/LocationGrid";
 
@@ -13,9 +13,9 @@ export default async function LocationsPage() {
       orderBy: { name: "asc" },
       include: { _count: { select: { npcs: true, organisationen: true, charaktere: true } } },
     }),
-    prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.nPC.findMany({ where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.charakter.findMany({ where: { kampagneId: ctx.kampagneId, ...charakterVisibilityWhere(ctx) }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
 
   return (

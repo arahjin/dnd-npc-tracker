@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
-import { charakterVisibilityWhere } from "@/lib/visibility";
+import { charakterVisibilityWhere, visibilityWhere } from "@/lib/visibility";
 import CharakterCreateButton from "@/components/CharakterCreateButton";
 import CharaktereGrid from "@/components/CharaktereGrid";
 
@@ -17,8 +17,8 @@ export default async function CharakterePage() {
         userId: true, user: { select: { name: true } },
       },
     }),
-    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.location.findMany({ where: { kampagneId: ctx.kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.organisation.findMany({ where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
 
   return (
