@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { charakterVisibilityWhere, visibilityWhere } from "@/lib/visibility";
@@ -6,6 +7,7 @@ import CharaktereGrid from "@/components/CharaktereGrid";
 
 export default async function CharakterePage() {
   const ctx = await requireKampagne();
+  const t = await getTranslations("charakter");
 
   const [charaktere, availableOrgs, availableLocations] = await Promise.all([
     prisma.charakter.findMany({
@@ -26,7 +28,7 @@ export default async function CharakterePage() {
       <div className="mx-auto max-w-7xl px-4 md:px-6 py-6 md:py-8">
         <div className="flex items-center justify-between mb-6">
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
-            {charaktere.length} {charaktere.length === 1 ? "Charakter" : "Charaktere"}
+            {charaktere.length} {charaktere.length === 1 ? t("countSingle") : t("countPlural")}
           </p>
           <CharakterCreateButton availableOrgs={availableOrgs} availableLocations={availableLocations} />
         </div>

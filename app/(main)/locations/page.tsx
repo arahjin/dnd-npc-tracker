@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { visibilityWhere, charakterVisibilityWhere } from "@/lib/visibility";
@@ -6,6 +7,7 @@ import LocationGrid from "@/components/LocationGrid";
 
 export default async function LocationsPage() {
   const ctx = await requireKampagne();
+  const t = await getTranslations("location");
 
   const [locations, availableNpcs, availableOrgs, availableChars] = await Promise.all([
     prisma.location.findMany({
@@ -23,7 +25,7 @@ export default async function LocationsPage() {
       <div className="mx-auto max-w-7xl px-4 md:px-6 py-6 md:py-8">
         <div className="flex items-center justify-between mb-6">
           <p className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-label)" }}>
-            {locations.length} {locations.length === 1 ? "Location" : "Locations"}
+            {locations.length} {locations.length === 1 ? t("countSingle") : t("countPlural")}
           </p>
           <LocationCreateButton availableNpcs={availableNpcs} availableOrgs={availableOrgs} availableChars={availableChars} />
         </div>

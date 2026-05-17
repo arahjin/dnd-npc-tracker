@@ -1,0 +1,200 @@
+{
+  "nav": {
+    "npcs": "NPCs",
+    "organisationen": "Organisationen",
+    "locations": "Locations",
+    "charaktere": "Charaktere",
+    "geschichte": "Geschichte",
+    "tagebuch": "Tagebuch",
+    "quests": "Quests"
+  },
+  "userMenu": {
+    "kampagnen": "Kampagnen",
+    "einladungen": "Einladungen verwalten",
+    "export": "Kampagne exportieren",
+    "konto": "Mein Konto",
+    "adminBereich": "Admin-Bereich",
+    "abmelden": "Abmelden",
+    "errorBadge": "{count} ungelöste Fehler",
+    "roles": {
+      "SPIELER": "Spieler",
+      "DUNGEON_MASTER": "Dungeon Master",
+      "ADMIN": "Admin"
+    }
+  },
+  "mobileNav": {
+    "open": "Menü öffnen",
+    "navigation": "Navigation",
+    "kampagne": "Kampagne",
+    "neueKampagne": "+ Neue Kampagne"
+  },
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "close": "Schließen",
+    "copy": "Kopieren",
+    "copied": "✓ Kopiert",
+    "loading": "Lädt…",
+    "yes": "Ja",
+    "no": "Nein",
+    "search": "Suchen",
+    "filter": "Filtern",
+    "all": "Alle",
+    "none": "Keine",
+    "unknown": "Unbekannt",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "connections": "Verknüpfungen",
+    "connection": "Verknüpfung",
+    "noConnections": "Keine Verknüpfungen",
+    "privateNotes": "Private Notizen",
+    "visibility": "Sichtbarkeit",
+    "name": "Name",
+    "description": "Beschreibung",
+    "image": "Bild",
+    "required": "Pflichtfeld",
+    "optional": "optional",
+    "allVisibilities": "Alle Sichtbarkeiten",
+    "found": "GEFUNDEN"
+  },
+  "image": {
+    "urlLabel": "Bild-URL (optional)",
+    "urlPlaceholder": "https://…",
+    "preview": "Vorschau",
+    "remove": "✕ Entfernen",
+    "uploadDivider": "oder hochladen",
+    "uploadButton": "↑ DATEI WÄHLEN",
+    "uploading": "⏳ Wird hochgeladen…",
+    "uploadHint": "JPG, PNG, WebP, GIF · max. 5 MB",
+    "uploadError": "Upload fehlgeschlagen.",
+    "aiDivider": "oder mit KI generieren",
+    "aiLabel": "Beschreibung für DALL-E 3",
+    "generateButton": "GENERIEREN",
+    "generating": "…",
+    "accept": "✓ ÜBERNEHMEN",
+    "regenerate": "↺ NEU GENERIEREN",
+    "generatingHint": "ca. 10 Sekunden",
+    "errorGenerating": "Fehler beim Generieren.",
+    "hints": {
+      "character": "DALL-E 3 zeichnet deinen Charakter…",
+      "location": "DALL-E 3 zeichnet deine Location…",
+      "organisation": "DALL-E 3 zeichnet das Wappen…"
+    }
+  },
+  "export": {
+    "button": "↓ KAMPAGNE EXPORTIEREN",
+    "loading": "⏳ Wird exportiert…",
+    "error": "Export fehlgeschlagen."
+  },
+  "quest": {
+    "allStatus": "Alle Status",
+    "empty": "Noch keine Quests vorhanden.",
+    "emptyFiltered": "Keine Quests entsprechen dem Filter.",
+    "countSingle": "QUEST",
+    "countPlural": "QUESTS"
+  },
+  "npc": {
+    "title": "NPCs",
+    "empty": "Keine NPCs erfasst",
+    "create": "NPC erstellen",
+    "filterLocation": "Alle Locations",
+    "filterVisibility": "Alle",
+    "onlyPrivate": "Nur Private",
+    "onlyPublic": "Nur Öffentliche",
+    "search": "NPC suchen…",
+    "filterStatus": "Alle Status",
+    "filterBeziehung": "Alle Beziehungen",
+    "filterOrg": "Alle Organisationen",
+    "countSingle": "NPC",
+    "countPlural": "NPCs",
+    "emptyFiltered": "Keine NPCs gefunden"
+  },
+  "location": {
+    "title": "Locations",
+    "empty": "Keine Locations erfasst",
+    "create": "Location erstellen",
+    "countSingle": "LOCATION",
+    "countPlural": "LOCATIONS",
+    "emptyFiltered": "Keine Locations für diesen Filter"
+  },
+  "organisation": {
+    "title": "Organisationen",
+    "empty": "Keine Organisationen erfasst",
+    "create": "Organisation erstellen",
+    "members": "Mitglieder",
+    "member": "Mitglied",
+    "countSingle": "ORGANISATION",
+    "countPlural": "ORGANISATIONEN",
+    "emptyFiltered": "Keine Organisationen für diesen Filter"
+  },
+  "charakter": {
+    "title": "Charaktere",
+    "empty": "Keine Charaktere erfasst",
+    "create": "Charakter erstellen",
+    "myChars": "Meine Charaktere",
+    "otherChars": "Charaktere der anderen Spieler",
+    "emptyOwn": "Du hast noch keinen Charakter. Klicke auf + Charakter oben rechts.",
+    "emptyOwnFiltered": "Keine Charaktere für diesen Filter.",
+    "countSingle": "CHARAKTER",
+    "countPlural": "CHARAKTERE"
+  },
+  "einladungen": {
+    "title": "Einladungen verwalten",
+    "permanentTitle": "Dauerhafter Einladungslink",
+    "permanentDesc": "Dieser Link bleibt gültig, bis du ihn deaktivierst. Alle, die ihn öffnen, treten als Spieler bei.",
+    "generate": "+ Link generieren",
+    "regenerate": "↺ NEU GENERIEREN",
+    "deactivate": "✕ DEAKTIVIEREN",
+    "copy": "KOPIEREN",
+    "copied": "✓ KOPIERT",
+    "oneTimeTitle": "Einmalige Einladungen",
+    "oneTimeDesc": "Jede Einladung kann einmal verwendet werden — zur Neuregistrierung oder zum Beitreten für bestehende Nutzer.",
+    "createButton": "+ Einladung erstellen",
+    "role": "Rolle",
+    "codeLabel": "Code für bestehende Nutzer",
+    "linkLabel": "Registrierungslink für neue Nutzer",
+    "used": "✓ Verwendet",
+    "empty": "Noch keine Einladungen erstellt.",
+    "errorLoad": "Fehler beim Laden des Links.",
+    "errorGenerate": "Fehler beim Generieren.",
+    "errorDeactivate": "Fehler beim Deaktivieren."
+  },
+  "dmExport": {
+    "title": "Kampagne exportieren",
+    "description": "Exportiert alle Daten der Kampagne als JSON-Datei — inklusive NPCs, Organisationen, Locations, Charaktere, Tagebuch und Quests.",
+    "button": "↓ KAMPAGNE EXPORTIEREN",
+    "loading": "⏳ Wird exportiert…",
+    "error": "Export fehlgeschlagen."
+  },
+  "login": {
+    "title": "Willkommen zurück",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "loading": "Anmelden…",
+    "forgotPassword": "Passwort vergessen?",
+    "error": "E-Mail oder Passwort ungültig.",
+    "noAccount": "Noch kein Konto?"
+  },
+  "register": {
+    "title": "Konto erstellen",
+    "name": "Name",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "passwordConfirm": "Passwort bestätigen",
+    "submit": "Registrieren",
+    "loading": "Registrieren…",
+    "errorMismatch": "Passwörter stimmen nicht überein.",
+    "errorLength": "Passwort muss mindestens 8 Zeichen haben.",
+    "errorGeneral": "Fehler bei der Registrierung.",
+    "alreadyHaveAccount": "Bereits ein Konto?"
+  },
+  "languageSwitcher": {
+    "de": "DE",
+    "en": "EN",
+    "label": "Sprache"
+  }
+}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { BEZIEHUNG_OPTIONS, STATUS_OPTIONS } from "@/lib/constants";
 import { IconPin, IconMap } from "@/components/Icons";
 
@@ -56,6 +57,9 @@ export default function NPCGrid({
   availableLocations?: { id: string; name: string }[];
   isDM?: boolean;
 }) {
+  const t = useTranslations("npc");
+  const tCommon = useTranslations("common");
+
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterBeziehung, setFilterBeziehung] = useState("");
@@ -82,7 +86,7 @@ export default function NPCGrid({
         <div className="flex-1 min-w-48 relative">
           <input
             type="text"
-            placeholder="NPC suchen..."
+            placeholder={t("search")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full px-4 py-2 font-cinzel text-sm tracking-wide outline-none transition-colors"
@@ -99,7 +103,7 @@ export default function NPCGrid({
           className={selectClass}
           style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
         >
-          <option value="">Alle Status</option>
+          <option value="">{t("filterStatus")}</option>
           {STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
         </select>
         <select
@@ -108,7 +112,7 @@ export default function NPCGrid({
           className={selectClass}
           style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
         >
-          <option value="">Alle Beziehungen</option>
+          <option value="">{t("filterBeziehung")}</option>
           {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
         </select>
         {availableOrgs.length > 0 && (
@@ -118,7 +122,7 @@ export default function NPCGrid({
             className={selectClass}
             style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
           >
-            <option value="">Alle Organisationen</option>
+            <option value="">{t("filterOrg")}</option>
             {availableOrgs.map((o) => <option key={o.id} value={o.id}>{o.name}</option>)}
           </select>
         )}
@@ -129,7 +133,7 @@ export default function NPCGrid({
             className={selectClass}
             style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
           >
-            <option value="">Alle Locations</option>
+            <option value="">{t("filterLocation")}</option>
             {availableLocations.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
           </select>
         )}
@@ -140,23 +144,23 @@ export default function NPCGrid({
             className={selectClass}
             style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
           >
-            <option value="">Alle Sichtbarkeiten</option>
-            <option value="public">Öffentlich</option>
-            <option value="privat">Privat</option>
+            <option value="">{tCommon("allVisibilities")}</option>
+            <option value="public">{tCommon("public")}</option>
+            <option value="privat">{tCommon("private")}</option>
           </select>
         )}
       </div>
 
       {/* Count */}
       <p className="font-cinzel text-xs tracking-widest mb-6" style={{ color: "var(--dnd-text-muted)" }}>
-        {filtered.length} {filtered.length === 1 ? "CHARAKTER" : "CHARAKTERE"} GEFUNDEN
+        {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")} {tCommon("found")}
       </p>
 
       {/* Grid */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32">
           <div className="mb-4" style={{ opacity: 0.3 }}><IconMap size={56} color="var(--dnd-text-muted)" /></div>
-          <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>Keine Charaktere gefunden</p>
+          <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>{t("emptyFiltered")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

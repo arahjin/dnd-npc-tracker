@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { IconPin } from "@/components/Icons";
 
 type Charakter = {
@@ -25,6 +26,7 @@ const selectClass = "font-cinzel text-sm px-3 py-2 outline-none tracking-wide tr
 const selectStyle = { background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" };
 
 function CharCard({ c }: { c: Charakter }) {
+  const tCommon = useTranslations("common");
   return (
     <Link href={`/charaktere/${c.id}`}
       className="group card-hover transition-all duration-300 block"
@@ -42,7 +44,7 @@ function CharCard({ c }: { c: Charakter }) {
         <div className="flex items-center gap-2">
           <h2 className="font-cinzel font-semibold text-base leading-tight" style={{ color: "var(--dnd-heading)" }}>{c.name}</h2>
           {c.sichtbarkeit === "privat" && (
-            <span className="font-cinzel text-xs px-1.5 py-0.5 shrink-0" style={{ background: "#200D0D", color: "#F87171", border: "1px solid #7F1D1D" }}>Privat</span>
+            <span className="font-cinzel text-xs px-1.5 py-0.5 shrink-0" style={{ background: "#200D0D", color: "#F87171", border: "1px solid #7F1D1D" }}>{tCommon("private")}</span>
           )}
         </div>
         {c.rasse && <p className="font-cinzel text-xs mt-1" style={{ color: "var(--dnd-text-muted)" }}>{c.rasse}</p>}
@@ -63,6 +65,9 @@ export default function CharaktereGrid({
   currentUserId: string;
   isDM?: boolean;
 }) {
+  const t = useTranslations("charakter");
+  const tCommon = useTranslations("common");
+
   const [filterVisibility, setFilterVisibility] = useState("");
 
   const filtered = filterVisibility
@@ -77,12 +82,12 @@ export default function CharaktereGrid({
       {isDM && (
         <div className="mb-6 flex flex-wrap gap-3 items-center">
           <select value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)} className={selectClass} style={selectStyle}>
-            <option value="">Alle Sichtbarkeiten</option>
-            <option value="public">Öffentlich</option>
-            <option value="privat">Privat</option>
+            <option value="">{tCommon("allVisibilities")}</option>
+            <option value="public">{tCommon("public")}</option>
+            <option value="privat">{tCommon("private")}</option>
           </select>
           <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
-            {filtered.length} {filtered.length === 1 ? "CHARAKTER" : "CHARAKTERE"}
+            {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")}
           </p>
         </div>
       )}
@@ -90,11 +95,11 @@ export default function CharaktereGrid({
       <section className="mb-10">
         <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
           style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
-          Meine Charaktere
+          {t("myChars")}
         </h2>
         {own.length === 0 ? (
           <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-            {filterVisibility ? "Keine Charaktere für diesen Filter." : "Du hast noch keinen Charakter. Klicke auf + Charakter oben rechts."}
+            {filterVisibility ? t("emptyOwnFiltered") : t("emptyOwn")}
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -107,7 +112,7 @@ export default function CharaktereGrid({
         <section>
           <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
             style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
-            Charaktere der anderen Spieler
+            {t("otherChars")}
           </h2>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {others.map((c) => <CharCard key={c.id} c={c} />)}

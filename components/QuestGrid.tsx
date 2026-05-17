@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { QUEST_STATUS_OPTIONS } from "@/lib/constants";
 import QuestCard from "./QuestCard";
 
@@ -31,6 +32,9 @@ const PRIORITAET_COLORS: Record<string, string> = {
 };
 
 export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; isDM?: boolean }) {
+  const t = useTranslations("quest");
+  const tCommon = useTranslations("common");
+
   const [filterStatus, setFilterStatus] = useState("");
   const [filterVisibility, setFilterVisibility] = useState("");
 
@@ -52,7 +56,7 @@ export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; i
           className={selectClass}
           style={selectStyle}
         >
-          <option value="">Alle Status</option>
+          <option value="">{t("allStatus")}</option>
           {QUEST_STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
         {isDM && (
@@ -62,20 +66,20 @@ export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; i
             className={selectClass}
             style={selectStyle}
           >
-            <option value="">Alle Sichtbarkeiten</option>
-            <option value="public">Öffentlich</option>
-            <option value="privat">Privat</option>
+            <option value="">{tCommon("allVisibilities")}</option>
+            <option value="public">{tCommon("public")}</option>
+            <option value="privat">{tCommon("private")}</option>
           </select>
         )}
         <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
-          {filtered.length} {filtered.length === 1 ? "QUEST" : "QUESTS"} GEFUNDEN
+          {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")} {tCommon("found")}
         </p>
       </div>
 
       {filtered.length === 0 ? (
         <div className="text-center py-20">
           <p className="font-cinzel text-sm tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
-            Keine Quests entsprechen dem Filter.
+            {t("emptyFiltered")}
           </p>
         </div>
       ) : (

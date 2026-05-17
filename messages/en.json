@@ -1,0 +1,200 @@
+{
+  "nav": {
+    "npcs": "NPCs",
+    "organisationen": "Organisations",
+    "locations": "Locations",
+    "charaktere": "Characters",
+    "geschichte": "History",
+    "tagebuch": "Journal",
+    "quests": "Quests"
+  },
+  "userMenu": {
+    "kampagnen": "Campaigns",
+    "einladungen": "Manage Invites",
+    "export": "Export Campaign",
+    "konto": "My Account",
+    "adminBereich": "Admin Area",
+    "abmelden": "Sign Out",
+    "errorBadge": "{count} unresolved errors",
+    "roles": {
+      "SPIELER": "Player",
+      "DUNGEON_MASTER": "Dungeon Master",
+      "ADMIN": "Admin"
+    }
+  },
+  "mobileNav": {
+    "open": "Open menu",
+    "navigation": "Navigation",
+    "kampagne": "Campaign",
+    "neueKampagne": "+ New Campaign"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "copy": "Copy",
+    "copied": "✓ Copied",
+    "loading": "Loading…",
+    "yes": "Yes",
+    "no": "No",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "none": "None",
+    "unknown": "Unknown",
+    "public": "Public",
+    "private": "Private",
+    "connections": "Connections",
+    "connection": "Connection",
+    "noConnections": "No connections",
+    "privateNotes": "Private Notes",
+    "visibility": "Visibility",
+    "name": "Name",
+    "description": "Description",
+    "image": "Image",
+    "required": "Required",
+    "optional": "optional",
+    "allVisibilities": "All Visibilities",
+    "found": "FOUND"
+  },
+  "image": {
+    "urlLabel": "Image URL (optional)",
+    "urlPlaceholder": "https://…",
+    "preview": "Preview",
+    "remove": "✕ Remove",
+    "uploadDivider": "or upload",
+    "uploadButton": "↑ CHOOSE FILE",
+    "uploading": "⏳ Uploading…",
+    "uploadHint": "JPG, PNG, WebP, GIF · max. 5 MB",
+    "uploadError": "Upload failed.",
+    "aiDivider": "or generate with AI",
+    "aiLabel": "Description for DALL-E 3",
+    "generateButton": "GENERATE",
+    "generating": "…",
+    "accept": "✓ USE THIS",
+    "regenerate": "↺ REGENERATE",
+    "generatingHint": "approx. 10 seconds",
+    "errorGenerating": "Error generating image.",
+    "hints": {
+      "character": "DALL-E 3 is drawing your character…",
+      "location": "DALL-E 3 is drawing your location…",
+      "organisation": "DALL-E 3 is drawing the crest…"
+    }
+  },
+  "export": {
+    "button": "↓ EXPORT CAMPAIGN",
+    "loading": "⏳ Exporting…",
+    "error": "Export failed."
+  },
+  "quest": {
+    "allStatus": "All Statuses",
+    "empty": "No quests yet.",
+    "emptyFiltered": "No quests match the filter.",
+    "countSingle": "QUEST",
+    "countPlural": "QUESTS"
+  },
+  "npc": {
+    "title": "NPCs",
+    "empty": "No NPCs yet",
+    "create": "Create NPC",
+    "filterLocation": "All Locations",
+    "filterVisibility": "All",
+    "onlyPrivate": "Private only",
+    "onlyPublic": "Public only",
+    "search": "Search NPC…",
+    "filterStatus": "All Statuses",
+    "filterBeziehung": "All Relationships",
+    "filterOrg": "All Organisations",
+    "countSingle": "NPC",
+    "countPlural": "NPCs",
+    "emptyFiltered": "No NPCs found"
+  },
+  "location": {
+    "title": "Locations",
+    "empty": "No locations yet",
+    "create": "Create Location",
+    "countSingle": "LOCATION",
+    "countPlural": "LOCATIONS",
+    "emptyFiltered": "No locations for this filter"
+  },
+  "organisation": {
+    "title": "Organisations",
+    "empty": "No organisations yet",
+    "create": "Create Organisation",
+    "members": "Members",
+    "member": "Member",
+    "countSingle": "ORGANISATION",
+    "countPlural": "ORGANISATIONS",
+    "emptyFiltered": "No organisations for this filter"
+  },
+  "charakter": {
+    "title": "Characters",
+    "empty": "No characters yet",
+    "create": "Create Character",
+    "myChars": "My Characters",
+    "otherChars": "Other Players' Characters",
+    "emptyOwn": "You don't have a character yet. Click + Character in the top right.",
+    "emptyOwnFiltered": "No characters for this filter.",
+    "countSingle": "CHARACTER",
+    "countPlural": "CHARACTERS"
+  },
+  "einladungen": {
+    "title": "Manage Invites",
+    "permanentTitle": "Permanent Invite Link",
+    "permanentDesc": "This link stays valid until you deactivate it. Anyone who opens it joins as a player.",
+    "generate": "+ Generate Link",
+    "regenerate": "↺ REGENERATE",
+    "deactivate": "✕ DEACTIVATE",
+    "copy": "COPY",
+    "copied": "✓ COPIED",
+    "oneTimeTitle": "One-time Invites",
+    "oneTimeDesc": "Each invite can be used once — for new registration or for existing users to join.",
+    "createButton": "+ Create Invite",
+    "role": "Role",
+    "codeLabel": "Code for existing users",
+    "linkLabel": "Registration link for new users",
+    "used": "✓ Used",
+    "empty": "No invites created yet.",
+    "errorLoad": "Error loading invite link.",
+    "errorGenerate": "Error generating link.",
+    "errorDeactivate": "Error deactivating link."
+  },
+  "dmExport": {
+    "title": "Export Campaign",
+    "description": "Exports all campaign data as a JSON file — including NPCs, organisations, locations, characters, journal and quests.",
+    "button": "↓ EXPORT CAMPAIGN",
+    "loading": "⏳ Exporting…",
+    "error": "Export failed."
+  },
+  "login": {
+    "title": "Welcome back",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign In",
+    "loading": "Signing in…",
+    "forgotPassword": "Forgot password?",
+    "error": "Invalid email or password.",
+    "noAccount": "No account yet?"
+  },
+  "register": {
+    "title": "Create Account",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "passwordConfirm": "Confirm password",
+    "submit": "Register",
+    "loading": "Registering…",
+    "errorMismatch": "Passwords do not match.",
+    "errorLength": "Password must be at least 8 characters.",
+    "errorGeneral": "Registration failed.",
+    "alreadyHaveAccount": "Already have an account?"
+  },
+  "languageSwitcher": {
+    "de": "DE",
+    "en": "EN",
+    "label": "Language"
+  }
+}
