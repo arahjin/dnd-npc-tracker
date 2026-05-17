@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { Suspense } from "react";
 import { PASSWORD_HINT } from "@/lib/password";
 import Image from "next/image";
@@ -10,6 +11,7 @@ import Image from "next/image";
 function RegisterForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations("register");
   const token = searchParams.get("token") ?? "";
   const returnTo = searchParams.get("returnTo") ?? "";
 
@@ -30,8 +32,8 @@ function RegisterForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password !== password2) { setError("Passwörter stimmen nicht überein."); return; }
-    if (password.length < 8) { setError("Passwort muss mindestens 8 Zeichen haben."); return; }
+    if (password !== password2) { setError(t("errorMismatch")); return; }
+    if (password.length < 8) { setError(t("errorLength")); return; }
     setLoading(true);
     setError("");
 
@@ -41,18 +43,15 @@ function RegisterForm() {
       body: JSON.stringify({ token: token || undefined, name, email, password }),
     });
     const data = await res.json();
-    if (!res.ok) { setError(data.error ?? "Fehler bei der Registrierung."); setLoading(false); return; }
+    if (!res.ok) { setError(data.error ?? t("errorGeneral")); setLoading(false); return; }
 
     const signInRes = await signIn("credentials", { email, password, redirect: false });
 
-    // If signIn failed, the email may already exist with a different password.
-    // Send the user to /login with a friendly hint instead of leaking enumeration.
     if (signInRes && (signInRes as { error?: string }).error) {
       router.push("/login?bereitsRegistriert=1");
       return;
     }
 
-    // If the invite linked us to a campaign, activate it immediately
     if (data.kampagneId) {
       await fetch(`/api/kampagnen/${data.kampagneId}/aktiv`, { method: "POST" });
     }
@@ -66,7 +65,6 @@ function RegisterForm() {
     color: "#D8D0C8", fontFamily: "var(--font-roboto), sans-serif",
   };
 
-  // If token is provided but invalid, show error but still allow registration without it
   const tokenInvalid = token && inviteInfo.checked && !inviteInfo.valid;
 
   return (
@@ -74,7 +72,7 @@ function RegisterForm() {
       <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
       <div className="px-4 py-3" style={{ background: "#111", borderBottom: "1px solid var(--dnd-border)" }}>
         <h1 className="font-cinzel text-sm tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>
-          Konto erstellen
+          {t("title")}
         </h1>
       </div>
 
@@ -82,7 +80,7 @@ function RegisterForm() {
         <div className="px-6 pt-5 pb-0">
           <div className="font-cinzel text-xs px-4 py-3 tracking-wide"
             style={{ background: "#0A1A0A", border: "1px solid #1E3A1E", color: "#4ADE80" }}>
-            ✓ Einladungslink gültig — du wirst nach der Registrierung automatisch der Kampagne hinzugefügt.
+            {t("inviteValid")}
           </div>
         </div>
       )}
@@ -91,7 +89,7 @@ function RegisterForm() {
         <div className="px-6 pt-5 pb-0">
           <div className="font-cinzel text-xs px-4 py-3 tracking-wide"
             style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
-            ⚠ Dieser Einladungslink ist ungültig oder bereits verwendet. Du kannst trotzdem ein Konto erstellen und später einer Kampagne beitreten.
+            {t("inviteInvalid")}
           </div>
         </div>
       )}
@@ -104,32 +102,32 @@ function RegisterForm() {
           </div>
         )}
         <div>
-          <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Name</label>
+          <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>{t("name")}</label>
           <input type="text" value={name} onChange={(e) => setName(e.target.value)} required
-            placeholder="Dein Name" autoFocus className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
+            placeholder={t("namePlaceholder")} autoFocus className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
         </div>
         <div>
-          <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>E-Mail</label>
+          <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>{t("email")}</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
             className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
         </div>
         <div>
-          <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Passwort</label>
+          <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>{t("password")}</label>
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
             className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
           <p className="mt-1 text-xs" style={{ color: "var(--dnd-text-muted)" }}>{PASSWORD_HINT}</p>
         </div>
         <div>
-          <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>Passwort wiederholen</label>
+          <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>{t("passwordConfirm")}</label>
           <input type="password" value={password2} onChange={(e) => setPassword2(e.target.value)} required
             className="w-full px-4 py-2.5 text-base outline-none" style={inputStyle} />
         </div>
         <button type="submit" disabled={loading} className="ddb-cta w-full justify-center py-3">
-          {loading ? "KONTO ERSTELLEN..." : "KONTO ERSTELLEN"}
+          {loading ? t("loading") : t("submit")}
         </button>
         <p className="text-center font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
-          Bereits ein Konto?{" "}
-          <a href="/login" style={{ color: "var(--dnd-red-light)" }}>Anmelden</a>
+          {t("alreadyHaveAccount")}{" "}
+          <a href="/login" style={{ color: "var(--dnd-red-light)" }}>{t("signInLink")}</a>
         </p>
       </form>
     </div>
@@ -149,7 +147,7 @@ export default function RegisterPage() {
             style={{ height: "60px", width: "auto" }}
           />
         </div>
-        <Suspense fallback={<p className="font-cinzel text-sm text-center" style={{ color: "var(--dnd-text-muted)" }}>Laden...</p>}>
+        <Suspense fallback={<p className="font-cinzel text-sm text-center" style={{ color: "var(--dnd-text-muted)" }}>…</p>}>
           <RegisterForm />
         </Suspense>
       </div>

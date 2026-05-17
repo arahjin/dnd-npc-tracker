@@ -177,20 +177,28 @@
     "loading": "Anmelden…",
     "forgotPassword": "Passwort vergessen?",
     "error": "E-Mail oder Passwort ungültig.",
-    "noAccount": "Noch kein Konto?"
+    "noAccount": "Noch kein Konto?",
+    "registerLink": "Jetzt registrieren",
+    "emailVerified": "✓ E-Mail bestätigt! Du kannst dich jetzt anmelden.",
+    "passwordReset": "✓ Passwort geändert! Bitte anmelden.",
+    "alreadyRegistered": "Diese E-Mail ist bereits registriert. Bitte logge dich ein oder setze dein Passwort zurück."
   },
   "register": {
     "title": "Konto erstellen",
     "name": "Name",
     "email": "E-Mail",
     "password": "Passwort",
-    "passwordConfirm": "Passwort bestätigen",
-    "submit": "Registrieren",
-    "loading": "Registrieren…",
+    "passwordConfirm": "Passwort wiederholen",
+    "submit": "Konto erstellen",
+    "loading": "Konto wird erstellt…",
     "errorMismatch": "Passwörter stimmen nicht überein.",
     "errorLength": "Passwort muss mindestens 8 Zeichen haben.",
     "errorGeneral": "Fehler bei der Registrierung.",
-    "alreadyHaveAccount": "Bereits ein Konto?"
+    "alreadyHaveAccount": "Bereits ein Konto?",
+    "signInLink": "Anmelden",
+    "namePlaceholder": "Dein Name",
+    "inviteValid": "✓ Einladungslink gültig — du wirst nach der Registrierung automatisch der Kampagne hinzugefügt.",
+    "inviteInvalid": "⚠ Dieser Einladungslink ist ungültig oder bereits verwendet. Du kannst trotzdem ein Konto erstellen und später einer Kampagne beitreten."
   },
   "languageSwitcher": {
     "de": "DE",
