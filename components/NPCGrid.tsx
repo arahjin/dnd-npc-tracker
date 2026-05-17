@@ -59,6 +59,16 @@ export default function NPCGrid({
 }) {
   const t = useTranslations("npc");
   const tCommon = useTranslations("common");
+  const tc = useTranslations("constants");
+  const STATUS_LABELS: Record<string, string> = {
+    "Lebendig": tc("statusLebendig"), "Tot": tc("statusTot"),
+    "Vermisst": tc("statusVermisst"), "Unbekannt": tc("statusUnbekannt"),
+  };
+  const BEZIEHUNG_LABELS: Record<string, string> = {
+    "Verbündet": tc("beziehungVerbuendet"), "Freundlich": tc("beziehungFreundlich"),
+    "Neutral": tc("beziehungNeutral"), "Feindlich": tc("beziehungFeindlich"),
+    "Unbekannt": tc("beziehungUnbekannt"),
+  };
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -104,7 +114,7 @@ export default function NPCGrid({
           style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
         >
           <option value="">{t("filterStatus")}</option>
-          {STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
+          {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{STATUS_LABELS[s] ?? s}</option>)}
         </select>
         <select
           value={filterBeziehung}
@@ -113,7 +123,7 @@ export default function NPCGrid({
           style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
         >
           <option value="">{t("filterBeziehung")}</option>
-          {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
+          {BEZIEHUNG_OPTIONS.map((b) => <option key={b} value={b}>{BEZIEHUNG_LABELS[b] ?? b}</option>)}
         </select>
         {availableOrgs.length > 0 && (
           <select

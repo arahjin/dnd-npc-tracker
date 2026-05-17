@@ -34,6 +34,12 @@ const PRIORITAET_COLORS: Record<string, string> = {
 export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; isDM?: boolean }) {
   const t = useTranslations("quest");
   const tCommon = useTranslations("common");
+  const tc = useTranslations("constants");
+  const QUEST_STATUS_LABELS: Record<string, string> = {
+    "Aktiv": tc("questStatusAktiv"), "Abgeschlossen": tc("questStatusAbgeschlossen"),
+    "Gescheitert": tc("questStatusGescheitert"), "Pausiert": tc("questStatusPausiert"),
+    "Unbekannt": tc("questStatusUnbekannt"),
+  };
 
   const [filterStatus, setFilterStatus] = useState("");
   const [filterVisibility, setFilterVisibility] = useState("");
@@ -57,7 +63,7 @@ export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; i
           style={selectStyle}
         >
           <option value="">{t("allStatus")}</option>
-          {QUEST_STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+          {QUEST_STATUS_OPTIONS.map((s) => <option key={s} value={s}>{QUEST_STATUS_LABELS[s] ?? s}</option>)}
         </select>
         {isDM && (
           <select

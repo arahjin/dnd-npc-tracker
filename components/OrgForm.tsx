@@ -28,6 +28,21 @@ const EMPTY: OrgData = {
 export default function OrgForm({ initial, id, availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: { initial?: Partial<OrgData & { sichtbarkeit?: string; privateNotizen?: string }>; id?: string; availableLocations?: { id: string; name: string }[]; onSuccess?: () => void; onCancel?: () => void; canSeePrivate?: boolean }) {
   const router = useRouter();
   const t = useTranslations("form");
+  const tc = useTranslations("constants");
+  const ALIGNMENT_LABELS: Record<string, string> = {
+    "Rechtschaffen Gut": tc("alignmentLG"), "Neutral Gut": tc("alignmentNG"),
+    "Chaotisch Gut": tc("alignmentCG"), "Rechtschaffen Neutral": tc("alignmentLN"),
+    "Wahrhaft Neutral": tc("alignmentNN"), "Chaotisch Neutral": tc("alignmentCN"),
+    "Rechtschaffen Böse": tc("alignmentLE"), "Neutral Böse": tc("alignmentNE"),
+    "Chaotisch Böse": tc("alignmentCE"),
+  };
+  const ORG_TYP_LABELS: Record<string, string> = {
+    "Gilde": tc("orgTypGilde"), "Fraktion": tc("orgTypFraktion"),
+    "Orden": tc("orgTypOrden"), "Regierung": tc("orgTypRegierung"),
+    "Kult": tc("orgTypKult"), "Händlerverband": tc("orgTypHaendlerverband"),
+    "Militär": tc("orgTypMilitaer"), "Kriminelle Organisation": tc("orgTypKriminell"),
+    "Sonstiges": tc("orgTypSonstiges"),
+  };
   const [form, setForm] = useState<OrgData>({ ...EMPTY, ...initial });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -94,7 +109,7 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
           <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("typLabel")}</label>
           <select value={form.typ} onChange={(e) => set("typ", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             <option value="">{t("selectPlaceholder")}</option>
-            {ORGANISATION_TYP_OPTIONS.map((o) => <option key={o}>{o}</option>)}
+            {ORGANISATION_TYP_OPTIONS.map((o) => <option key={o} value={o}>{ORG_TYP_LABELS[o] ?? o}</option>)}
           </select>
         </div>
         <div>
@@ -110,7 +125,7 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("alignmentLabel")}</label>
         <select value={form.alignment} onChange={(e) => set("alignment", e.target.value)} className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
           <option value="">{t("selectPlaceholder")}</option>
-          {ALIGNMENT_OPTIONS.map((a) => <option key={a}>{a}</option>)}
+          {ALIGNMENT_OPTIONS.map((a) => <option key={a} value={a}>{ALIGNMENT_LABELS[a] ?? a}</option>)}
         </select>
       </div>
 

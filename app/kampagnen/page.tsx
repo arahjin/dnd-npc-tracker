@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { IconSword } from "@/components/Icons";
 
 type Kampagne = {
@@ -15,6 +16,7 @@ type Kampagne = {
 
 export default function KampagnenPage() {
   const router = useRouter();
+  const t = useTranslations("kampagnen");
   const [kampagnen, setKampagnen] = useState<Kampagne[]>([]);
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState<string | null>(null);
@@ -59,7 +61,7 @@ export default function KampagnenPage() {
     });
     const data = await res.json();
     if (!res.ok) {
-      setJoinError(data.error ?? "Fehler.");
+      setJoinError(data.error ?? t("createError"));
       setJoinLoading(false);
       return;
     }
@@ -71,7 +73,7 @@ export default function KampagnenPage() {
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!newName.trim()) { setCreateError("Name ist erforderlich."); return; }
+    if (!newName.trim()) { setCreateError(t("nameRequired")); return; }
     setCreateLoading(true);
     setCreateError(null);
     const res = await fetch("/api/kampagnen", {
@@ -81,7 +83,7 @@ export default function KampagnenPage() {
     });
     const data = await res.json();
     if (!res.ok) {
-      setCreateError(data.error ?? "Fehler beim Erstellen.");
+      setCreateError(data.error ?? t("createError"));
       setCreateLoading(false);
       return;
     }
@@ -101,7 +103,7 @@ export default function KampagnenPage() {
         <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
         <div className="mx-auto max-w-2xl px-4 md:px-6" style={{ height: "60px", display: "flex", alignItems: "center" }}>
           <h1 className="font-cinzel text-lg font-bold tracking-widest" style={{ color: "var(--dnd-heading)" }}>
-            <IconSword size={14} color="var(--dnd-gold)" /> Kampagnen
+            <IconSword size={14} color="var(--dnd-gold)" /> {t("title")}
           </h1>
         </div>
       </header>
@@ -113,7 +115,7 @@ export default function KampagnenPage() {
           <section>
             <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-4 pb-2"
               style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
-              Meine Kampagnen
+              {t("myTitle")}
             </h2>
             <div className="space-y-3">
               {kampagnen.map((k) => (
@@ -133,7 +135,7 @@ export default function KampagnenPage() {
                       <p className="text-sm" style={{ color: "var(--dnd-text-muted)" }}>{k.beschreibung}</p>
                     )}
                     <p className="font-cinzel text-xs mt-1" style={{ color: "var(--dnd-text-muted)" }}>
-                      {k._count.mitglieder} {k._count.mitglieder === 1 ? "Mitglied" : "Mitglieder"}
+                      {t("memberCount", { count: k._count.mitglieder })}
                     </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -141,11 +143,11 @@ export default function KampagnenPage() {
                       <a href="/kampagnen/verwalten"
                         className="font-cinzel text-xs px-3 py-1.5 transition-colors"
                         style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)", textDecoration: "none" }}>
-                        Verwalten
+                        {t("manage")}
                       </a>
                     )}
                     <button onClick={() => activate(k.id)} disabled={activating === k.id} className="ddb-cta shrink-0">
-                      {activating === k.id ? "..." : "Betreten →"}
+                      {activating === k.id ? t("joining") : t("enter")}
                     </button>
                   </div>
                 </div>
@@ -155,14 +157,14 @@ export default function KampagnenPage() {
         )}
 
         {loading && (
-          <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>Lade Kampagnen...</p>
+          <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>{t("loading")}</p>
         )}
 
         {/* Join by code */}
         <section>
           <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-4 pb-2"
             style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
-            Mit Einladungscode beitreten
+            {t("joinTitle")}
           </h2>
           <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
             <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
@@ -171,12 +173,12 @@ export default function KampagnenPage() {
                 type="text"
                 value={joinCode}
                 onChange={(e) => setJoinCode(e.target.value)}
-                placeholder="Einladungscode eingeben..."
+                placeholder={t("codePlaceholder")}
                 className="flex-1 min-w-0 px-4 py-2.5 text-sm outline-none"
                 style={inputStyle}
               />
               <button type="submit" disabled={joinLoading || !joinCode.trim()} className="ddb-cta shrink-0">
-                {joinLoading ? "..." : "Beitreten"}
+                {joinLoading ? t("joining") : t("joinButton")}
               </button>
               {joinError && (
                 <p className="w-full font-cinzel text-xs" style={{ color: "var(--dnd-red-light)" }}>✗ {joinError}</p>
@@ -192,17 +194,17 @@ export default function KampagnenPage() {
         <section>
           <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-4 pb-2"
             style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
-            Neue Kampagne erstellen
+            {t("createTitle")}
           </h2>
           <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
             <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-gold), var(--dnd-red-dark))" }} />
             {!showCreate ? (
               <div className="p-4">
                 <p className="text-sm mb-3" style={{ color: "var(--dnd-text-muted)" }}>
-                  Erstelle eine eigene Kampagne — du wirst automatisch zum Dungeon Master.
+                  {t("createDesc")}
                 </p>
                 <button onClick={() => setShowCreate(true)} className="ddb-cta">
-                  + Kampagne erstellen
+                  {t("createOpenButton")}
                 </button>
               </div>
             ) : (
@@ -212,32 +214,32 @@ export default function KampagnenPage() {
                 )}
                 <div>
                   <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>
-                    Kampagnenname *
+                    {t("nameLabel")}
                   </label>
                   <input
                     type="text" value={newName} onChange={(e) => setNewName(e.target.value)}
-                    placeholder="z.B. Lorehub Kampagne" autoFocus
+                    placeholder={t("namePlaceholder")} autoFocus
                     className="w-full px-4 py-2.5 text-sm outline-none" style={inputStyle}
                   />
                 </div>
                 <div>
                   <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-2" style={{ color: "var(--dnd-label)" }}>
-                    Beschreibung (optional)
+                    {t("descLabel")}
                   </label>
                   <input
                     type="text" value={newBeschreibung} onChange={(e) => setNewBeschreibung(e.target.value)}
-                    placeholder="Kurze Beschreibung..."
+                    placeholder={t("descPlaceholder")}
                     className="w-full px-4 py-2.5 text-sm outline-none" style={inputStyle}
                   />
                 </div>
                 <div className="flex gap-3">
                   <button type="submit" disabled={createLoading} className="ddb-cta">
-                    {createLoading ? "ERSTELLEN..." : "KAMPAGNE ERSTELLEN"}
+                    {createLoading ? t("creating") : t("createButton")}
                   </button>
                   <button type="button" onClick={() => { setShowCreate(false); setCreateError(null); }}
                     className="font-cinzel text-xs px-4 py-2"
                     style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-                    ABBRECHEN
+                    {t("cancel")}
                   </button>
                 </div>
               </form>

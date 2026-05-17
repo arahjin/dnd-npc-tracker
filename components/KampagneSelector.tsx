@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IconSword } from "@/components/Icons";
+import { useTranslations } from "next-intl";
 
 type Kampagne = { id: string; name: string };
 
@@ -15,6 +16,7 @@ type Props = {
 
 export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }: Props) {
   const router = useRouter();
+  const t = useTranslations("mobileNav");
   const [open, setOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
 
@@ -49,7 +51,7 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
           >
             <div className="px-3 py-2" style={{ borderBottom: "1px solid #1A1A1A" }}>
               <span className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-text-muted)" }}>
-                Kampagne wechseln
+                {t("switchKampagne")}
               </span>
             </div>
             {kampagnen.map((k) => (
@@ -78,7 +80,7 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "#1A1A1A")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
             >
-              + Neue Kampagne
+              {t("neueKampagneShort")}
             </Link>
           </div>
         </>

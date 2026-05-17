@@ -258,6 +258,12 @@ export default function LocationForm({
 }: Props) {
   const router = useRouter();
   const t = useTranslations("form");
+  const tc = useTranslations("constants");
+  const ART_LABELS: Record<string, string> = {
+    "Kontinent": tc("artKontinent"), "Land": tc("artLand"), "Region": tc("artRegion"),
+    "Stadt": tc("artStadt"), "Dorf": tc("artDorf"), "Besonderer Ort": tc("artBesondererOrt"),
+    "Wald": tc("artWald"), "Gewässer": tc("artGewaesser"), "Insel": tc("artInsel"),
+  };
   const [name, setName] = useState(initial.name ?? "");
   const [image, setImage] = useState(initial.image ?? "");
   const [art, setArt] = useState(initial.art ?? "");
@@ -359,7 +365,7 @@ export default function LocationForm({
           style={inputStyle}
         >
           <option value="">{t("artSelectPlaceholder")}</option>
-          {ART_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+          {ART_OPTIONS.map((o) => <option key={o} value={o}>{ART_LABELS[o] ?? o}</option>)}
         </select>
       </div>
 

@@ -74,6 +74,21 @@ export default function QuestForm({
 }: Props) {
   const router = useRouter();
   const t = useTranslations("form");
+  const tc = useTranslations("constants");
+  const QUEST_STATUS_LABELS: Record<string, string> = {
+    "Aktiv": tc("questStatusAktiv"), "Abgeschlossen": tc("questStatusAbgeschlossen"),
+    "Gescheitert": tc("questStatusGescheitert"), "Pausiert": tc("questStatusPausiert"),
+    "Unbekannt": tc("questStatusUnbekannt"),
+  };
+  const QUEST_TYP_LABELS: Record<string, string> = {
+    "Hauptquest": tc("questTypHauptquest"), "Nebenquest": tc("questTypNebenquest"),
+    "Gildenauftrag": tc("questTypGildenauftrag"), "Persönlich": tc("questTypPersoenlich"),
+    "Geheim": tc("questTypGeheim"),
+  };
+  const QUEST_PRIORITAET_LABELS: Record<string, string> = {
+    "Hoch": tc("questPrioritaetHoch"), "Mittel": tc("questPrioritaetMittel"),
+    "Niedrig": tc("questPrioritaetNiedrig"),
+  };
   const [form, setForm] = useState<QuestData>({ ...EMPTY, ...initial });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -229,14 +244,14 @@ export default function QuestForm({
           <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("statusLabel")}</label>
           <select value={form.status} onChange={(e) => set("status", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            {QUEST_STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
+            {QUEST_STATUS_OPTIONS.map((s) => <option key={s} value={s}>{QUEST_STATUS_LABELS[s] ?? s}</option>)}
           </select>
         </div>
         <div>
           <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("typLabel")}</label>
           <select value={form.typ} onChange={(e) => set("typ", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            {QUEST_TYP_OPTIONS.map((o) => <option key={o}>{o}</option>)}
+            {QUEST_TYP_OPTIONS.map((o) => <option key={o} value={o}>{QUEST_TYP_LABELS[o] ?? o}</option>)}
           </select>
         </div>
       </div>
@@ -248,7 +263,7 @@ export default function QuestForm({
           <select value={form.prioritaet} onChange={(e) => set("prioritaet", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             <option value="">{t("noPriorityOption")}</option>
-            {QUEST_PRIORITAET_OPTIONS.map((p) => <option key={p}>{p}</option>)}
+            {QUEST_PRIORITAET_OPTIONS.map((p) => <option key={p} value={p}>{QUEST_PRIORITAET_LABELS[p] ?? p}</option>)}
           </select>
         </div>
         <div>

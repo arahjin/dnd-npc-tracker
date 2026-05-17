@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function KontoPage() {
   const router = useRouter();
+  const t = useTranslations("konto");
   const [confirm, setConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +18,7 @@ export default function KontoPage() {
     const res = await fetch("/api/konto", { method: "DELETE" });
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error ?? "Fehler beim Löschen.");
+      setError(data.error ?? t("deleteError"));
       setDeleting(false);
       return;
     }
@@ -31,9 +33,9 @@ export default function KontoPage() {
         <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
         <div className="mx-auto max-w-2xl px-4 md:px-6" style={{ height: "60px", display: "flex", alignItems: "center", gap: "16px" }}>
           <button onClick={() => router.back()} className="font-cinzel text-xs tracking-widest uppercase"
-            style={{ color: "var(--dnd-text-muted)" }}>← Zurück</button>
+            style={{ color: "var(--dnd-text-muted)" }}>{t("back")}</button>
           <h1 className="font-cinzel text-lg font-bold tracking-widest" style={{ color: "var(--dnd-heading)" }}>
-            Mein Konto
+            {t("title")}
           </h1>
         </div>
       </header>
@@ -45,18 +47,18 @@ export default function KontoPage() {
           <div style={{ height: "2px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red), var(--dnd-red-dark))" }} />
           <div className="p-6">
             <h2 className="font-cinzel text-base font-semibold mb-2" style={{ color: "#F87171" }}>
-              Konto löschen
+              {t("deleteTitle")}
             </h2>
             <p className="text-sm mb-1" style={{ color: "var(--dnd-text-muted)" }}>
-              Dies löscht dein Konto unwiderruflich. Folgendes wird entfernt:
+              {t("deleteDesc")}
             </p>
             <ul className="text-sm mb-5 space-y-0.5 list-disc list-inside" style={{ color: "var(--dnd-text-muted)" }}>
-              <li>Deine Charaktere und Tagebucheinträge</li>
-              <li>Deine Kampagnenmitgliedschaften</li>
-              <li>Alle verknüpften Daten</li>
+              <li>{t("deleteItem1")}</li>
+              <li>{t("deleteItem2")}</li>
+              <li>{t("deleteItem3")}</li>
             </ul>
             <p className="font-cinzel text-xs mb-4" style={{ color: "#FCA5A5" }}>
-              NPCs, Organisationen und Locations, die du erstellt hast, bleiben in der Kampagne erhalten.
+              {t("deleteNote")}
             </p>
 
             {error && (
@@ -71,25 +73,25 @@ export default function KontoPage() {
                 onClick={() => setConfirm(true)}
                 className="font-cinzel text-xs tracking-widest px-5 py-2.5 transition-all"
                 style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
-                KONTO LÖSCHEN
+                {t("deleteButton")}
               </button>
             ) : (
               <div className="flex items-center gap-3 flex-wrap">
                 <span className="font-cinzel text-xs" style={{ color: "#F87171" }}>
-                  Bist du sicher? Diese Aktion kann nicht rückgängig gemacht werden.
+                  {t("deleteConfirmText")}
                 </span>
                 <button
                   onClick={handleDelete}
                   disabled={deleting}
                   className="font-cinzel text-xs tracking-widest px-5 py-2.5 transition-all disabled:opacity-50"
                   style={{ background: "#200D0D", border: "1px solid #991B1B", color: "#F87171" }}>
-                  {deleting ? "WIRD GELÖSCHT..." : "JA, ENDGÜLTIG LÖSCHEN"}
+                  {deleting ? t("deleting") : t("deleteConfirmButton")}
                 </button>
                 <button
                   onClick={() => { setConfirm(false); setError(null); }}
                   className="font-cinzel text-xs tracking-widest px-4 py-2.5 transition-all"
                   style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-                  ABBRECHEN
+                  {t("cancel")}
                 </button>
               </div>
             )}

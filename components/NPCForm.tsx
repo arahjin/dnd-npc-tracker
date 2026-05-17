@@ -48,6 +48,20 @@ const EMPTY: NPCData = {
 export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: Props) {
   const router = useRouter();
   const t = useTranslations("form");
+  const tc = useTranslations("constants");
+  const STATUS_LABELS: Record<string, string> = {
+    "Lebendig": tc("statusLebendig"), "Tot": tc("statusTot"),
+    "Vermisst": tc("statusVermisst"), "Unbekannt": tc("statusUnbekannt"),
+  };
+  const BEZIEHUNG_LABELS: Record<string, string> = {
+    "Verbündet": tc("beziehungVerbuendet"), "Freundlich": tc("beziehungFreundlich"),
+    "Neutral": tc("beziehungNeutral"), "Feindlich": tc("beziehungFeindlich"),
+    "Unbekannt": tc("beziehungUnbekannt"),
+  };
+  const GESCHLECHT_LABELS: Record<string, string> = {
+    "Männlich": tc("geschlechtMaennlich"), "Weiblich": tc("geschlechtWeiblich"),
+    "Divers": tc("geschlechtDivers"),
+  };
   const [form, setForm] = useState<NPCData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
   const [saving, setSaving] = useState(false);
@@ -156,14 +170,14 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
           <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("statusLabel")}</label>
           <select value={form.status} onChange={(e) => set("status", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            {STATUS_OPTIONS.map((s) => <option key={s}>{s}</option>)}
+            {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{STATUS_LABELS[s] ?? s}</option>)}
           </select>
         </div>
         <div>
           <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("beziehungLabel")}</label>
           <select value={form.beziehung} onChange={(e) => set("beziehung", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
-            {BEZIEHUNG_OPTIONS.map((b) => <option key={b}>{b}</option>)}
+            {BEZIEHUNG_OPTIONS.map((b) => <option key={b} value={b}>{BEZIEHUNG_LABELS[b] ?? b}</option>)}
           </select>
         </div>
       </div>
@@ -175,7 +189,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
           <select value={form.geschlecht} onChange={(e) => set("geschlecht", e.target.value)}
             className={inputClass + " font-cinzel text-sm"} style={inputStyle}>
             <option value="">{t("selectPlaceholder")}</option>
-            {GESCHLECHT_OPTIONS.map((g) => <option key={g}>{g}</option>)}
+            {GESCHLECHT_OPTIONS.map((g) => <option key={g} value={g}>{GESCHLECHT_LABELS[g] ?? g}</option>)}
           </select>
         </div>
         <div>
