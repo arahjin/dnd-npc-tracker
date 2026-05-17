@@ -60,7 +60,21 @@
     "required": "Required",
     "optional": "optional",
     "allVisibilities": "All Visibilities",
-    "found": "FOUND"
+    "found": "FOUND",
+    "searchPlaceholder": "Search...",
+    "closeButton": "✕ Close"
+  },
+  "loading": {
+    "default": "Loading…",
+    "generic": "Loading...",
+    "npc": "Loading NPCs",
+    "locations": "Loading locations",
+    "organisationen": "Loading organisations",
+    "charaktere": "Loading characters",
+    "quests": "Loading quests",
+    "tagebuch": "Loading journal",
+    "geschichte": "Loading history",
+    "suche": "Searching"
   },
   "image": {
     "urlLabel": "Image URL (optional)",
@@ -400,7 +414,11 @@
     "rolleOption": "— Role —",
     "addItem": "+ Add {title}",
     "questCreateButton": "CREATE QUEST",
-    "charaktereLabel": "Characters"
+    "charaktereLabel": "Characters",
+    "aiPromptNPC": "e.g. Elven rogue, dark hood, scarred face, mysterious",
+    "aiPromptChar": "e.g. Human paladin, silver armor, blue cloak, holy aura",
+    "aiPromptLoc": "e.g. Misty mountain village, snowy peaks, glowing windows at dusk",
+    "aiPromptOrg": "e.g. Crimson dagger crossed with golden chalice, black banner"
   },
   "constants": {
     "statusLebendig": "Alive",

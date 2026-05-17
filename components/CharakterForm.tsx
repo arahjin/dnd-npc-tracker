@@ -117,7 +117,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
         onChange={(url) => set("image", url)}
         kind="character"
         label={t("charImageLabel")}
-        generatorPlaceholder="z.B. Human paladin, silver armor, blue cloak, holy aura"
+        generatorPlaceholder={t("aiPromptChar")}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

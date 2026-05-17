@@ -60,7 +60,21 @@
     "required": "Pflichtfeld",
     "optional": "optional",
     "allVisibilities": "Alle Sichtbarkeiten",
-    "found": "GEFUNDEN"
+    "found": "GEFUNDEN",
+    "searchPlaceholder": "Suchen...",
+    "closeButton": "✕ Schließen"
+  },
+  "loading": {
+    "default": "Lädt…",
+    "generic": "Laden...",
+    "npc": "NPCs werden geladen",
+    "locations": "Locations werden geladen",
+    "organisationen": "Organisationen werden geladen",
+    "charaktere": "Charaktere werden geladen",
+    "quests": "Quests werden geladen",
+    "tagebuch": "Tagebuch wird geladen",
+    "geschichte": "Geschichte wird geladen",
+    "suche": "Suche läuft"
   },
   "image": {
     "urlLabel": "Bild-URL (optional)",
@@ -400,7 +414,11 @@
     "rolleOption": "— Rolle —",
     "addItem": "+ {title} hinzufügen",
     "questCreateButton": "QUEST ERSTELLEN",
-    "charaktereLabel": "Charaktere"
+    "charaktereLabel": "Charaktere",
+    "aiPromptNPC": "z.B. Elfischer Schurke, dunkle Kapuze, vernarbtes Gesicht, geheimnisvoll",
+    "aiPromptChar": "z.B. Menschlicher Paladin, silberne Rüstung, blauer Umhang, heilige Aura",
+    "aiPromptLoc": "z.B. Nebliges Bergdorf, verschneite Gipfel, leuchtende Fenster in der Dämmerung",
+    "aiPromptOrg": "z.B. Blutroter Dolch gekreuzt mit goldenem Kelch, schwarzes Banner"
   },
   "constants": {
     "statusLebendig": "Lebendig",

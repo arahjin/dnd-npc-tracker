@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function NavSearch({ compact }: { compact?: boolean }) {
+  const t = useTranslations("common");
   const [query, setQuery] = useState("");
   const router = useRouter();
 
@@ -23,7 +25,7 @@ export default function NavSearch({ compact }: { compact?: boolean }) {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder={compact ? "Suchen..." : "Suchen..."}
+        placeholder={t("searchPlaceholder")}
         className="font-cinzel"
         style={{
           background: "#1A1A1A",

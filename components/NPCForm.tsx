@@ -161,7 +161,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
         onChange={(url) => set("image", url)}
         kind="character"
         label={t("charImageLabel")}
-        generatorPlaceholder="z.B. Elven rogue, dark hood, scarred face, mysterious"
+        generatorPlaceholder={t("aiPromptNPC")}
       />
 
       {/* Status + Beziehung */}

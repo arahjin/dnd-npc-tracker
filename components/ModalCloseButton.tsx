@@ -1,9 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function ModalCloseButton() {
   const router = useRouter();
+  const t = useTranslations("common");
   return (
     <button
       onClick={() => router.back()}
@@ -12,7 +14,7 @@ export default function ModalCloseButton() {
       onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "var(--dnd-text)")}
       onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "var(--dnd-text-muted)")}
     >
-      ✕ Schließen
+      {t("closeButton")}
     </button>
   );
 }

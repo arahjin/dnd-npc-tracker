@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { PASSWORD_HINT } from "@/lib/password";
 import Image from "next/image";
 
@@ -85,6 +86,7 @@ function ResetForm() {
 }
 
 export default function PasswortZuruecksetzenPage() {
+  const tl = useTranslations("loading");
   return (
     <main className="min-h-screen flex items-center justify-center" style={{ background: "var(--dnd-bg)" }}>
       <div className="w-full max-w-md px-4">
@@ -104,7 +106,7 @@ export default function PasswortZuruecksetzenPage() {
               Neues Passwort setzen
             </h1>
           </div>
-          <Suspense fallback={<div className="p-6"><p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>Laden...</p></div>}>
+          <Suspense fallback={<div className="p-6"><p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>{tl("generic")}</p></div>}>
             <ResetForm />
           </Suspense>
         </div>

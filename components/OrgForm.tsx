@@ -101,7 +101,7 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
         onChange={(url) => set("image", url)}
         kind="organisation"
         label={t("orgImageLabel")}
-        generatorPlaceholder="z.B. Crimson dagger crossed with golden chalice, black banner"
+        generatorPlaceholder={t("aiPromptOrg")}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

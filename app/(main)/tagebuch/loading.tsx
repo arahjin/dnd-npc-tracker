@@ -1,2 +1,6 @@
 import PageLoadingSkeleton from "@/components/PageLoadingSkeleton";
-export default function Loading() { return <PageLoadingSkeleton label="Tagebuch wird geladen" />; }
+import { getTranslations } from "next-intl/server";
+export default async function Loading() {
+  const t = await getTranslations("loading");
+  return <PageLoadingSkeleton label={t("tagebuch")} />;
+}

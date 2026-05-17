@@ -353,7 +353,7 @@ export default function LocationForm({
         onChange={setImage}
         kind="location"
         label={t("artLabel")}
-        generatorPlaceholder="z.B. Misty mountain village, snowy peaks, glowing windows at dusk"
+        generatorPlaceholder={t("aiPromptLoc")}
       />
 
       {/* Art */}
