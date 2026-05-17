@@ -167,6 +167,13 @@
   "dmExport": {
     "title": "Kampagne exportieren",
     "description": "Exportiert alle Daten der Kampagne als JSON-Datei — inklusive NPCs, Organisationen, Locations, Charaktere, Tagebuch und Quests.",
+    "descriptionWithName": "Exportiert alle Daten der Kampagne {name} als JSON-Datei — inklusive NPCs, Organisationen, Locations, Charaktere, Tagebuch und Quests.",
+    "item1": "NPCs mit Organisationszugehörigkeiten und Locations",
+    "item2": "Organisationen mit Mitgliedern",
+    "item3": "Locations mit verknüpften Entitäten",
+    "item4": "Charaktere mit Spielerinformationen",
+    "item5": "Journal-Einträge (Tagebuch & Geschichte)",
+    "item6": "Quests mit Objectives und Verknüpfungen",
     "button": "↓ KAMPAGNE EXPORTIEREN",
     "loading": "⏳ Wird exportiert…",
     "error": "Export fehlgeschlagen."
@@ -215,7 +222,8 @@
     },
     "hero": {
       "toApp": "Zur App →",
-      "startFree": "Kostenlos starten"
+      "startFree": "Kostenlos starten",
+      "subtitle": "Dein digitales Kampagnen-Archiv für Pen & Paper"
     },
     "features": {
       "title": "Was Lorehub bietet",

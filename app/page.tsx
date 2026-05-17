@@ -222,7 +222,7 @@ export default async function StartPage() {
     settings = await prisma.siteSettings.findUnique({ where: { id: "singleton" } });
   } catch { /* fallback */ }
 
-  const subtitle = settings?.landingSubtitle || "Dein digitales Kampagnen-Archiv für Pen & Paper";
+  const subtitle = settings?.landingSubtitle || t("hero.subtitle");
   const bodyText = settings?.landingBody || "";
   const paragraphs = bodyText.split(/\n\n+/).map((p) => p.trim()).filter(Boolean);
 

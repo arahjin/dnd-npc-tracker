@@ -1,19 +1,15 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 
 type Invite = { id: string; token: string; usedById: string | null; role: string; createdAt: string };
 type PermanentInvite = { token: string; createdAt: string } | null;
 
-const ROLE_LABEL: Record<string, string> = {
-  SPIELER: "Spieler",
-  DUNGEON_MASTER: "Dungeon Master",
-  ADMIN: "Admin",
-};
-
 // ── Permanent link panel ──────────────────────────────────────────────────────
 
 function PermanentInvitePanel() {
+  const t = useTranslations("einladungen");
   const [invite, setInvite] = useState<PermanentInvite>(undefined as unknown as PermanentInvite);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -21,9 +17,9 @@ function PermanentInvitePanel() {
 
   const load = useCallback(async () => {
     const res = await fetch("/api/invite/permanent");
-    if (!res.ok) { setError("Fehler beim Laden des Links."); return; }
+    if (!res.ok) { setError(t("errorLoad")); return; }
     setInvite(await res.json());
-  }, []);
+  }, [t]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -41,7 +37,7 @@ function PermanentInvitePanel() {
     setLoading(true);
     setError("");
     const res = await fetch("/api/invite/permanent", { method: "POST" });
-    if (!res.ok) { const d = await res.json(); setError(d.error ?? "Fehler beim Generieren."); setLoading(false); return; }
+    if (!res.ok) { const d = await res.json(); setError(d.error ?? t("errorGenerate")); setLoading(false); return; }
     await load();
     setLoading(false);
   }
@@ -50,7 +46,7 @@ function PermanentInvitePanel() {
     setLoading(true);
     setError("");
     const res = await fetch("/api/invite/permanent", { method: "DELETE" });
-    if (!res.ok) { const d = await res.json(); setError(d.error ?? "Fehler beim Deaktivieren."); setLoading(false); return; }
+    if (!res.ok) { const d = await res.json(); setError(d.error ?? t("errorDeactivate")); setLoading(false); return; }
     await load();
     setLoading(false);
   }
@@ -61,10 +57,10 @@ function PermanentInvitePanel() {
   return (
     <div className="mb-10">
       <h2 className="font-cinzel text-lg font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>
-        Dauerhafter Einladungslink
+        {t("permanentTitle")}
       </h2>
       <p className="text-sm mb-4" style={{ color: "var(--dnd-text-muted)" }}>
-        Dieser Link bleibt gültig, bis du ihn deaktivierst. Alle, die ihn öffnen, treten als Spieler bei.
+        {t("permanentDesc")}
       </p>
 
       <div style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
@@ -83,7 +79,7 @@ function PermanentInvitePanel() {
                   onClick={() => copy(inviteUrl(invite.token))}
                   className="ddb-cta shrink-0"
                   style={{ padding: "6px 14px", fontSize: "0.65rem" }}>
-                  {copied ? "✓ KOPIERT" : "KOPIEREN"}
+                  {copied ? t("copied") : t("copy")}
                 </button>
               </div>
               <div className="flex gap-2">
@@ -92,14 +88,14 @@ function PermanentInvitePanel() {
                   disabled={loading}
                   className="font-cinzel text-xs tracking-widest px-3 py-1.5 transition-all disabled:opacity-40"
                   style={{ border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)" }}>
-                  ↺ NEU GENERIEREN
+                  {t("regenerate")}
                 </button>
                 <button
                   onClick={deactivate}
                   disabled={loading}
                   className="font-cinzel text-xs tracking-widest px-3 py-1.5 transition-all disabled:opacity-40"
                   style={{ border: "1px solid #7F1D1D", color: "#F87171" }}>
-                  ✕ DEAKTIVIEREN
+                  {t("deactivate")}
                 </button>
               </div>
             </div>
@@ -108,7 +104,7 @@ function PermanentInvitePanel() {
               onClick={generate}
               disabled={loading}
               className="ddb-cta disabled:opacity-50">
-              {loading ? "…" : "+ Link generieren"}
+              {loading ? "…" : t("generate")}
             </button>
           )}
         </div>
@@ -120,6 +116,13 @@ function PermanentInvitePanel() {
 // ── One-time invite panel ─────────────────────────────────────────────────────
 
 export default function EinladungenClient() {
+  const t = useTranslations("einladungen");
+  const tu = useTranslations("userMenu");
+  const ROLE_LABEL: Record<string, string> = {
+    SPIELER: tu("roles.SPIELER"),
+    DUNGEON_MASTER: tu("roles.DUNGEON_MASTER"),
+    ADMIN: tu("roles.ADMIN"),
+  };
   const [invites, setInvites] = useState<Invite[]>([]);
   const [newRole, setNewRole] = useState<"SPIELER" | "DUNGEON_MASTER">("SPIELER");
   const [loading, setLoading] = useState(false);
@@ -156,7 +159,7 @@ export default function EinladungenClient() {
   return (
     <div className="mx-auto max-w-3xl px-4 md:px-6 py-10">
       <div className="mb-8">
-        <h1 className="font-cinzel text-2xl font-bold" style={{ color: "var(--dnd-heading)" }}>Einladungen verwalten</h1>
+        <h1 className="font-cinzel text-2xl font-bold" style={{ color: "var(--dnd-heading)" }}>{t("title")}</h1>
         <div className="mt-3 flex items-center gap-3">
           <div className="h-px w-40" style={{ background: "linear-gradient(90deg, var(--dnd-red), transparent)" }} />
           <span style={{ color: "var(--dnd-red)" }}>✦</span>
@@ -167,10 +170,10 @@ export default function EinladungenClient() {
 
       <div className="mb-6">
         <h2 className="font-cinzel text-lg font-semibold mb-1" style={{ color: "var(--dnd-heading)" }}>
-          Einmalige Einladungen
+          {t("oneTimeTitle")}
         </h2>
         <p className="text-sm mb-4" style={{ color: "var(--dnd-text-muted)" }}>
-          Jede Einladung kann einmal verwendet werden — zur Neuregistrierung oder zum Beitreten für bestehende Nutzer.
+          {t("oneTimeDesc")}
         </p>
       </div>
 
@@ -178,7 +181,7 @@ export default function EinladungenClient() {
       <div className="mb-8 flex items-center gap-3 p-4"
         style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
         <label className="font-cinzel text-xs tracking-widest uppercase shrink-0" style={{ color: "var(--dnd-label)" }}>
-          Rolle
+          {t("role")}
         </label>
         <select
           value={newRole}
@@ -186,18 +189,18 @@ export default function EinladungenClient() {
           className="font-cinzel text-xs px-3 py-2 flex-1 outline-none"
           style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)" }}
         >
-          <option value="SPIELER">Spieler</option>
-          <option value="DUNGEON_MASTER">Dungeon Master</option>
+          <option value="SPIELER">{tu("roles.SPIELER")}</option>
+          <option value="DUNGEON_MASTER">{tu("roles.DUNGEON_MASTER")}</option>
         </select>
         <button onClick={createInvite} disabled={loading} className="ddb-cta shrink-0">
-          {loading ? "..." : "+ Einladung erstellen"}
+          {loading ? "..." : t("createButton")}
         </button>
       </div>
 
       {/* Invite list */}
       {invites.length === 0 ? (
         <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-          Noch keine Einladungen erstellt.
+          {t("empty")}
         </p>
       ) : (
         <div className="space-y-3">
@@ -218,13 +221,13 @@ export default function EinladungenClient() {
                       color: inv.role === "DUNGEON_MASTER" ? "var(--dnd-gold)" : "#818CF8",
                       border: `1px solid ${inv.role === "DUNGEON_MASTER" ? "#78350F" : "#3730A3"}`,
                     }}>
-                      {ROLE_LABEL[inv.role]}
+                      {ROLE_LABEL[inv.role] ?? inv.role}
                     </span>
                     <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
                       {new Date(inv.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "short", year: "numeric" })}
                     </span>
                     {used && (
-                      <span className="font-cinzel text-xs ml-auto" style={{ color: "#4ADE80" }}>✓ Verwendet</span>
+                      <span className="font-cinzel text-xs ml-auto" style={{ color: "#4ADE80" }}>{t("used")}</span>
                     )}
                   </div>
 
@@ -234,7 +237,7 @@ export default function EinladungenClient() {
                       <div className="flex items-center gap-2">
                         <div className="flex-1 min-w-0">
                           <p className="font-cinzel text-xs mb-1" style={{ color: "var(--dnd-label)" }}>
-                            Code für bestehende Nutzer
+                            {t("codeLabel")}
                           </p>
                           <code className="block text-sm px-3 py-1.5 truncate"
                             style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-gold)", fontFamily: "monospace", letterSpacing: "0.05em" }}>
@@ -245,7 +248,7 @@ export default function EinladungenClient() {
                           onClick={() => copy(inv.token, `code-${inv.id}`)}
                           className="ddb-cta shrink-0 self-end"
                           style={{ padding: "6px 14px", fontSize: "0.65rem" }}>
-                          {copied === `code-${inv.id}` ? "✓ KOPIERT" : "KOPIEREN"}
+                          {copied === `code-${inv.id}` ? t("copied") : t("copy")}
                         </button>
                       </div>
 
@@ -253,7 +256,7 @@ export default function EinladungenClient() {
                       <div className="flex items-center gap-2">
                         <div className="flex-1 min-w-0">
                           <p className="font-cinzel text-xs mb-1" style={{ color: "var(--dnd-label)" }}>
-                            Registrierungslink für neue Nutzer
+                            {t("linkLabel")}
                           </p>
                           <code className="block text-xs px-3 py-1.5 truncate"
                             style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text-muted)", fontFamily: "monospace" }}>
@@ -264,7 +267,7 @@ export default function EinladungenClient() {
                           onClick={() => copy(registrierUrl(inv.token), `link-${inv.id}`)}
                           className="ddb-cta shrink-0 self-end"
                           style={{ padding: "6px 14px", fontSize: "0.65rem" }}>
-                          {copied === `link-${inv.id}` ? "✓ KOPIERT" : "KOPIEREN"}
+                          {copied === `link-${inv.id}` ? t("copied") : t("copy")}
                         </button>
                       </div>
                     </div>
