@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Settings = {
   copyrightText: string;
@@ -49,6 +50,7 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<"allgemein" | "startseite" | "impressum" | "datenschutz">("allgemein");
+  const t = useTranslations("siteSettings");
 
   function set(key: keyof Settings, val: string) {
     setForm((f) => ({ ...f, [key]: val }));
@@ -65,10 +67,10 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Fehler");
+      if (!res.ok) throw new Error((await res.json()).error ?? t("fallbackError"));
       setSaved(true);
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Unbekannter Fehler");
+      setError(e instanceof Error ? e.message : t("unknownError"));
     } finally {
       setSaving(false);
     }
@@ -92,10 +94,10 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
     <div>
       {/* Tabs */}
       <div style={{ borderBottom: "1px solid var(--dnd-border)", display: "flex", gap: 0, marginBottom: "24px" }}>
-        <button style={tabStyle("allgemein")} onClick={() => setActiveTab("allgemein")}>Allgemein</button>
-        <button style={tabStyle("startseite")} onClick={() => setActiveTab("startseite")}>Startseite</button>
-        <button style={tabStyle("impressum")} onClick={() => setActiveTab("impressum")}>Impressum</button>
-        <button style={tabStyle("datenschutz")} onClick={() => setActiveTab("datenschutz")}>Datenschutz</button>
+        <button style={tabStyle("allgemein")} onClick={() => setActiveTab("allgemein")}>{t("tabAllgemein")}</button>
+        <button style={tabStyle("startseite")} onClick={() => setActiveTab("startseite")}>{t("tabStartseite")}</button>
+        <button style={tabStyle("impressum")} onClick={() => setActiveTab("impressum")}>{t("tabImpressum")}</button>
+        <button style={tabStyle("datenschutz")} onClick={() => setActiveTab("datenschutz")}>{t("tabDatenschutz")}</button>
       </div>
 
       {/* Tab: Allgemein */}
@@ -103,41 +105,41 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
         <div className="space-y-6">
           <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
             <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
-              <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>Footer-Einstellungen</h2>
+              <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>{t("footerSection")}</h2>
             </div>
             <div className="px-5 py-5 space-y-5">
               <div>
-                <Label>Copyright-Text</Label>
+                <Label>{t("copyrightLabel")}</Label>
                 <input
                   type="text"
                   value={form.copyrightText}
                   onChange={(e) => set("copyrightText", e.target.value)}
-                  placeholder="© 2025 Meine Organisation. Alle Rechte vorbehalten."
+                  placeholder={t("copyrightPlaceholder")}
                   style={inputStyle}
                 />
-                <Hint>Wird im Footer links angezeigt.</Hint>
+                <Hint>{t("copyrightHint")}</Hint>
               </div>
               <div>
-                <Label>Kontakt-E-Mail</Label>
+                <Label>{t("kontaktEmailLabel")}</Label>
                 <input
                   type="email"
                   value={form.kontaktEmail}
                   onChange={(e) => set("kontaktEmail", e.target.value)}
-                  placeholder="kontakt@beispiel.de"
+                  placeholder={t("kontaktEmailPlaceholder")}
                   style={inputStyle}
                 />
-                <Hint>Wird als mailto-Link im Footer angezeigt. Leer lassen = kein Kontakt-Link.</Hint>
+                <Hint>{t("kontaktEmailHint")}</Hint>
               </div>
               <div>
-                <Label>Discord-Link</Label>
+                <Label>{t("discordLabel")}</Label>
                 <input
                   type="url"
                   value={form.discordUrl}
                   onChange={(e) => set("discordUrl", e.target.value)}
-                  placeholder="https://discord.gg/einladungslink"
+                  placeholder={t("discordPlaceholder")}
                   style={inputStyle}
                 />
-                <Hint>Wird als Discord-Icon im Footer angezeigt. Leer lassen = kein Discord-Link.</Hint>
+                <Hint>{t("discordHint")}</Hint>
               </div>
             </div>
           </div>
@@ -148,40 +150,40 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
       {activeTab === "startseite" && (
         <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
           <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
-            <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>Startseiten-Inhalt</h2>
+            <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>{t("landingSection")}</h2>
           </div>
           <div className="px-5 py-5 space-y-5">
             <div>
-              <Label>Titel</Label>
+              <Label>{t("landingTitleLabel")}</Label>
               <input
                 type="text"
                 value={form.landingTitle}
                 onChange={(e) => set("landingTitle", e.target.value)}
-                placeholder="Lorehub"
+                placeholder={t("landingTitlePlaceholder")}
                 style={inputStyle}
               />
-              <Hint>Großer Headline-Text auf der Startseite.</Hint>
+              <Hint>{t("landingTitleHint")}</Hint>
             </div>
             <div>
-              <Label>Untertitel</Label>
+              <Label>{t("landingSubtitleLabel")}</Label>
               <input
                 type="text"
                 value={form.landingSubtitle}
                 onChange={(e) => set("landingSubtitle", e.target.value)}
-                placeholder="Dein digitales Kampagnen-Archiv"
+                placeholder={t("landingSubtitlePlaceholder")}
                 style={inputStyle}
               />
-              <Hint>Kurzer Satz unter dem Titel.</Hint>
+              <Hint>{t("landingSubtitleHint")}</Hint>
             </div>
             <div>
-              <Label>Beschreibungstext</Label>
+              <Label>{t("landingBodyLabel")}</Label>
               <textarea
                 value={form.landingBody}
                 onChange={(e) => set("landingBody", e.target.value)}
-                placeholder={"Beschreibe hier deine App, ihre Features und was Spieler und Dungeon Master damit machen können.\n\nLeerzeile = neuer Absatz."}
+                placeholder={t("landingBodyPlaceholder")}
                 style={textareaStyle}
               />
-              <Hint>Leerzeile = neuer Absatz. Wird unter dem Untertitel angezeigt.</Hint>
+              <Hint>{t("landingBodyHint")}</Hint>
             </div>
           </div>
         </div>
@@ -191,17 +193,17 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
       {activeTab === "impressum" && (
         <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
           <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
-            <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>Impressum-Inhalt</h2>
+            <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>{t("impressumSection")}</h2>
           </div>
           <div className="px-5 py-5">
-            <Label>Text (Pflichtangaben gemäß § 5 TMG)</Label>
+            <Label>{t("impressumLabel")}</Label>
             <textarea
               value={form.impressumContent}
               onChange={(e) => set("impressumContent", e.target.value)}
-              placeholder={"Name / Organisation\nStraße Hausnummer\nPLZ Ort\n\nTelefon: +49 ...\nE-Mail: ...\n\nVerantwortlich für den Inhalt nach § 55 Abs. 2 RStV:\nVor- und Nachname, Anschrift"}
+              placeholder={t("impressumPlaceholder")}
               style={textareaStyle}
             />
-            <Hint>Leerzeile = neuer Absatz. Einfache Zeilenumbrüche bleiben erhalten.</Hint>
+            <Hint>{t("impressumHint")}</Hint>
           </div>
         </div>
       )}
@@ -210,17 +212,17 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
       {activeTab === "datenschutz" && (
         <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
           <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
-            <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>Datenschutzerklärung-Inhalt</h2>
+            <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "#FFFFFF" }}>{t("datenschutzSection")}</h2>
           </div>
           <div className="px-5 py-5">
-            <Label>Text (DSGVO-konform)</Label>
+            <Label>{t("datenschutzLabel")}</Label>
             <textarea
               value={form.datenschutzContent}
               onChange={(e) => set("datenschutzContent", e.target.value)}
-              placeholder={"1. Datenschutz auf einen Blick\n\nDiese Website erhebt und verarbeitet personenbezogene Daten nur im Rahmen der gesetzlichen Bestimmungen...\n\n2. Verantwortliche Stelle\n\nName und Kontaktdaten des Verantwortlichen..."}
+              placeholder={t("datenschutzPlaceholder")}
               style={textareaStyle}
             />
-            <Hint>Leerzeile = neuer Absatz. Einfache Zeilenumbrüche bleiben erhalten.</Hint>
+            <Hint>{t("datenschutzHint")}</Hint>
           </div>
         </div>
       )}
@@ -233,11 +235,11 @@ export default function SiteSettingsForm({ initial }: { initial: Settings }) {
           className="ddb-cta"
           style={{ opacity: saving ? 0.6 : 1 }}
         >
-          {saving ? "Speichert…" : "Speichern"}
+          {saving ? t("saving") : t("save")}
         </button>
         {saved && (
           <span className="font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-red-light)" }}>
-            ✓ Gespeichert
+            {t("saved")}
           </span>
         )}
         {error && (

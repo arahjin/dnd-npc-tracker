@@ -100,7 +100,7 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
       : await fetch("/api/npcs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
 
     if (!res.ok) {
-      let msg = `Fehler ${res.status}`;
+      let msg = t("errorStatus", { status: res.status });
       try { const j = await res.json(); msg = j.error ?? msg; } catch { /* ignore */ }
       setError(msg);
       setSaving(false);

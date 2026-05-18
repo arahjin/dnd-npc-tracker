@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { IconSword } from "@/components/Icons";
 
 type Member = {
@@ -25,6 +26,9 @@ type KampagneDetail = Kampagne & { mitglieder: Member[] };
 
 export default function KampagnenVerwaltenPage() {
   const router = useRouter();
+  const t = useTranslations("kampagnenVerwalten");
+  const tCommon = useTranslations("common");
+  const tRoles = useTranslations("userMenu.roles");
   const [kampagnen, setKampagnen] = useState<KampagneDetail[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
@@ -125,7 +129,7 @@ export default function KampagnenVerwaltenPage() {
     return (
       <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
         <div className="mx-auto max-w-2xl px-4 md:px-6 py-16 text-center">
-          <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>Lade...</p>
+          <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>{t("loading")}</p>
         </div>
       </main>
     );
@@ -137,9 +141,9 @@ export default function KampagnenVerwaltenPage() {
         <div style={{ height: "3px", background: "linear-gradient(90deg, var(--dnd-red-dark), var(--dnd-red) 30%, var(--dnd-gold) 50%, var(--dnd-red) 70%, var(--dnd-red-dark))" }} />
         <div className="mx-auto max-w-2xl px-4 md:px-6" style={{ height: "60px", display: "flex", alignItems: "center", gap: "16px" }}>
           <button onClick={() => router.back()} className="font-cinzel text-xs tracking-widest uppercase"
-            style={{ color: "var(--dnd-text-muted)" }}>← Zurück</button>
+            style={{ color: "var(--dnd-text-muted)" }}>{tCommon("back")}</button>
           <h1 className="font-cinzel text-lg font-bold" style={{ color: "var(--dnd-heading)" }}>
-            Kampagnen verwalten
+            {t("title")}
           </h1>
         </div>
       </header>
@@ -155,11 +159,11 @@ export default function KampagnenVerwaltenPage() {
         {kampagnen.length === 0 && (
           <div className="flex flex-col items-center py-24 gap-4 text-center">
             <div style={{ opacity: 0.3 }}><IconSword size={52} color="var(--dnd-text-muted)" /></div>
-            <p className="font-cinzel text-lg" style={{ color: "var(--dnd-heading)" }}>Keine Kampagnen</p>
+            <p className="font-cinzel text-lg" style={{ color: "var(--dnd-heading)" }}>{t("empty")}</p>
             <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
-              Du bist in keiner Kampagne.
+              {t("emptyDesc")}
             </p>
-            <a href="/kampagnen" className="ddb-cta mt-2">Kampagne beitreten oder erstellen</a>
+            <a href="/kampagnen" className="ddb-cta mt-2">{t("joinOrCreate")}</a>
           </div>
         )}
 
@@ -179,7 +183,7 @@ export default function KampagnenVerwaltenPage() {
                       <h2 className="font-cinzel text-lg font-semibold" style={{ color: "var(--dnd-heading)" }}>{k.name}</h2>
                       {isSelfOwner && (
                         <span className="font-cinzel text-xs px-1.5 py-0.5"
-                          style={{ background: "#1A0800", border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>Ersteller</span>
+                          style={{ background: "#1A0800", border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>{t("creator")}</span>
                       )}
                       {!isSelfOwner && isSelfDM && (
                         <span className="font-cinzel text-xs px-1.5 py-0.5"
@@ -199,7 +203,7 @@ export default function KampagnenVerwaltenPage() {
                         disabled={removing === `${k.id}-${currentUserId}`}
                         className={btnBase}
                         style={{ border: "1px solid #374151", color: "var(--dnd-text-muted)" }}>
-                        {removing === `${k.id}-${currentUserId}` ? "..." : "Verlassen"}
+                        {removing === `${k.id}-${currentUserId}` ? "..." : t("leave")}
                       </button>
                     )}
 
@@ -208,7 +212,7 @@ export default function KampagnenVerwaltenPage() {
                       confirmDelete === k.id ? (
                         <div className="flex flex-wrap items-center gap-2 w-full">
                           <span className="font-cinzel text-xs basis-full" style={{ color: "#F87171" }}>
-                            Tippe „{k.name}" zum Bestätigen — alle NPCs, Locations, Quests, Charaktere und Tagebucheinträge werden unwiderruflich gelöscht.
+                            {t("deleteConfirm", { name: k.name })}
                           </span>
                           <input
                             type="text"
@@ -229,18 +233,18 @@ export default function KampagnenVerwaltenPage() {
                               color: confirmName === k.name ? "#F87171" : "#5A1A1A",
                               cursor: confirmName === k.name ? "pointer" : "not-allowed",
                             }}>
-                            {deleting === k.id ? "..." : "Endgültig löschen"}
+                            {deleting === k.id ? "..." : t("deleteFinal")}
                           </button>
                           <button onClick={() => { setConfirmDelete(null); setConfirmName(""); }} className={btnBase}
                             style={{ border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
-                            Abbrechen
+                            {tCommon("cancel")}
                           </button>
                         </div>
                       ) : (
                         <button onClick={() => { setConfirmDelete(k.id); setConfirmName(""); setError(null); }}
                           className={btnBase}
                           style={{ border: "1px solid #991B1B", color: "#F87171" }}>
-                          Löschen
+                          {tCommon("delete")}
                         </button>
                       )
                     )}
@@ -252,7 +256,7 @@ export default function KampagnenVerwaltenPage() {
                   <div>
                     <p className="font-cinzel text-xs tracking-widest uppercase mb-2"
                       style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)", paddingBottom: "6px" }}>
-                      Mitglieder · {k.mitglieder.length}
+                      {t("membersCount", { count: k.mitglieder.length })}
                     </p>
                     <div className="space-y-1">
                       {k.mitglieder.map((m) => {
@@ -271,14 +275,14 @@ export default function KampagnenVerwaltenPage() {
                               {m.isOwner && (
                                 <span className="font-cinzel text-xs px-1.5 py-0.5"
                                   style={{ background: "#1A0800", border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}>
-                                  Ersteller
+                                  {t("creator")}
                                 </span>
                               )}
                               {!m.isOwner && m.isDM && (
                                 <span className="font-cinzel text-xs" style={{ color: "var(--dnd-gold)" }}>DM</span>
                               )}
                               {!m.isDM && (
-                                <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>Spieler</span>
+                                <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>{tRoles("SPIELER")}</span>
                               )}
                             </div>
                             {showRemove && (
@@ -289,7 +293,7 @@ export default function KampagnenVerwaltenPage() {
                                 style={{ border: "1px solid #374151", color: "var(--dnd-text-muted)" }}
                                 onMouseEnter={(e) => { e.currentTarget.style.color = "#F87171"; e.currentTarget.style.borderColor = "#991B1B"; }}
                                 onMouseLeave={(e) => { e.currentTarget.style.color = "var(--dnd-text-muted)"; e.currentTarget.style.borderColor = "#374151"; }}>
-                                {removing === removeKey ? "..." : "Entfernen"}
+                                {removing === removeKey ? "..." : t("remove")}
                               </button>
                             )}
                           </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const NPCModal = dynamic(() => import("./NPCModal"));
 
@@ -24,6 +25,7 @@ type Props = {
 
 export default function NPCEditButton({ id, name, availableOrgs, initialOrgs, availableLocations = [], initial, canSeePrivate }: Props) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("common");
 
   return (
     <>
@@ -32,14 +34,14 @@ export default function NPCEditButton({ id, name, availableOrgs, initialOrgs, av
         className="ddb-cta"
         style={{ background: "transparent", borderColor: "var(--dnd-gold)", color: "var(--dnd-gold)" }}
       >
-        Bearbeiten
+        {t("edit")}
       </button>
 
       {open && (
         <NPCModal
           isOpen={open}
           onClose={() => setOpen(false)}
-          title={`${name} bearbeiten`}
+          title={t("editName", { name })}
           id={id}
           availableOrgs={availableOrgs}
           initialOrgs={initialOrgs}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 type Objective = { id: string; label: string; done: boolean; order: number };
 
@@ -14,6 +15,7 @@ export default function QuestObjectivesChecklist({ questId, initialObjectives, c
   const [objectives, setObjectives] = useState<Objective[]>(initialObjectives);
   const [newLabel, setNewLabel] = useState("");
   const [adding, setAdding] = useState(false);
+  const t = useTranslations("questObjectives");
 
   async function toggleDone(objective: Objective) {
     // Optimistic update
@@ -54,7 +56,7 @@ export default function QuestObjectivesChecklist({ questId, initialObjectives, c
 
   if (objectives.length === 0 && !canEdit) {
     return (
-      <p className="text-sm py-2" style={{ color: "var(--dnd-text-muted)" }}>Keine Ziele definiert.</p>
+      <p className="text-sm py-2" style={{ color: "var(--dnd-text-muted)" }}>{t("emptyReadonly")}</p>
     );
   }
 
@@ -100,7 +102,7 @@ export default function QuestObjectivesChecklist({ questId, initialObjectives, c
             value={newLabel}
             onChange={(e) => setNewLabel(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addObjective())}
-            placeholder="Neues Ziel hinzufügen..."
+            placeholder={t("addPlaceholder")}
             className="flex-1 px-3 py-1.5 text-sm outline-none"
             style={{
               background: "#0A0A0A",
@@ -116,7 +118,7 @@ export default function QuestObjectivesChecklist({ questId, initialObjectives, c
             className="font-cinzel text-xs tracking-widest px-4 py-1.5 transition-all disabled:opacity-40"
             style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}
           >
-            {adding ? "..." : "+ Hinzufügen"}
+            {adding ? "..." : t("addButton")}
           </button>
         </div>
       )}

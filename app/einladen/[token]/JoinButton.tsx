@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function JoinButton({ token, isLoggedIn }: { token: string; isLoggedIn: boolean }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const t = useTranslations("joinInvite");
 
   if (!isLoggedIn) {
     return (
@@ -38,7 +40,7 @@ export default function JoinButton({ token, isLoggedIn }: { token: string; isLog
     const data = await res.json();
     setLoading(false);
     if (!res.ok && res.status !== 400) {
-      setError(data.error ?? "Fehler beim Beitreten.");
+      setError(data.error ?? t("joinError"));
       return;
     }
     // Already a member or just joined — either way, navigate to the campaign

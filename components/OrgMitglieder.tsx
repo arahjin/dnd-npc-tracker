@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { IconPerson } from "@/components/Icons";
 
 type Mitglied = { id: string; npcId: string; name: string; image: string | null; rolle: string | null };
@@ -11,6 +12,8 @@ type NPC = { id: string; name: string };
 
 export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: string; mitglieder: Mitglied[]; alleNPCs: NPC[] }) {
   const router = useRouter();
+  const t = useTranslations("mitglieder");
+  const tc = useTranslations("confirm");
   const [selectedNPC, setSelectedNPC] = useState("");
   const [rolle, setRolle] = useState("");
   const [adding, setAdding] = useState(false);
@@ -32,7 +35,7 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
   }
 
   async function handleRemove(npcId: string) {
-    if (!confirm("Mitglied entfernen?")) return;
+    if (!confirm(tc("removeMitglied"))) return;
     await fetch(`/api/organisationen/${orgId}/mitglieder`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -47,14 +50,14 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
     <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
       <div className="px-4 py-2 flex items-center justify-between" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
         <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>
-          Mitglieder ({mitglieder.length})
+          {t("titleWithCount", { count: mitglieder.length })}
         </h2>
       </div>
 
       {/* Mitgliederliste */}
       <div className="divide-y" style={{ borderColor: "#1E1E1E" }}>
         {mitglieder.length === 0 && (
-          <p className="px-4 py-4 text-sm" style={{ color: "var(--dnd-text-muted)" }}>Noch keine Mitglieder erfasst.</p>
+          <p className="px-4 py-4 text-sm" style={{ color: "var(--dnd-text-muted)" }}>{t("emptyMitglieder")}</p>
         )}
         {mitglieder.map((m) => (
           <div key={m.id} className="flex items-center gap-4 px-4 py-3">
@@ -83,22 +86,22 @@ export default function OrgMitglieder({ orgId, mitglieder, alleNPCs }: { orgId: 
       {verfuegbareNPCs.length > 0 && (
         <div className="px-4 py-4 flex flex-wrap gap-2 items-end" style={{ borderTop: "1px solid #1E1E1E" }}>
           <div className="flex-1 min-w-36">
-            <p className="font-cinzel text-xs tracking-widest mb-1.5" style={{ color: "var(--dnd-label)" }}>NPC</p>
+            <p className="font-cinzel text-xs tracking-widest mb-1.5" style={{ color: "var(--dnd-label)" }}>{t("npcLabel")}</p>
             <select value={selectedNPC} onChange={(e) => setSelectedNPC(e.target.value)}
               className="w-full px-3 py-2 font-cinzel text-sm outline-none" style={inputStyle}>
-              <option value="">— Wählen —</option>
+              <option value="">{t("selectPlaceholder")}</option>
               {verfuegbareNPCs.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
             </select>
           </div>
           <div className="flex-1 min-w-36">
-            <p className="font-cinzel text-xs tracking-widest mb-1.5" style={{ color: "var(--dnd-label)" }}>Rolle</p>
+            <p className="font-cinzel text-xs tracking-widest mb-1.5" style={{ color: "var(--dnd-label)" }}>{t("rolleLabel")}</p>
             <input type="text" value={rolle} onChange={(e) => setRolle(e.target.value)}
-              placeholder="z.B. Anführer, Mitglied..." className="w-full px-3 py-2 text-sm outline-none" style={inputStyle} />
+              placeholder={t("rollePlaceholder")} className="w-full px-3 py-2 text-sm outline-none" style={inputStyle} />
           </div>
           <button onClick={handleAdd} disabled={!selectedNPC || adding}
             className="font-cinzel text-xs tracking-widest px-4 py-2 transition-all disabled:opacity-40"
             style={{ background: "var(--dnd-red)", color: "#F5EDD6", border: "1px solid var(--dnd-red-dark)" }}>
-            {adding ? "..." : "+ HINZUFÜGEN"}
+            {adding ? "..." : t("addButton")}
           </button>
         </div>
       )}

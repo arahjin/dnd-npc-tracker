@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 
 const CharakterModal = dynamic(() => import("./CharakterModal"));
 
@@ -23,15 +24,16 @@ type Props = {
 
 export default function CharakterEditButton({ id, name, availableOrgs, initialOrgs, availableLocations = [], initial, canSeePrivate }: Props) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("common");
   return (
     <>
       <button onClick={() => setOpen(true)} className="ddb-cta"
         style={{ background: "transparent", borderColor: "var(--dnd-gold)", color: "var(--dnd-gold)" }}>
-        Bearbeiten
+        {t("edit")}
       </button>
       {open && (
         <CharakterModal isOpen={open} onClose={() => setOpen(false)}
-          title={`${name} bearbeiten`} id={id}
+          title={t("editName", { name })} id={id}
           availableOrgs={availableOrgs} initialOrgs={initialOrgs}
           availableLocations={availableLocations} initial={initial} canSeePrivate={canSeePrivate} />
       )}
