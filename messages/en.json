@@ -432,7 +432,7 @@
     "createQuestTitle": "Create New Quest",
     "createKampagneTitle": "New Campaign",
     "spielerLabel": "Assign Player",
-    "spielerHint": "— DM/Admin only"
+    "spielerHint": "— DM only"
   },
   "constants": {
     "statusLebendig": "Alive",
