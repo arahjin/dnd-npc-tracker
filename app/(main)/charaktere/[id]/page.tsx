@@ -25,7 +25,7 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
   const { userId, isDM, isAdmin } = ctx;
   const isDMOrAdmin = isDM || isAdmin;
 
-  const [charakter, orgs, locations] = await Promise.all([
+  const [charakter, orgs, locations, members] = await Promise.all([
     prisma.charakter.findUnique({
       where: { id },
       include: {
@@ -45,6 +45,14 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
+    // Only DMs/Admins can reassign owners — fetch members for the dropdown.
+    isDMOrAdmin
+      ? prisma.kampagneMitglied.findMany({
+          where: { kampagneId: ctx.kampagneId },
+          select: { user: { select: { id: true, name: true } } },
+          orderBy: { user: { name: "asc" } },
+        })
+      : Promise.resolve([] as { user: { id: string; name: string | null } }[]),
   ]);
   if (!charakter) notFound();
   if (charakter.kampagneId && charakter.kampagneId !== ctx.kampagneId) notFound();
@@ -65,6 +73,9 @@ export default async function CharakterDetail({ params }: { params: Promise<{ id
                 id={id} name={charakter.name} availableOrgs={orgs} availableLocations={locations}
                 initialOrgs={charakter.organisationen.map((m) => ({ organisationId: m.organisationId, rolle: m.rolle ?? "" }))}
                 canSeePrivate={showPrivate}
+                availableUsers={isDMOrAdmin ? members.map((m) => m.user) : undefined}
+                initialUserId={charakter.userId}
+                canChangeOwner={isDMOrAdmin}
                 initial={{
                   name: charakter.name, image: charakter.image ?? "", status: charakter.status,
                   beziehung: charakter.beziehung, geschlecht: charakter.geschlecht ?? "",

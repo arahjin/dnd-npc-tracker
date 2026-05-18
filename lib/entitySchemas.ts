@@ -100,6 +100,8 @@ export const charakterUpdateSchema = z.object({
   status: charBase.status.optional(),
   beziehung: charBase.beziehung.optional(),
   sichtbarkeit: sichtbarkeit.optional(),
+  // Owner reassignment (DM/Admin only — enforced server-side in the route).
+  userId: z.string().min(1).optional(),
 }).partial();
 
 // ─── Location ───────────────────────────────────────────

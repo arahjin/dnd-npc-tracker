@@ -25,6 +25,10 @@ type Props = {
   onSuccess?: () => void;
   onCancel?: () => void;
   canSeePrivate?: boolean;
+  // Owner-reassignment (DM/Admin feature)
+  availableUsers?: { id: string; name: string | null }[];
+  initialUserId?: string;
+  canChangeOwner?: boolean;
 };
 
 const EMPTY: CharData = {
@@ -34,7 +38,7 @@ const EMPTY: CharData = {
   sichtbarkeit: "public", privateNotizen: "",
 };
 
-export default function CharakterForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, onCancel, canSeePrivate = true }: Props) {
+export default function CharakterForm({ initial, id, availableOrgs = [], initialOrgs = [], availableLocations = [], onSuccess, onCancel, canSeePrivate = true, availableUsers = [], initialUserId, canChangeOwner = false }: Props) {
   const router = useRouter();
   const t = useTranslations("form");
   const tc = useTranslations("constants");
@@ -53,6 +57,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
   };
   const [form, setForm] = useState<CharData>({ ...EMPTY, ...initial });
   const [selectedOrgs, setSelectedOrgs] = useState<OrgMembership[]>(initialOrgs);
+  const [ownerId, setOwnerId] = useState<string>(initialUserId ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -77,6 +82,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
       notizen: form.notizen.trim() || null,
       sichtbarkeit: form.sichtbarkeit,
       ...(canSeePrivate && { privateNotizen: form.privateNotizen.trim() || null }),
+      ...(canChangeOwner && ownerId && { userId: ownerId }),
       organisationen: selectedOrgs.filter((o) => o.organisationId),
     };
 
@@ -215,6 +221,21 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
               );
             })}
           </div>
+        </div>
+      )}
+
+      {canChangeOwner && availableUsers.length > 0 && (
+        <div>
+          <label className={labelStyle} style={{ color: "#FCD34D" }}>
+            {t("spielerLabel")} <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>{t("spielerHint")}</span>
+          </label>
+          <select value={ownerId} onChange={(e) => setOwnerId(e.target.value)}
+            className={inputClass + " font-cinzel text-sm"}
+            style={{ ...inputStyle, border: "1px solid #78350F" }}>
+            {availableUsers.map((u) => (
+              <option key={u.id} value={u.id}>{u.name ?? u.id}</option>
+            ))}
+          </select>
         </div>
       )}
 

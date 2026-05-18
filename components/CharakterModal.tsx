@@ -14,9 +14,12 @@ type Props = {
   availableLocations?: { id: string; name: string }[];
   canSeePrivate?: boolean;
   initial?: Record<string, string>;
+  availableUsers?: { id: string; name: string | null }[];
+  initialUserId?: string;
+  canChangeOwner?: boolean;
 };
 
-export default function CharakterModal({ isOpen, onClose, title, id, availableOrgs, initialOrgs, availableLocations, initial, canSeePrivate }: Props) {
+export default function CharakterModal({ isOpen, onClose, title, id, availableOrgs, initialOrgs, availableLocations, initial, canSeePrivate, availableUsers, initialUserId, canChangeOwner }: Props) {
   const tc = useTranslations("common");
   useEffect(() => {
     if (!isOpen) return;
@@ -42,7 +45,7 @@ export default function CharakterModal({ isOpen, onClose, title, id, availableOr
             </div>
           </div>
           <div className="px-6 py-8">
-            <CharakterForm id={id} availableOrgs={availableOrgs} initialOrgs={initialOrgs} availableLocations={availableLocations} initial={initial} onSuccess={onClose} onCancel={onClose} canSeePrivate={canSeePrivate} />
+            <CharakterForm id={id} availableOrgs={availableOrgs} initialOrgs={initialOrgs} availableLocations={availableLocations} initial={initial} onSuccess={onClose} onCancel={onClose} canSeePrivate={canSeePrivate} availableUsers={availableUsers} initialUserId={initialUserId} canChangeOwner={canChangeOwner} />
           </div>
         </div>
       </div>

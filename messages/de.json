@@ -430,7 +430,9 @@
     "createLocationTitle": "Neue Location erstellen",
     "createLocationTitleShort": "Neue Location",
     "createQuestTitle": "Neue Quest erstellen",
-    "createKampagneTitle": "Neue Kampagne"
+    "createKampagneTitle": "Neue Kampagne",
+    "spielerLabel": "Spieler zuweisen",
+    "spielerHint": "— nur DM/Admin"
   },
   "constants": {
     "statusLebendig": "Lebendig",

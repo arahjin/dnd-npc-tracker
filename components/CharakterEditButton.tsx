@@ -20,9 +20,12 @@ type Props = {
     herkunft: string; aktuellePosition: string; gottheit: string; notizen: string;
     sichtbarkeit?: string; privateNotizen?: string;
   };
+  availableUsers?: { id: string; name: string | null }[];
+  initialUserId?: string;
+  canChangeOwner?: boolean;
 };
 
-export default function CharakterEditButton({ id, name, availableOrgs, initialOrgs, availableLocations = [], initial, canSeePrivate }: Props) {
+export default function CharakterEditButton({ id, name, availableOrgs, initialOrgs, availableLocations = [], initial, canSeePrivate, availableUsers, initialUserId, canChangeOwner }: Props) {
   const [open, setOpen] = useState(false);
   const t = useTranslations("common");
   return (
@@ -35,7 +38,8 @@ export default function CharakterEditButton({ id, name, availableOrgs, initialOr
         <CharakterModal isOpen={open} onClose={() => setOpen(false)}
           title={t("editName", { name })} id={id}
           availableOrgs={availableOrgs} initialOrgs={initialOrgs}
-          availableLocations={availableLocations} initial={initial} canSeePrivate={canSeePrivate} />
+          availableLocations={availableLocations} initial={initial} canSeePrivate={canSeePrivate}
+          availableUsers={availableUsers} initialUserId={initialUserId} canChangeOwner={canChangeOwner} />
       )}
     </>
   );

@@ -50,12 +50,28 @@ export async function PUT(req: NextRequest, { params }: Params) {
   const raw = await req.json();
   const parsed = parseOrError(charakterUpdateSchema, raw);
   if (!parsed.ok) return NextResponse.json({ error: parsed.error }, { status: 400 });
-  const { organisationen, ...rest } = parsed.data;
+  const { organisationen, userId: newOwnerId, ...rest } = parsed.data;
 
   const data: Record<string, unknown> = { ...rest };
   if (raw.image !== undefined) {
     try { data.image = validateImageUrl(raw.image); }
     catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
+  }
+
+  // Owner reassignment: only DMs/Admins may change the character's owner,
+  // and the target user must be a member of the campaign.
+  if (newOwnerId !== undefined && newOwnerId !== existing.userId) {
+    if (!ctx.isDM && !ctx.isAdmin) {
+      return NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 });
+    }
+    const member = await prisma.kampagneMitglied.findUnique({
+      where: { kampagneId_userId: { kampagneId: ctx.kampagneId, userId: newOwnerId } },
+      select: { userId: true },
+    });
+    if (!member) {
+      return NextResponse.json({ error: "Spieler ist kein Mitglied dieser Kampagne." }, { status: 400 });
+    }
+    data.userId = newOwnerId;
   }
 
   const charakter = await prisma.$transaction(async (tx) => {
