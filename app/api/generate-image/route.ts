@@ -7,7 +7,7 @@ import { logError } from "@/lib/errorLog";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-/** Max DALL-E 3 generations per user per 24 hours */
+/** Max image generations per user per 24 hours */
 const DAILY_LIMIT = 5;
 /** Max characters for the user prompt before our wrapper is added. */
 const MAX_PROMPT_LENGTH = 500;
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Moderation guard: cheap pre-check so we don't pay for DALL-E when the
+    // Moderation guard: cheap pre-check so we don't pay for image gen when the
     // prompt would be rejected by OpenAI policy anyway.
     const moderation = await openai.moderations.create({ input: prompt });
     if (moderation.results[0]?.flagged) {
@@ -74,22 +74,19 @@ export async function POST(req: NextRequest) {
     const enhancedPrompt = templates[kind];
 
     const response = await openai.images.generate({
-      model: "dall-e-3",
+      model: "gpt-image-1",
       prompt: enhancedPrompt,
       n: 1,
       size: "1024x1024",
-      quality: "standard",
+      quality: "medium",
     });
 
-    const tempUrl = response.data?.[0]?.url;
-    if (!tempUrl) return NextResponse.json({ error: "Kein Bild von DALL-E erhalten." }, { status: 500 });
+    const b64 = response.data?.[0]?.b64_json;
+    if (!b64) return NextResponse.json({ error: "Kein Bild vom Modell erhalten." }, { status: 500 });
 
-    const imageRes = await fetch(tempUrl);
-    if (!imageRes.ok) return NextResponse.json({ error: "Bild konnte nicht von DALL-E heruntergeladen werden." }, { status: 500 });
-    const imageBlob = await imageRes.blob();
-
+    const imageBuffer = Buffer.from(b64, "base64");
     const filename = `${kind}-${Date.now()}.png`;
-    const { url } = await put(filename, imageBlob, { access: "public" });
+    const { url } = await put(filename, imageBuffer, { access: "public", contentType: "image/png" });
 
     // ── Record usage ──────────────────────────────────────────────────────
     await prisma.bildGenerierung.create({ data: { userId } });
