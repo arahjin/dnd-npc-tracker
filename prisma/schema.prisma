@@ -164,6 +164,7 @@ model NPC {
 
   @@index([kampagneId])
   @@index([kampagneId, name])
+  @@index([erstellerId])
 }
 
 model Organisation {
@@ -190,6 +191,7 @@ model Organisation {
   quests              QuestOrganisation[]
 
   @@index([kampagneId])
+  @@index([erstellerId])
 }
 
 model NPCOrganisation {
@@ -273,6 +275,7 @@ model Location {
   quests         QuestLocation[]
 
   @@index([kampagneId])
+  @@index([erstellerId])
 }
 
 // ─── Journal ─────────────────────────────────────────────
@@ -339,6 +342,7 @@ model Quest {
 
   @@index([kampagneId])
   @@index([kampagneId, status])
+  @@index([erstellerId])
 }
 
 model QuestObjective {

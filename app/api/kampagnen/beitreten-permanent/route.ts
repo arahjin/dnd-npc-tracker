@@ -36,7 +36,12 @@ export async function POST(req: NextRequest) {
 
   // Set the active campaign cookie so the user lands directly in the new campaign
   const jar = await cookies();
-  jar.set("aktiveKampagne", invite.kampagneId, { path: "/", httpOnly: false, sameSite: "lax" });
+  jar.set("aktiveKampagne", invite.kampagneId, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+  });
 
   return NextResponse.json({ ok: true, kampagneId: invite.kampagneId, kampagneName: invite.kampagne.name });
 }

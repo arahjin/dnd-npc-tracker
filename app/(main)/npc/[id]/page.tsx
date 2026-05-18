@@ -52,11 +52,11 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
   const ctx = await requireKampagne();
   const { userId, isDM, isAdmin } = ctx;
 
-  const [npc, orgs] = await Promise.all([
+  const [npc, orgs, locations] = await Promise.all([
     prisma.nPC.findUnique({
       where: { id },
       include: {
-        organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
+        organisationen: { include: { organisation: { select: { id: true, name: true } } }, orderBy: { organisation: { name: "asc" } } },
         locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
         quests: { include: { quest: { select: { id: true, title: true, status: true, typ: true } } } },
       },
@@ -66,17 +66,16 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
       orderBy: { name: "asc" },
       select: { id: true, name: true },
     }),
+    prisma.location.findMany({
+      where: { kampagneId: ctx.kampagneId },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true },
+    }),
   ]);
   if (!npc) notFound();
   // Cross-campaign isolation: NPC must belong to active campaign (legacy null kampagneId allowed)
   if (npc.kampagneId && npc.kampagneId !== ctx.kampagneId) notFound();
   if (npc.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId)) notFound();
-
-  const locations = await prisma.location.findMany({
-    where: { kampagneId: ctx.kampagneId },
-    orderBy: { name: "asc" },
-    select: { id: true, name: true },
-  });
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId);
 

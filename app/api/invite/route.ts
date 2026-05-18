@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 import { checkPresetLimit, rateLimitResponse, RATE_LIMITS } from "@/lib/rateLimit";
@@ -19,7 +20,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Nur Admins können DM-Links erstellen." }, { status: 403 });
 
   const invite = await prisma.invite.create({
-    data: { role: inviteRole, kampagneId: ctx.kampagneId },
+    data: { role: inviteRole, kampagneId: ctx.kampagneId, token: randomBytes(32).toString("base64url") },
   });
   return NextResponse.json({ token: invite.token, role: invite.role });
 }

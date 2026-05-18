@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
-import { auth } from "@/auth";
+import { requireKampagne } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 import DetailModal from "@/components/DetailModal";
@@ -46,34 +45,23 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function NPCModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await auth();
-  if (!session?.user) notFound();
-  const userId = session.user.id;
-  const role = session.user.role;
-  const isDM = role === "DUNGEON_MASTER";
-  const isAdmin = role === "ADMIN";
-
-  const cookieStore = await cookies();
-  const kampagneId = cookieStore.get("aktiveKampagne")?.value;
+  const ctx = await requireKampagne();
+  const { userId, isDM, isAdmin, kampagneId } = ctx;
 
   const [npc, orgs, locations] = await Promise.all([
     prisma.nPC.findUnique({
       where: { id },
       include: {
-        organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
+        organisationen: { include: { organisation: { select: { id: true, name: true } } }, orderBy: { organisation: { name: "asc" } } },
         locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
       },
     }),
-    kampagneId
-      ? prisma.organisation.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
-      : Promise.resolve([]),
-    kampagneId
-      ? prisma.location.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } })
-      : Promise.resolve([]),
+    prisma.organisation.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
   if (!npc) notFound();
+  if (npc.kampagneId !== kampagneId) notFound();
   if (npc.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId)) notFound();
-  if (kampagneId && npc.kampagneId !== kampagneId) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, npc.erstellerId);
 

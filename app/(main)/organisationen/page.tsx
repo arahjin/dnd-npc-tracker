@@ -16,7 +16,7 @@ export default async function OrganisationenPage() {
       select: {
         id: true, name: true, image: true, typ: true, region: true,
         alignment: true, beschreibung: true, sichtbarkeit: true,
-        _count: { select: { mitglieder: true } },
+        _count: { select: { mitglieder: true, charakterMitglieder: true } },
       },
     }),
     prisma.location.findMany({

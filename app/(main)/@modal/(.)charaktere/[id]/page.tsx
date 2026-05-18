@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { auth } from "@/auth";
-import { cookies } from "next/headers";
+import { requireKampagne } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 import DetailModal from "@/components/DetailModal";
@@ -24,33 +23,23 @@ function Field({ label, value }: { label: string; value: string | null }) {
 
 export default async function CharakterModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await auth();
-  if (!session?.user) notFound();
-  const userId = session.user.id;
-  const role = session.user.role;
-  const isDM = role === "DUNGEON_MASTER";
-  const isAdmin = role === "ADMIN";
-
-  const cookieStore = await cookies();
-  const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? undefined;
+  const ctx = await requireKampagne();
+  const { userId, isDM, isAdmin, kampagneId } = ctx;
 
   const [charakter, orgs, locations] = await Promise.all([
     prisma.charakter.findUnique({
       where: { id },
       include: {
         user: { select: { id: true, name: true } },
-        organisationen: { include: { organisation: true }, orderBy: { organisation: { name: "asc" } } },
+        organisationen: { include: { organisation: { select: { id: true, name: true } } }, orderBy: { organisation: { name: "asc" } } },
         locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },
       },
     }),
-    prisma.organisation.findMany({ where: kampagneId ? { kampagneId } : {}, orderBy: { name: "asc" }, select: { id: true, name: true } }),
-    prisma.location.findMany({
-      where: kampagneId ? { kampagneId } : {},
-      orderBy: { name: "asc" },
-      select: { id: true, name: true },
-    }),
+    prisma.organisation.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    prisma.location.findMany({ where: { kampagneId }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
   if (!charakter) notFound();
+  if (charakter.kampagneId !== kampagneId) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, charakter.userId);
   const canEdit = isDM || isAdmin || charakter.userId === userId;

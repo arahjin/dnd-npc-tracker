@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { requireKampagneApi } from "@/lib/kampagne";
 
@@ -28,7 +29,7 @@ export async function POST() {
       data: { active: false },
     });
     await tx.invite.create({
-      data: { kampagneId: ctx.kampagneId, isPermanent: true, active: true, role: "SPIELER" },
+      data: { kampagneId: ctx.kampagneId, isPermanent: true, active: true, role: "SPIELER", token: randomBytes(32).toString("base64url") },
     });
   });
 

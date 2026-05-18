@@ -49,7 +49,10 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
             ],
           },
           orderBy: { name: "asc" },
-          include: { organisationen: { include: { organisation: { select: { id: true, name: true } } } } },
+          select: {
+            id: true, name: true, image: true, status: true, rasse: true,
+            organisationen: { select: { id: true, organisationId: true, organisation: { select: { id: true, name: true } } } },
+          },
         }),
         prisma.organisation.findMany({
           where: {
@@ -62,6 +65,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
             ],
           },
           orderBy: { name: "asc" },
+          select: { id: true, name: true, typ: true, region: true, alignment: true },
         }),
         prisma.charakter.findMany({
           where: {
@@ -74,9 +78,10 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
             ],
           },
           orderBy: { name: "asc" },
-          include: {
+          select: {
+            id: true, name: true, image: true, rasse: true,
             user: { select: { id: true, name: true } },
-            organisationen: { include: { organisation: { select: { id: true, name: true } } } },
+            organisationen: { select: { id: true, organisationId: true, organisation: { select: { id: true, name: true } } } },
           },
         }),
         prisma.location.findMany({
@@ -114,18 +119,23 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
         prisma.nPC.findMany({
           where: { locations: { some: { id: { in: locIds } } }, id: { notIn: [...existingNpcIds] } },
           orderBy: { name: "asc" },
-          include: { organisationen: { include: { organisation: { select: { id: true, name: true } } } } },
+          select: {
+            id: true, name: true, image: true, status: true, rasse: true,
+            organisationen: { select: { id: true, organisationId: true, organisation: { select: { id: true, name: true } } } },
+          },
         }),
         prisma.organisation.findMany({
           where: { locations: { some: { id: { in: locIds } } }, id: { notIn: [...existingOrgIds] } },
           orderBy: { name: "asc" },
+          select: { id: true, name: true, typ: true, region: true, alignment: true },
         }),
         prisma.charakter.findMany({
           where: { locations: { some: { id: { in: locIds } } }, id: { notIn: [...existingCharIds] } },
           orderBy: { name: "asc" },
-          include: {
+          select: {
+            id: true, name: true, image: true, rasse: true,
             user: { select: { id: true, name: true } },
-            organisationen: { include: { organisation: { select: { id: true, name: true } } } },
+            organisationen: { select: { id: true, organisationId: true, organisation: { select: { id: true, name: true } } } },
           },
         }),
       ])
@@ -143,6 +153,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
     ? await prisma.organisation.findMany({
         where: { id: { in: orgIdsToFetch } },
         orderBy: { name: "asc" },
+        select: { id: true, name: true, typ: true, region: true, alignment: true },
       })
     : [];
 

@@ -37,6 +37,19 @@ export async function POST(req: NextRequest) {
   try { validatedImage = validateImageUrl(image); }
   catch (e) { return NextResponse.json({ error: e instanceof Error ? e.message : "Bild-URL ungültig" }, { status: 400 }); }
 
+  if (Array.isArray(npcIds) && npcIds.length > 0) {
+    const count = await prisma.nPC.count({ where: { id: { in: npcIds }, kampagneId: ctx.kampagneId } });
+    if (count !== npcIds.length) return NextResponse.json({ error: "Ungültige NPC-Referenz" }, { status: 400 });
+  }
+  if (Array.isArray(orgIds) && orgIds.length > 0) {
+    const count = await prisma.organisation.count({ where: { id: { in: orgIds }, kampagneId: ctx.kampagneId } });
+    if (count !== orgIds.length) return NextResponse.json({ error: "Ungültige Organisations-Referenz" }, { status: 400 });
+  }
+  if (Array.isArray(charakterIds) && charakterIds.length > 0) {
+    const count = await prisma.charakter.count({ where: { id: { in: charakterIds }, kampagneId: ctx.kampagneId } });
+    if (count !== charakterIds.length) return NextResponse.json({ error: "Ungültige Charakter-Referenz" }, { status: 400 });
+  }
+
   const location = await prisma.location.create({
     data: {
       ...rest,

@@ -12,7 +12,11 @@ export default async function QuestsPage() {
   const quests = await prisma.quest.findMany({
     where: { kampagneId: ctx.kampagneId, ...visibilityWhere(ctx) },
     orderBy: { createdAt: "desc" },
-    include: { objectives: { orderBy: { order: "asc" } } },
+    select: {
+      id: true, title: true, status: true, typ: true, prioritaet: true,
+      summary: true, sichtbarkeit: true, erstellerId: true,
+      objectives: { select: { id: true, label: true, done: true, order: true }, orderBy: { order: "asc" } },
+    },
   });
 
   return (

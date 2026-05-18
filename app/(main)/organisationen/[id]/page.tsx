@@ -40,9 +40,9 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
   const org = await prisma.organisation.findUnique({
     where: { id },
     include: {
-      mitglieder: { include: { npc: true }, orderBy: { npc: { name: "asc" } } },
+      mitglieder: { include: { npc: { select: { id: true, name: true, image: true } } }, orderBy: { npc: { name: "asc" } } },
       charakterMitglieder: {
-        include: { charakter: { include: { user: { select: { id: true, name: true } } } } },
+        include: { charakter: { select: { id: true, name: true, image: true, user: { select: { id: true, name: true } } } } },
         orderBy: { charakter: { name: "asc" } },
       },
       locations: { orderBy: { name: "asc" }, select: { id: true, name: true, art: true } },

@@ -16,7 +16,7 @@ type Org = {
   alignment: string | null;
   beschreibung: string | null;
   sichtbarkeit: string;
-  _count: { mitglieder: number };
+  _count: { mitglieder: number; charakterMitglieder: number };
 };
 
 const ALIGNMENT_COLORS: Record<string, { bg: string; text: string; border: string }> = {
@@ -102,7 +102,7 @@ export default function OrgGrid({ orgs, isDM = false }: { orgs: Org[]; isDM?: bo
                     <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "var(--dnd-text)" }}>{stripMentions(org.beschreibung)}</p>
                   )}
                   <p className="mt-3 font-cinzel text-xs tracking-wide" style={{ color: "var(--dnd-red-light)" }}>
-                    {org._count.mitglieder} {org._count.mitglieder === 1 ? t("member") : t("members")}
+                    {org._count.mitglieder + org._count.charakterMitglieder} {(org._count.mitglieder + org._count.charakterMitglieder) === 1 ? t("member") : t("members")}
                   </p>
                 </div>
                 <div style={{ height: "1px", background: "linear-gradient(90deg, transparent, var(--dnd-border), transparent)" }} />

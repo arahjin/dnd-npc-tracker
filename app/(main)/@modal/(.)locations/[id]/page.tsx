@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { auth } from "@/auth";
+import { requireKampagne } from "@/lib/kampagne";
 import { prisma } from "@/lib/prisma";
 import { canSeePrivate } from "@/lib/visibility";
 import DetailModal from "@/components/DetailModal";
@@ -51,12 +51,8 @@ function LinkedList({ items, baseHref }: { items: { id: string; name: string }[]
 
 export default async function LocationModal({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const session = await auth();
-  if (!session?.user) notFound();
-  const userId = session.user.id;
-  const role = session.user.role;
-  const isDM = role === "DUNGEON_MASTER";
-  const isAdmin = role === "ADMIN";
+  const ctx = await requireKampagne();
+  const { userId, isDM, isAdmin, kampagneId } = ctx;
 
   const location = await prisma.location.findUnique({
     where: { id },
@@ -67,6 +63,7 @@ export default async function LocationModal({ params }: { params: Promise<{ id: 
     },
   });
   if (!location) notFound();
+  if (location.kampagneId !== kampagneId) notFound();
   if (location.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, location.erstellerId)) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, location.erstellerId);

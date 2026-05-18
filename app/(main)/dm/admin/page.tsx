@@ -1,9 +1,14 @@
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import ErrorLogResolveButton from "./ErrorLogResolveButton";
 
 export default async function AdminPage() {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") redirect("/");
+
   const errors = await prisma.errorLog.findMany({
     where: { resolved: false },
     orderBy: { createdAt: "desc" },
