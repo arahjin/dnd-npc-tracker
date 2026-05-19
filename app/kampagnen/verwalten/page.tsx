@@ -11,6 +11,7 @@ type Member = {
   isOwner: boolean;
   userId: string;
   user: { id: string; name: string; email: string };
+  charaktere: { id: string; name: string }[];
 };
 
 type Kampagne = {
@@ -283,6 +284,26 @@ export default function KampagnenVerwaltenPage() {
                               )}
                               {!m.isDM && (
                                 <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>{tRoles("SPIELER")}</span>
+                              )}
+                              {m.charaktere.length > 0 ? (
+                                m.charaktere.map((c) => (
+                                  <a
+                                    key={c.id}
+                                    href={`/charaktere/${c.id}`}
+                                    className="font-cinzel text-xs px-2 py-0.5 transition-colors"
+                                    style={{
+                                      background: "#0A1015", border: "1px solid #1E3A5F",
+                                      color: "#7DAEDB", textDecoration: "none",
+                                    }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.color = "#A8CFEB"; e.currentTarget.style.borderColor = "#2E5A8F"; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.color = "#7DAEDB"; e.currentTarget.style.borderColor = "#1E3A5F"; }}>
+                                    {c.name}
+                                  </a>
+                                ))
+                              ) : !m.isDM && (
+                                <span className="font-cinzel text-xs italic" style={{ color: "var(--dnd-text-muted)", opacity: 0.6 }}>
+                                  {t("noCharacter")}
+                                </span>
                               )}
                             </div>
                             {showRemove && (

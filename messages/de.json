@@ -526,6 +526,13 @@
   "konto": {
     "title": "Mein Konto",
     "back": "← Zurück",
+    "profileTitle": "Profil",
+    "nameLabel": "Anzeigename",
+    "nameRequired": "Name ist erforderlich.",
+    "nameError": "Fehler beim Speichern.",
+    "nameSaved": "Name aktualisiert.",
+    "saveName": "Speichern",
+    "saving": "Speichern...",
     "deleteTitle": "Konto löschen",
     "deleteDesc": "Dies löscht dein Konto unwiderruflich. Folgendes wird entfernt:",
     "deleteItem1": "Deine Charaktere und Tagebucheinträge",
@@ -602,7 +609,8 @@
     "deleteFinal": "Endgültig löschen",
     "membersCount": "Mitglieder · {count}",
     "creator": "Ersteller",
-    "remove": "Entfernen"
+    "remove": "Entfernen",
+    "noCharacter": "kein Charakter"
   },
   "admin": {
     "title": "Admin-Bereich",

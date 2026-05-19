@@ -526,6 +526,13 @@
   "konto": {
     "title": "My Account",
     "back": "← Back",
+    "profileTitle": "Profile",
+    "nameLabel": "Display name",
+    "nameRequired": "Name is required.",
+    "nameError": "Failed to save.",
+    "nameSaved": "Name updated.",
+    "saveName": "Save",
+    "saving": "Saving...",
     "deleteTitle": "Delete Account",
     "deleteDesc": "This permanently deletes your account. The following will be removed:",
     "deleteItem1": "Your characters and journal entries",
@@ -602,7 +609,8 @@
     "deleteFinal": "Delete permanently",
     "membersCount": "Members · {count}",
     "creator": "Creator",
-    "remove": "Remove"
+    "remove": "Remove",
+    "noCharacter": "no character"
   },
   "admin": {
     "title": "Admin Area",

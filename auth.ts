@@ -29,12 +29,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
+    jwt({ token, user, trigger, session }) {
       if (user) {
         token.id = user.id as string;
         token.role = user.role;
         // NextAuth's User.emailVerified is typed as Date; ours is a boolean column.
         token.emailVerified = Boolean(user.emailVerified ?? true);
+      }
+      // Client-side update() trigger — refresh display name in JWT.
+      if (trigger === "update" && session && typeof (session as { name?: unknown }).name === "string") {
+        token.name = (session as { name: string }).name;
       }
       return token;
     },

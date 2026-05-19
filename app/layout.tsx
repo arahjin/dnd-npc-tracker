@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import SiteFooter from "@/components/SiteFooter";
+import SessionProviderWrapper from "@/components/SessionProviderWrapper";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -43,7 +44,9 @@ export default async function RootLayout({
     <html lang={locale} className={`h-full ${roboto.variable} ${oswald.variable} ${nunito.variable}`}>
       <body className="min-h-full flex flex-col antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
+          <SessionProviderWrapper>
+            {children}
+          </SessionProviderWrapper>
         </NextIntlClientProvider>
         <SiteFooter />
       </body>

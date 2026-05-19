@@ -20,13 +20,32 @@ export async function GET(_req: NextRequest, { params }: Params) {
     if (!self) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const mitglieder = await prisma.kampagneMitglied.findMany({
-    where: { kampagneId },
-    include: { user: { select: { id: true, name: true, email: true } } },
-    orderBy: [{ isOwner: "desc" }, { isDM: "desc" }, { createdAt: "asc" }],
-  });
+  const [mitglieder, charaktere] = await Promise.all([
+    prisma.kampagneMitglied.findMany({
+      where: { kampagneId },
+      include: { user: { select: { id: true, name: true, email: true } } },
+      orderBy: [{ isOwner: "desc" }, { isDM: "desc" }, { createdAt: "asc" }],
+    }),
+    prisma.charakter.findMany({
+      where: { kampagneId },
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, userId: true },
+    }),
+  ]);
 
-  return NextResponse.json(mitglieder);
+  // Group characters by owning user so the client can render them inline.
+  const byUser = new Map<string, { id: string; name: string }[]>();
+  for (const c of charaktere) {
+    const list = byUser.get(c.userId) ?? [];
+    list.push({ id: c.id, name: c.name });
+    byUser.set(c.userId, list);
+  }
+  const enriched = mitglieder.map((m) => ({
+    ...m,
+    charaktere: byUser.get(m.userId) ?? [],
+  }));
+
+  return NextResponse.json(enriched);
 }
 
 // DELETE — leave campaign (self) or remove a member (DM/Admin)
