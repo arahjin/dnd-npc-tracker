@@ -186,9 +186,14 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
                 </div>
 
                 {[
+                  // Kampagne-Block (oben)
                   { href: "/kampagnen", label: tUser("kampagnen"), show: true },
                   { href: "/dm/einladungen", label: tUser("einladungen"), show: canManageInvites },
+                  { href: "/dm/export", label: tUser("export"), show: canManageInvites },
+                  // Admin
                   { href: "/dm/admin", label: tUser("adminBereich"), show: isAdmin },
+                  // Konto-Block (unten)
+                  { href: "/konto", label: tUser("konto"), show: true },
                 ].filter(i => i.show).map(item => (
                   <a
                     key={item.href}
@@ -204,7 +209,6 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
                   </a>
                 ))}
 
-                <div style={{ height: 1, background: "#1A1A1A" }} />
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}
                   className="font-cinzel"

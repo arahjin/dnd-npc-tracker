@@ -73,19 +73,15 @@ export default function UserMenu({ name, role, isDM = false, errorCount = 0 }: P
               </p>
             </div>
 
-            {/* Kampagnen section */}
+            {/* Kampagnen section — top */}
             {menuItem("/kampagnen", t("kampagnen"))}
             {canManageInvites && menuItem("/dm/einladungen", t("einladungen"))}
             {canManageInvites && menuItem("/dm/export", t("export"))}
-            {divider}
-
-            {/* Account */}
-            {menuItem("/konto", t("konto"))}
-            {divider}
 
             {/* Admin section */}
             {isAdmin && (
               <>
+                {divider}
                 <a href="/dm/admin" className="flex items-center justify-between px-4 py-2 font-cinzel text-xs transition-colors"
                   style={{ color: "#C8B8A8" }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "#F5EDD6")}
@@ -100,10 +96,12 @@ export default function UserMenu({ name, role, isDM = false, errorCount = 0 }: P
                     </span>
                   )}
                 </a>
-                {divider}
               </>
             )}
 
+            {/* Account + sign-out — bottom */}
+            {divider}
+            {menuItem("/konto", t("konto"))}
             <button onClick={() => signOut({ callbackUrl: "/login" })}
               className="w-full text-left px-4 py-2 font-cinzel text-xs transition-colors"
               style={{ color: "#F87171" }}
