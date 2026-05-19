@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { signOut } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -28,8 +29,12 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
   const [open, setOpen] = useState(false);
   const [kampagneOpen, setKampagneOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Mount flag for portal — avoids SSR mismatch (document is undefined on the server).
+  useEffect(() => { setMounted(true); }, []);
   const tNav = useTranslations("nav");
   const tMobile = useTranslations("mobileNav");
   const tUser = useTranslations("userMenu");
@@ -76,8 +81,11 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
         </svg>
       </button>
 
-      {/* Backdrop + Drawer */}
-      {open && (
+      {/* Backdrop + Drawer — portalled to <body> to escape the SiteHeader's
+          stacking context (which has zIndex:0 to bound its own gold accent).
+          Without the portal, no z-index value can lift the drawer above the
+          page content that sits as a sibling of the header. */}
+      {open && mounted && createPortal(
         <>
           <div
             onClick={() => setOpen(false)}
@@ -273,7 +281,8 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
               </div>
             )}
           </div>
-        </>
+        </>,
+        document.body
       )}
     </>
   );
