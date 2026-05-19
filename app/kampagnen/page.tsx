@@ -45,7 +45,7 @@ export default function KampagnenPage() {
   async function activate(id: string) {
     setActivating(id);
     await fetch(`/api/kampagnen/${id}/aktiv`, { method: "POST" });
-    router.push("/npc");
+    router.push("/dashboard");
     router.refresh();
   }
 
@@ -67,7 +67,7 @@ export default function KampagnenPage() {
     }
     // Auto-activate and redirect
     await fetch(`/api/kampagnen/${data.kampagneId}/aktiv`, { method: "POST" });
-    router.push("/npc");
+    router.push("/dashboard");
     router.refresh();
   }
 
@@ -88,7 +88,7 @@ export default function KampagnenPage() {
       return;
     }
     await fetch(`/api/kampagnen/${data.id}/aktiv`, { method: "POST" });
-    router.push("/npc");
+    router.push("/dashboard");
     router.refresh();
   }
 

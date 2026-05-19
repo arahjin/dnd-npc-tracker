@@ -1,5 +1,6 @@
 {
   "nav": {
+    "dashboard": "Übersicht",
     "npcs": "NPCs",
     "organisationen": "Organisationen",
     "locations": "Locations",
@@ -7,6 +8,15 @@
     "geschichte": "Geschichte",
     "tagebuch": "Tagebuch",
     "quests": "Quests"
+  },
+  "dashboard": {
+    "subtitle": "Kampagnen-Übersicht",
+    "openQuests": "Offene Quests",
+    "ofTotal": "von {total} insgesamt",
+    "latestEntries": "Letzte Einträge",
+    "noGeschichte": "Noch keine Geschichts-Einträge",
+    "noTagebuch": "Noch keine Tagebuch-Einträge",
+    "noTitle": "Ohne Titel"
   },
   "userMenu": {
     "kampagnen": "Kampagnen",
@@ -70,6 +80,7 @@
   "loading": {
     "default": "Lädt…",
     "generic": "Laden...",
+    "dashboard": "Übersicht wird geladen",
     "npc": "NPCs werden geladen",
     "locations": "Locations werden geladen",
     "organisationen": "Organisationen werden geladen",

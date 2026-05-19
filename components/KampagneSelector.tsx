@@ -24,7 +24,7 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
     if (id === aktiveId) { setOpen(false); return; }
     setSwitching(true);
     await fetch(`/api/kampagnen/${id}/aktiv`, { method: "POST" });
-    router.push("/npc");
+    router.push("/dashboard");
     router.refresh();
     setOpen(false);
     setSwitching(false);

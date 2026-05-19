@@ -37,6 +37,7 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
   const canManageInvites = isDM || isAdmin;
 
   const NAV = [
+    { href: "/dashboard",      label: tNav("dashboard"),      key: "dashboard" },
     { href: "/npc",            label: tNav("npcs"),           key: "npcs" },
     { href: "/organisationen", label: tNav("organisationen"), key: "organisationen" },
     { href: "/locations",      label: tNav("locations"),      key: "locations" },
@@ -50,7 +51,7 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
     if (id === kampagneData?.aktiveId) { setOpen(false); return; }
     setSwitching(true);
     await fetch(`/api/kampagnen/${id}/aktiv`, { method: "POST" });
-    router.push("/npc");
+    router.push("/dashboard");
     router.refresh();
     setOpen(false);
     setSwitching(false);

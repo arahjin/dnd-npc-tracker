@@ -9,6 +9,7 @@ export default function NavLinks() {
   const t = useTranslations("nav");
 
   const NAV = [
+    { href: "/dashboard",      label: t("dashboard"),      prefix: "/dashboard", exact: true },
     { href: "/npc",            label: t("npcs"),           prefix: "/npc" },
     { href: "/organisationen", label: t("organisationen"), prefix: "/organisationen" },
     { href: "/locations",      label: t("locations"),      prefix: "/locations" },
@@ -20,15 +21,18 @@ export default function NavLinks() {
 
   return (
     <>
-      {NAV.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={`ddb-nav-link${pathname.startsWith(item.prefix) ? " ddb-nav-active" : ""}`}
-        >
-          {item.label}
-        </Link>
-      ))}
+      {NAV.map((item) => {
+        const active = item.exact ? pathname === item.prefix : pathname.startsWith(item.prefix);
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            className={`ddb-nav-link${active ? " ddb-nav-active" : ""}`}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
     </>
   );
 }

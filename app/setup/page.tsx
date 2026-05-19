@@ -35,7 +35,7 @@ export default function SetupPage() {
       }
       setDone(true);
       await signIn("credentials", { email, password, redirect: false });
-      router.push("/npc");
+      router.push("/dashboard");
     } catch (err) {
       setError(t("networkError", { error: String(err) }));
       setLoading(false);

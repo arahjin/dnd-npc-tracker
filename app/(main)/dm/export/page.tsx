@@ -5,7 +5,7 @@ import { getTranslations } from "next-intl/server";
 
 export default async function ExportPage() {
   const ctx = await requireKampagne();
-  if (!ctx.isDM) redirect("/npc");
+  if (!ctx.isDM) redirect("/dashboard");
 
   const t = await getTranslations("dmExport");
 

@@ -32,7 +32,7 @@ function LoginForm() {
     if (result?.error) {
       setError(t("error"));
     } else {
-      router.push("/npc");
+      router.push("/dashboard");
       router.refresh();
     }
   }

@@ -44,7 +44,7 @@ export default function JoinButton({ token, isLoggedIn }: { token: string; isLog
       return;
     }
     // Already a member or just joined — either way, navigate to the campaign
-    router.push("/npc");
+    router.push("/dashboard");
     router.refresh();
   }
 

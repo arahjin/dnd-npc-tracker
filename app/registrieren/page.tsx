@@ -56,7 +56,7 @@ function RegisterForm() {
       await fetch(`/api/kampagnen/${data.kampagneId}/aktiv`, { method: "POST" });
     }
 
-    router.push(returnTo || "/npc");
+    router.push(returnTo || "/dashboard");
     router.refresh();
   }
 
