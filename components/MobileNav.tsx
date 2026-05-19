@@ -179,11 +179,20 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
             {/* User section - pushed to bottom */}
             {userName && (
               <div style={{ marginTop: "auto" }}>
-                <div style={{ padding: "12px 20px", borderTop: "1px solid #1A1A1A", borderBottom: "1px solid #1A1A1A" }}>
-                  <p className="font-cinzel" style={{ fontSize: "0.75rem", color: "var(--dnd-gold)" }}>
-                    <RoleIcon role={userRole ?? "SPIELER"} /> {userName}
-                  </p>
-                </div>
+                <a
+                  href="/konto"
+                  onClick={() => setOpen(false)}
+                  className="font-cinzel"
+                  style={{
+                    display: "flex", alignItems: "center", gap: "8px",
+                    padding: "12px 20px",
+                    borderTop: "1px solid #1A1A1A", borderBottom: "1px solid #1A1A1A",
+                    fontSize: "0.75rem", color: "var(--dnd-gold)", textDecoration: "none",
+                  }}
+                >
+                  <RoleIcon role={userRole ?? "SPIELER"} />
+                  <span>{userName}</span>
+                </a>
 
                 {[
                   // Kampagne-Block (oben)

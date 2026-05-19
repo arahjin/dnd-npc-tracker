@@ -57,7 +57,7 @@ export default async function SiteHeader() {
   }
 
   return (
-    <header className="site-header" style={{ position: "relative" }}>
+    <header className="site-header" style={{ position: "relative", zIndex: 0 }}>
       {/* ── Background image ── */}
       <Image
         src="/lorehub_header.png"
