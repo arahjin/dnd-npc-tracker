@@ -267,7 +267,7 @@ export default function MentionTextarea({
   }
 
   return (
-    <div className="relative">
+    <div className="relative" style={{ zIndex: query !== null && filtered.length > 0 ? 1000 : "auto" }}>
       {/* Contenteditable editor */}
       <div
         ref={editorRef}
@@ -313,8 +313,8 @@ export default function MentionTextarea({
       {/* Mention dropdown */}
       {query !== null && filtered.length > 0 && (
         <div
-          className="absolute left-0 right-0 z-30 shadow-xl"
-          style={{ top: "100%", background: "#0E0E0E", border: "1px solid #2A2A2A", maxHeight: "220px", overflowY: "auto" }}
+          className="absolute left-0 right-0 shadow-xl"
+          style={{ top: "100%", zIndex: 1000, background: "#0E0E0E", border: "1px solid #2A2A2A", maxHeight: "220px", overflowY: "auto" }}
         >
           <div className="px-3 py-1.5" style={{ borderBottom: "1px solid #1A1A1A" }}>
             <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>

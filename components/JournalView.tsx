@@ -134,13 +134,13 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
               <button onClick={() => { setFilterTag(null); setFilterSearch(""); }} style={{ opacity: 0.7 }}>✕</button>
             </span>
           ) : (
-            <div className="relative flex-1">
+            <div className="relative flex-1" style={{ zIndex: filterSearch && filterTagOptions.length > 0 ? 1000 : "auto" }}>
               <input type="text" value={filterSearch} onChange={(e) => setFilterSearch(e.target.value)}
                 placeholder={t("filterPlaceholder")}
                 className="w-full px-3 py-1.5 text-sm outline-none" style={inputStyle} />
               {filterSearch && filterTagOptions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 z-20"
-                  style={{ background: "#111", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
+                <div className="absolute top-full left-0 right-0"
+                  style={{ zIndex: 1000, background: "#111", border: "1px solid var(--dnd-border)", maxHeight: "160px", overflowY: "auto" }}>
                   {filterTagOptions.slice(0, 8).map((t) => (
                     <button key={t.id} type="button"
                       onClick={() => { setFilterTag(t); setFilterSearch(""); }}

@@ -78,7 +78,7 @@ function MultiSelect({
   );
 
   return (
-    <div ref={containerRef} style={{ position: "relative" }}>
+    <div ref={containerRef} style={{ position: "relative", zIndex: open ? 1000 : "auto" }}>
       <p className={labelStyle} style={{ color: "var(--dnd-label)" }}>{label}</p>
 
       {/* Trigger: shows tags + opens dropdown */}
@@ -150,7 +150,7 @@ function MultiSelect({
             top: "calc(100% + 2px)",
             left: 0,
             right: 0,
-            zIndex: 100,
+            zIndex: 1000,
             background: "#0E0E0E",
             border: "1px solid #2A2A2A",
             boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
