@@ -82,13 +82,13 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
           <div
             onClick={() => setOpen(false)}
             style={{
-              position: "fixed", inset: 0, zIndex: 50,
+              position: "fixed", inset: 0, zIndex: 9998,
               background: "rgba(0,0,0,0.75)", backdropFilter: "blur(2px)",
             }}
           />
           <div
             style={{
-              position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 51,
+              position: "fixed", top: 0, right: 0, bottom: 0, zIndex: 9999,
               width: "min(300px, 88vw)", background: "#0E0E0E",
               borderLeft: "1px solid #2A2A2A", display: "flex", flexDirection: "column",
               overflowY: "auto",
