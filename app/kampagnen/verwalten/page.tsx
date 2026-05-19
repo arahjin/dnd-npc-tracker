@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { IconSword } from "@/components/Icons";
+import KampagneInvitesSection from "@/components/KampagneInvitesSection";
 
 type Member = {
   id: string;
@@ -12,6 +13,7 @@ type Member = {
   userId: string;
   user: { id: string; name: string; email: string };
   charaktere: { id: string; name: string }[];
+  viaInvite: { id: string; role: string; isPermanent: boolean } | null;
 };
 
 type Kampagne = {
@@ -27,6 +29,8 @@ type KampagneDetail = Kampagne & { mitglieder: Member[] };
 
 export default function KampagnenVerwaltenPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const focusId = searchParams.get("focus");
   const t = useTranslations("kampagnenVerwalten");
   const tCommon = useTranslations("common");
   const tRoles = useTranslations("userMenu.roles");
@@ -157,6 +161,19 @@ export default function KampagnenVerwaltenPage() {
           </div>
         )}
 
+        {(() => {
+          const list = focusId ? kampagnen.filter((k) => k.id === focusId) : kampagnen;
+          if (focusId && kampagnen.length > 0 && list.length === 0) {
+            return (
+              <div className="font-cinzel text-sm px-4 py-6 text-center"
+                style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text-muted)" }}>
+                {t("notFound")}
+              </div>
+            );
+          }
+          return null;
+        })()}
+
         {kampagnen.length === 0 && (
           <div className="flex flex-col items-center py-24 gap-4 text-center">
             <div style={{ opacity: 0.3 }}><IconSword size={52} color="var(--dnd-text-muted)" /></div>
@@ -168,7 +185,7 @@ export default function KampagnenVerwaltenPage() {
           </div>
         )}
 
-        {kampagnen.map((k) => {
+        {(focusId ? kampagnen.filter((k) => k.id === focusId) : kampagnen).map((k) => {
           const isSelfDM = k.isDM;
           const isSelfOwner = k.isOwner;
 
@@ -252,6 +269,11 @@ export default function KampagnenVerwaltenPage() {
                   </div>
                 </div>
 
+                {/* Invite section — shown to DMs and admins */}
+                {(isSelfDM || isAdmin) && (
+                  <KampagneInvitesSection kampagneId={k.id} isAdmin={isAdmin} />
+                )}
+
                 {/* Member list — shown to DMs and admins */}
                 {(isSelfDM || isAdmin) && k.mitglieder.length > 0 && (
                   <div>
@@ -303,6 +325,12 @@ export default function KampagnenVerwaltenPage() {
                               ) : !m.isDM && (
                                 <span className="font-cinzel text-xs italic" style={{ color: "var(--dnd-text-muted)", opacity: 0.6 }}>
                                   {t("noCharacter")}
+                                </span>
+                              )}
+                              {m.viaInvite && (
+                                <span className="text-xs px-1.5 py-0.5"
+                                  style={{ fontFamily: "monospace", color: "var(--dnd-text-muted)", border: "1px solid #1A1A1A", background: "#0A0A0A", opacity: 0.8 }}>
+                                  {m.viaInvite.isPermanent ? t("viaPermanent") : t("viaInvite")}
                                 </span>
                               )}
                             </div>

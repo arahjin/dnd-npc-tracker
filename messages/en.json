@@ -38,7 +38,8 @@
     "kampagne": "Campaign",
     "neueKampagne": "+ New Campaign",
     "switchKampagne": "Switch Campaign",
-    "neueKampagneShort": "+ New Campaign"
+    "neueKampagneShort": "+ New Campaign",
+    "editKampagne": "Edit campaign"
   },
   "common": {
     "save": "Save",
@@ -610,7 +611,17 @@
     "membersCount": "Members · {count}",
     "creator": "Creator",
     "remove": "Remove",
-    "noCharacter": "no character"
+    "noCharacter": "no character",
+    "invitesSectionTitle": "Invites",
+    "viaInvite": "via invite",
+    "viaPermanent": "via permanent link",
+    "notFound": "Campaign not found or no access.",
+    "share": "SHARE",
+    "shareVia": "SHARE VIA:",
+    "shareWhatsapp": "WhatsApp",
+    "shareSms": "SMS",
+    "shareCopy": "Copy",
+    "inviteShareText": "Join my campaign {name} on Lorehub: {url}"
   },
   "admin": {
     "title": "Admin Area",

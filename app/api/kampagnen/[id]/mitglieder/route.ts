@@ -20,7 +20,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
     if (!self) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const [mitglieder, charaktere] = await Promise.all([
+  const [mitglieder, charaktere, usedInvites] = await Promise.all([
     prisma.kampagneMitglied.findMany({
       where: { kampagneId },
       include: { user: { select: { id: true, name: true, email: true } } },
@@ -31,6 +31,10 @@ export async function GET(_req: NextRequest, { params }: Params) {
       orderBy: { name: "asc" },
       select: { id: true, name: true, userId: true },
     }),
+    prisma.invite.findMany({
+      where: { kampagneId, usedById: { not: null } },
+      select: { id: true, role: true, isPermanent: true, usedById: true },
+    }),
   ]);
 
   // Group characters by owning user so the client can render them inline.
@@ -40,9 +44,14 @@ export async function GET(_req: NextRequest, { params }: Params) {
     list.push({ id: c.id, name: c.name });
     byUser.set(c.userId, list);
   }
+  const inviteByUser = new Map<string, { id: string; role: string; isPermanent: boolean }>();
+  for (const inv of usedInvites) {
+    if (inv.usedById) inviteByUser.set(inv.usedById, { id: inv.id, role: inv.role, isPermanent: inv.isPermanent });
+  }
   const enriched = mitglieder.map((m) => ({
     ...m,
     charaktere: byUser.get(m.userId) ?? [],
+    viaInvite: inviteByUser.get(m.userId) ?? null,
   }));
 
   return NextResponse.json(enriched);

@@ -38,7 +38,8 @@
     "kampagne": "Kampagne",
     "neueKampagne": "+ Neue Kampagne",
     "switchKampagne": "Kampagne wechseln",
-    "neueKampagneShort": "+ Neue Kampagne"
+    "neueKampagneShort": "+ Neue Kampagne",
+    "editKampagne": "Kampagne bearbeiten"
   },
   "common": {
     "save": "Speichern",
@@ -610,7 +611,17 @@
     "membersCount": "Mitglieder · {count}",
     "creator": "Ersteller",
     "remove": "Entfernen",
-    "noCharacter": "kein Charakter"
+    "noCharacter": "kein Charakter",
+    "invitesSectionTitle": "Einladungen",
+    "viaInvite": "via Einladung",
+    "viaPermanent": "via Dauer-Link",
+    "notFound": "Kampagne nicht gefunden oder kein Zugriff.",
+    "share": "TEILEN",
+    "shareVia": "TEILEN VIA:",
+    "shareWhatsapp": "WhatsApp",
+    "shareSms": "SMS",
+    "shareCopy": "Kopieren",
+    "inviteShareText": "Tritt meiner Kampagne {name} auf Lorehub bei: {url}"
   },
   "admin": {
     "title": "Admin-Bereich",

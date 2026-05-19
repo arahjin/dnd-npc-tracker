@@ -160,23 +160,42 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
 
                 {kampagneOpen && (
                   <div style={{ padding: "0 20px 12px", background: "#0A0A0A" }}>
-                    {kampagneData.kampagnen.map((k) => (
-                      <button
-                        key={k.id}
-                        onClick={() => switchKampagne(k.id)}
-                        disabled={switching}
-                        className="font-cinzel"
-                        style={{
-                          width: "100%", textAlign: "left", display: "flex", alignItems: "center", gap: 8,
-                          padding: "10px 0", fontSize: "0.8rem", background: "none", border: "none", cursor: "pointer",
-                          color: k.id === kampagneData.aktiveId ? "var(--dnd-gold)" : "#9A8A78",
-                          opacity: switching ? 0.5 : 1,
-                        }}
-                      >
-                        {k.id === kampagneData.aktiveId && <span style={{ color: "var(--dnd-gold)", fontSize: "0.6rem" }}>✦</span>}
-                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{k.name}</span>
-                      </button>
-                    ))}
+                    {kampagneData.kampagnen.map((k) => {
+                      const isActive = k.id === kampagneData.aktiveId;
+                      const showEdit = isAdmin || (isActive && isDM);
+                      return (
+                        <div key={k.id} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                          <button
+                            onClick={() => switchKampagne(k.id)}
+                            disabled={switching}
+                            className="font-cinzel"
+                            style={{
+                              flex: 1, textAlign: "left", display: "flex", alignItems: "center", gap: 8,
+                              padding: "10px 0", fontSize: "0.8rem", background: "none", border: "none", cursor: "pointer",
+                              color: isActive ? "var(--dnd-gold)" : "#9A8A78",
+                              opacity: switching ? 0.5 : 1, minWidth: 0,
+                            }}
+                          >
+                            {isActive && <span style={{ color: "var(--dnd-gold)", fontSize: "0.6rem" }}>✦</span>}
+                            <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{k.name}</span>
+                          </button>
+                          {showEdit && (
+                            <a
+                              href={`/kampagnen/verwalten?focus=${k.id}`}
+                              onClick={() => setOpen(false)}
+                              aria-label={tMobile("editKampagne")}
+                              style={{
+                                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                                width: 28, height: 28, color: "var(--dnd-text-muted)",
+                                textDecoration: "none", fontSize: "0.85rem", flexShrink: 0,
+                              }}
+                            >
+                              ✏️
+                            </a>
+                          )}
+                        </div>
+                      );
+                    })}
                     <a
                       href="/kampagnen/neu"
                       onClick={() => setOpen(false)}
