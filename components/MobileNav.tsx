@@ -26,6 +26,7 @@ function RoleIcon({ role }: { role: string }) {
 
 export default function MobileNav({ userName, userRole, isDM, kampagneData, initialLocale = "de" }: Props) {
   const [open, setOpen] = useState(false);
+  const [kampagneOpen, setKampagneOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -132,42 +133,64 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
               ))}
             </nav>
 
-            {/* Campaign switcher */}
+            {/* Campaign switcher — collapsible */}
             {kampagneData && kampagneData.kampagnen.length > 0 && (
               <div style={{ borderBottom: "1px solid #1A1A1A" }}>
-                <div style={{ padding: "12px 20px 8px" }}>
-                  <p className="font-cinzel" style={{ fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--dnd-text-muted)", marginBottom: "8px" }}>
-                    {tMobile("kampagne")}
-                  </p>
-                  {kampagneData.kampagnen.map((k) => (
-                    <button
-                      key={k.id}
-                      onClick={() => switchKampagne(k.id)}
-                      disabled={switching}
+                <button
+                  onClick={() => setKampagneOpen((p) => !p)}
+                  aria-expanded={kampagneOpen}
+                  className="font-cinzel"
+                  style={{
+                    width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+                    gap: 12, padding: "14px 20px",
+                    fontSize: "0.75rem", letterSpacing: "0.14em", textTransform: "uppercase",
+                    color: "var(--dnd-gold)", background: "none", border: "none", cursor: "pointer", textAlign: "left",
+                  }}
+                >
+                  <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
+                    <span style={{ fontSize: "0.6rem", letterSpacing: "0.2em", color: "var(--dnd-text-muted)", flexShrink: 0 }}>
+                      {tMobile("kampagne")}
+                    </span>
+                    <span style={{ color: "var(--dnd-gold)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {kampagneData.aktiveKampagne}
+                    </span>
+                  </span>
+                  <span style={{ opacity: 0.6, fontSize: "0.65rem", flexShrink: 0 }}>{kampagneOpen ? "▲" : "▼"}</span>
+                </button>
+
+                {kampagneOpen && (
+                  <div style={{ padding: "0 20px 12px", background: "#0A0A0A" }}>
+                    {kampagneData.kampagnen.map((k) => (
+                      <button
+                        key={k.id}
+                        onClick={() => switchKampagne(k.id)}
+                        disabled={switching}
+                        className="font-cinzel"
+                        style={{
+                          width: "100%", textAlign: "left", display: "flex", alignItems: "center", gap: 8,
+                          padding: "10px 0", fontSize: "0.8rem", background: "none", border: "none", cursor: "pointer",
+                          color: k.id === kampagneData.aktiveId ? "var(--dnd-gold)" : "#9A8A78",
+                          opacity: switching ? 0.5 : 1,
+                        }}
+                      >
+                        {k.id === kampagneData.aktiveId && <span style={{ color: "var(--dnd-gold)", fontSize: "0.6rem" }}>✦</span>}
+                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{k.name}</span>
+                      </button>
+                    ))}
+                    <a
+                      href="/kampagnen/neu"
+                      onClick={() => setOpen(false)}
                       className="font-cinzel"
                       style={{
-                        width: "100%", textAlign: "left", display: "flex", alignItems: "center", gap: 8,
-                        padding: "10px 0", fontSize: "0.8rem", background: "none", border: "none", cursor: "pointer",
-                        color: k.id === kampagneData.aktiveId ? "var(--dnd-gold)" : "#9A8A78",
-                        opacity: switching ? 0.5 : 1,
+                        display: "flex", alignItems: "center", padding: "10px 0",
+                        fontSize: "0.7rem", color: "var(--dnd-text-muted)", textDecoration: "none",
+                        borderTop: "1px solid #1A1A1A", marginTop: "6px",
                       }}
                     >
-                      {k.id === kampagneData.aktiveId && <span style={{ color: "var(--dnd-gold)", fontSize: "0.6rem" }}>✦</span>}
-                      <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{k.name}</span>
-                    </button>
-                  ))}
-                  <a
-                    href="/kampagnen/neu"
-                    onClick={() => setOpen(false)}
-                    className="font-cinzel"
-                    style={{
-                      display: "flex", alignItems: "center", padding: "10px 0",
-                      fontSize: "0.7rem", color: "var(--dnd-text-muted)", textDecoration: "none",
-                    }}
-                  >
-                    {tMobile("neueKampagne")}
-                  </a>
-                </div>
+                      {tMobile("neueKampagne")}
+                    </a>
+                  </div>
+                )}
               </div>
             )}
 
