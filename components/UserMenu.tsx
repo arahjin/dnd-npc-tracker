@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { signOut } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { IconAdmin, IconSword, IconDice } from "@/components/Icons";
@@ -16,10 +17,32 @@ function RoleIcon({ role }: { role: string }) {
 
 export default function UserMenu({ name, role, isDM = false, errorCount = 0 }: Props) {
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
   const t = useTranslations("userMenu");
   const isAdmin = role === "ADMIN";
   const canManageInvites = isDM || isAdmin;
   const showErrorBadge = isAdmin && errorCount > 0;
+
+  useEffect(() => { setMounted(true); }, []);
+
+  useLayoutEffect(() => {
+    if (!open) { setPos(null); return; }
+    function update() {
+      const el = buttonRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+    }
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [open]);
 
   const roleLabel =
     role === "ADMIN" ? t("roles.ADMIN") :
@@ -40,6 +63,7 @@ export default function UserMenu({ name, role, isDM = false, errorCount = 0 }: P
   return (
     <div style={{ position: "relative" }}>
       <button
+        ref={buttonRef}
         onClick={() => setOpen((p) => !p)}
         className="font-cinzel text-xs tracking-wide flex items-center gap-2 px-3 py-1.5 transition-all relative"
         style={{ border: "1px solid #333", color: "#C8B8A8", background: "#1A1A1A" }}
@@ -60,12 +84,17 @@ export default function UserMenu({ name, role, isDM = false, errorCount = 0 }: P
         )}
       </button>
 
-      {open && (
+      {open && mounted && pos && createPortal(
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 mt-1 z-50 min-w-48"
-            style={{ background: "#111", border: "1px solid #2A2A2A" }}>
-
+          <div onClick={() => setOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 9998 }} />
+          <div
+            style={{
+              position: "fixed", top: pos.top, right: pos.right,
+              zIndex: 9999, minWidth: "12rem",
+              background: "#111", border: "1px solid #2A2A2A",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
+            }}
+          >
             {/* User info */}
             <div className="px-4 py-2" style={{ borderBottom: "1px solid #1A1A1A" }}>
               <p className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
@@ -110,7 +139,8 @@ export default function UserMenu({ name, role, isDM = false, errorCount = 0 }: P
               {t("abmelden")}
             </button>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   );

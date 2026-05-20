@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IconSword } from "@/components/Icons";
@@ -19,6 +20,29 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
   const t = useTranslations("mobileNav");
   const [open, setOpen] = useState(false);
   const [switching, setSwitching] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [pos, setPos] = useState<{ top: number; right: number } | null>(null);
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => { setMounted(true); }, []);
+
+  // Recalculate dropdown position whenever it opens / on resize / on scroll
+  useLayoutEffect(() => {
+    if (!open) { setPos(null); return; }
+    function update() {
+      const el = buttonRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      setPos({ top: rect.bottom + 4, right: window.innerWidth - rect.right });
+    }
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [open]);
 
   async function switchTo(id: string) {
     if (id === aktiveId) { setOpen(false); return; }
@@ -33,6 +57,7 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         onClick={() => setOpen((o) => !o)}
         className="flex items-center gap-2 font-cinzel text-xs tracking-wide px-3 py-1.5 transition-all"
         style={{ background: "#1A0A0A", border: "1px solid var(--dnd-gold)", color: "var(--dnd-gold)" }}
@@ -42,12 +67,23 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
         <span style={{ opacity: 0.6 }}>{open ? "▲" : "▼"}</span>
       </button>
 
-      {open && (
+      {open && mounted && pos && createPortal(
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
-            className="absolute right-0 top-full mt-1 z-50 min-w-48"
-            style={{ background: "#111", border: "1px solid var(--dnd-border)", boxShadow: "0 8px 24px rgba(0,0,0,0.6)" }}
+            onClick={() => setOpen(false)}
+            style={{ position: "fixed", inset: 0, zIndex: 9998 }}
+          />
+          <div
+            style={{
+              position: "fixed",
+              top: pos.top,
+              right: pos.right,
+              zIndex: 9999,
+              minWidth: "12rem",
+              background: "#111",
+              border: "1px solid var(--dnd-border)",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.6)",
+            }}
           >
             <div className="px-3 py-2" style={{ borderBottom: "1px solid #1A1A1A" }}>
               <span className="font-cinzel text-xs tracking-widest uppercase" style={{ color: "var(--dnd-text-muted)" }}>
@@ -83,7 +119,8 @@ export default function KampagneSelector({ aktiveId, aktiveKampagne, kampagnen }
               {t("neueKampagneShort")}
             </Link>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </div>
   );
