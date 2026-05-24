@@ -8,6 +8,7 @@ import { canSeePrivate } from "@/lib/visibility";
 import LocationDeleteButton from "@/components/LocationDeleteButton";
 import RenderMentions from "@/components/RenderMentions";
 import { LocationArtIcon, IconLock } from "@/components/Icons";
+import { getTranslations } from "next-intl/server";
 
 function Field({ label, value }: { label: string; value?: string | number | null }) {
   if (!value && value !== 0) return null;
@@ -69,6 +70,10 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
       organisationen: { orderBy: { name: "asc" }, select: { id: true, name: true } },
       charaktere: { orderBy: { name: "asc" }, select: { id: true, name: true } },
       quests: { include: { quest: { select: { id: true, title: true, status: true, typ: true } } } },
+      mapPlacements: {
+        select: { id: true, map: { select: { id: true, name: true } } },
+        orderBy: { createdAt: "asc" },
+      },
     },
   });
 
@@ -76,6 +81,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
   if (location.sichtbarkeit === "privat" && !canSeePrivate({ userId, isDM, isAdmin }, location.erstellerId)) notFound();
 
   const showPrivate = canSeePrivate({ userId, isDM, isAdmin }, location.erstellerId);
+  const tKarten = await getTranslations("karten");
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -185,6 +191,29 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
             <LinkedList items={location.charaktere} baseHref="/charaktere" />
           </Section>
         </div>
+
+        {/* Auf Karten */}
+        {location.mapPlacements && location.mapPlacements.length > 0 && (
+          <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+            <div className="px-4 py-2" style={{ background: "var(--dnd-red-dark)", borderBottom: "1px solid var(--dnd-border)" }}>
+              <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>
+                {tKarten("onMaps")} ({location.mapPlacements.length})
+              </h2>
+            </div>
+            <div className="px-4 py-3 flex flex-wrap gap-2">
+              {location.mapPlacements.map((mp) => (
+                <Link
+                  key={mp.id}
+                  href={`/karten/${mp.map.id}?placement=${mp.id}`}
+                  className="font-cinzel text-xs px-3 py-1.5"
+                  style={{ background: "#141414", border: "1px solid var(--dnd-border)", color: "var(--dnd-heading)", textDecoration: "none" }}
+                >
+                  {mp.map.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Zugehörige Quests */}
         {location.quests && location.quests.length > 0 && (

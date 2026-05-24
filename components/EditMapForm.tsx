@@ -15,18 +15,34 @@ const inputStyle: React.CSSProperties = {
 };
 const labelStyle = "font-cinzel text-xs tracking-[0.15em] uppercase block mb-2";
 
-type UploadedImage = { url: string; width: number; height: number };
-
 type AvailableMap = { id: string; name: string };
 
-export default function NewMapForm({ availableMaps = [] }: { availableMaps?: AvailableMap[] } = {}) {
+type Props = {
+  mapId: string;
+  initialName: string;
+  initialBeschreibung: string;
+  initialImageUrl: string;
+  initialParentMapId: string | null;
+  availableMaps: AvailableMap[];
+};
+
+type UploadedImage = { url: string; width: number; height: number };
+
+export default function EditMapForm({
+  mapId,
+  initialName,
+  initialBeschreibung,
+  initialImageUrl,
+  initialParentMapId,
+  availableMaps,
+}: Props) {
   const t = useTranslations("karten");
   const tCommon = useTranslations("common");
   const router = useRouter();
 
-  const [name, setName] = useState("");
-  const [beschreibung, setBeschreibung] = useState("");
-  const [parentMapId, setParentMapId] = useState("");
+  const [name, setName] = useState(initialName);
+  const [beschreibung, setBeschreibung] = useState(initialBeschreibung);
+  const [parentMapId, setParentMapId] = useState(initialParentMapId ?? "");
   const [image, setImage] = useState<UploadedImage | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
@@ -38,15 +54,12 @@ export default function NewMapForm({ availableMaps = [] }: { availableMaps?: Ava
     setUploadError("");
     setUploading(true);
     try {
-      // Use Vercel Blob's client-upload pattern: file goes directly from the
-      // browser to blob storage, bypassing Vercel's 4.5 MB serverless body limit.
       const blob = await upload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/maps/upload-token",
         contentType: file.type,
       });
       const url = blob.url;
-      // Probe dimensions
       const dims = await new Promise<{ w: number; h: number }>((resolve, reject) => {
         const img = new window.Image();
         img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight });
@@ -68,31 +81,30 @@ export default function NewMapForm({ availableMaps = [] }: { availableMaps?: Ava
       setError(t("nameRequired"));
       return;
     }
-    if (!image) {
-      setError(t("imageRequired"));
-      return;
-    }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/maps", {
-        method: "POST",
+      const body: Record<string, unknown> = {
+        name: name.trim(),
+        beschreibung: beschreibung.trim() || null,
+        parentMapId: parentMapId || null,
+      };
+      if (image) {
+        body.imageUrl = image.url;
+        body.imageWidth = image.width;
+        body.imageHeight = image.height;
+      }
+      const res = await fetch(`/api/maps/${mapId}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: name.trim(),
-          beschreibung: beschreibung.trim() || null,
-          imageUrl: image.url,
-          imageWidth: image.width,
-          imageHeight: image.height,
-          parentMapId: parentMapId || null,
-        }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error ?? "Fehler beim Erstellen.");
+        setError(data.error ?? "Fehler beim Speichern.");
         setSubmitting(false);
         return;
       }
-      router.push(`/karten/${data.id}`);
+      router.push(`/karten/${mapId}`);
       router.refresh();
     } catch {
       setError("Netzwerkfehler.");
@@ -131,26 +143,26 @@ export default function NewMapForm({ availableMaps = [] }: { availableMaps?: Ava
         />
       </div>
 
-      {availableMaps.length > 0 && (
-        <div>
-          <label className={labelStyle} style={{ color: "var(--dnd-text-muted)" }}>
-            {t("parentMapLabel")}
-          </label>
-          <select
-            value={parentMapId}
-            onChange={(e) => setParentMapId(e.target.value)}
-            className="w-full px-4 py-2.5 text-base outline-none"
-            style={inputStyle}
-          >
-            <option value="">{t("parentMapNone")}</option>
-            {availableMaps.map((m) => (
+      <div>
+        <label className={labelStyle} style={{ color: "var(--dnd-text-muted)" }}>
+          {t("parentMapLabel")}
+        </label>
+        <select
+          value={parentMapId}
+          onChange={(e) => setParentMapId(e.target.value)}
+          className="w-full px-4 py-2.5 text-base outline-none"
+          style={inputStyle}
+        >
+          <option value="">{t("parentMapNone")}</option>
+          {availableMaps
+            .filter((m) => m.id !== mapId)
+            .map((m) => (
               <option key={m.id} value={m.id}>
                 {m.name}
               </option>
             ))}
-          </select>
-        </div>
-      )}
+        </select>
+      </div>
 
       <div style={{ border: "1px solid #2A2A2A", background: "#0D0D0D" }}>
         <div
@@ -161,18 +173,21 @@ export default function NewMapForm({ availableMaps = [] }: { availableMaps?: Ava
             className="font-cinzel text-xs tracking-[0.15em] uppercase"
             style={{ color: "var(--dnd-heading)" }}
           >
-            {t("imageLabel")} <span style={{ color: "var(--dnd-red)" }}>*</span>
+            {t("replaceImage")}
           </span>
         </div>
         <div className="p-4 space-y-3">
-          {image && (
-            <div
-              className="relative w-full overflow-hidden"
-              style={{ aspectRatio: "16 / 9", border: "1px solid #2A2A2A" }}
-            >
-              <Image src={image.url} alt="Vorschau" fill className="object-contain" />
-            </div>
-          )}
+          <div
+            className="relative w-full overflow-hidden"
+            style={{ aspectRatio: "16 / 9", border: "1px solid #2A2A2A" }}
+          >
+            <Image
+              src={image?.url ?? initialImageUrl}
+              alt="Vorschau"
+              fill
+              className="object-contain"
+            />
+          </div>
           <input
             type="file"
             ref={fileInputRef}
@@ -192,8 +207,18 @@ export default function NewMapForm({ availableMaps = [] }: { availableMaps?: Ava
             {uploading ? tCommon("loading") : t("uploadImage")}
           </button>
           {image && (
-            <p className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
-              {image.width} × {image.height}
+            <>
+              <p className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
+                {image.width} × {image.height}
+              </p>
+              <p className="text-xs" style={{ color: "#F0C040" }}>
+                {t("replaceImageHint")}
+              </p>
+            </>
+          )}
+          {!image && (
+            <p className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>
+              {t("keepImageHint")}
             </p>
           )}
           {uploadError && (
@@ -215,10 +240,10 @@ export default function NewMapForm({ availableMaps = [] }: { availableMaps?: Ava
 
       <div className="flex items-center gap-3">
         <button type="submit" disabled={submitting} className="ddb-cta">
-          {submitting ? t("creating") : t("createButton")}
+          {submitting ? t("creating") : t("save")}
         </button>
         <Link
-          href="/karten"
+          href={`/karten/${mapId}`}
           className="font-cinzel text-xs tracking-widest uppercase"
           style={{ color: "var(--dnd-text-muted)" }}
         >

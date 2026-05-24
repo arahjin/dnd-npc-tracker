@@ -292,28 +292,39 @@ model Map {
   imageUrl     String
   imageWidth   Int
   imageHeight  Int
+  parentMapId  String?
+  parentMap    Map?            @relation("MapHierarchy", fields: [parentMapId], references: [id], onDelete: SetNull)
+  childMaps    Map[]           @relation("MapHierarchy")
   erstellerId  String?
   ersteller    User?           @relation("erstellteMaps", fields: [erstellerId], references: [id], onDelete: SetNull)
   placements   MapPlacement[]
+  linkedFrom   MapPlacement[]  @relation("PlacementLinkedMap")
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 
   @@index([kampagneId])
   @@index([erstellerId])
+  @@index([parentMapId])
 }
 
 model MapPlacement {
-  id         String   @id @default(cuid())
-  mapId      String
-  map        Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
-  locationId String
-  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  x          Float
-  y          Float
-  createdAt  DateTime @default(now())
+  id          String   @id @default(cuid())
+  mapId       String
+  map         Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  locationId  String
+  location    Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  x           Float
+  y           Float
+  shape       Json?
+  color       String?
+  icon        String?
+  linkedMapId String?
+  linkedMap   Map?     @relation("PlacementLinkedMap", fields: [linkedMapId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
 
   @@index([mapId])
   @@index([locationId])
+  @@index([linkedMapId])
 }
 
 // ─── Journal ─────────────────────────────────────────────

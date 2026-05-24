@@ -17,6 +17,7 @@ export async function GET() {
       imageUrl: true,
       imageWidth: true,
       imageHeight: true,
+      parentMapId: true,
       createdAt: true,
       _count: { select: { placements: true } },
     },
@@ -42,6 +43,7 @@ export async function POST(req: NextRequest) {
     imageUrl?: unknown;
     imageWidth?: unknown;
     imageHeight?: unknown;
+    parentMapId?: unknown;
   };
 
   const name = typeof b.name === "string" ? b.name.trim() : "";
@@ -70,6 +72,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Ungültige Bildgröße." }, { status: 400 });
   }
 
+  let parentMapId: string | null = null;
+  if (b.parentMapId !== undefined && b.parentMapId !== null && b.parentMapId !== "") {
+    if (typeof b.parentMapId !== "string") {
+      return NextResponse.json({ error: "Ungültige Parent-Karte." }, { status: 400 });
+    }
+    const parent = await prisma.map.findFirst({
+      where: { id: b.parentMapId, kampagneId: ctx.kampagneId },
+      select: { id: true },
+    });
+    if (!parent) return NextResponse.json({ error: "Parent-Karte nicht gefunden." }, { status: 400 });
+    parentMapId = b.parentMapId;
+  }
+
   const created = await prisma.map.create({
     data: {
       kampagneId: ctx.kampagneId,
@@ -79,6 +94,7 @@ export async function POST(req: NextRequest) {
       imageUrl,
       imageWidth: Math.round(imageWidth),
       imageHeight: Math.round(imageHeight),
+      parentMapId,
     },
   });
 

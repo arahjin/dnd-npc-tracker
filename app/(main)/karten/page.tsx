@@ -10,7 +10,7 @@ export default async function KartenPage() {
   const t = await getTranslations("karten");
 
   const maps = await prisma.map.findMany({
-    where: { kampagneId: ctx.kampagneId },
+    where: { kampagneId: ctx.kampagneId, parentMapId: null },
     orderBy: { createdAt: "desc" },
     select: {
       id: true,
