@@ -47,6 +47,7 @@ export default function MobileNav({ userName, userRole, isDM, kampagneData, init
     { href: "/npc",            label: tNav("npcs"),           key: "npcs" },
     { href: "/organisationen", label: tNav("organisationen"), key: "organisationen" },
     { href: "/locations",      label: tNav("locations"),      key: "locations" },
+    { href: "/karten",         label: tNav("karten"),         key: "karten" },
     { href: "/charaktere",     label: tNav("charaktere"),     key: "charaktere" },
     { href: "/geschichte",     label: tNav("geschichte"),     key: "geschichte" },
     { href: "/tagebuch",       label: tNav("tagebuch"),       key: "tagebuch" },

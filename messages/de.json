@@ -7,7 +7,8 @@
     "charaktere": "Charaktere",
     "geschichte": "Geschichte",
     "tagebuch": "Tagebuch",
-    "quests": "Quests"
+    "quests": "Quests",
+    "karten": "Karten"
   },
   "dashboard": {
     "subtitle": "Kampagnen-Übersicht",
@@ -89,7 +90,8 @@
     "quests": "Quests werden geladen",
     "tagebuch": "Tagebuch wird geladen",
     "geschichte": "Geschichte wird geladen",
-    "suche": "Suche läuft"
+    "suche": "Suche läuft",
+    "karten": "Karten werden geladen"
   },
   "image": {
     "urlLabel": "Bild-URL (optional)",
@@ -700,6 +702,34 @@
     "adminsHintLink": "Website-Einstellungen",
     "adminsHintSuffix": "bearbeiten.",
     "contactHeading": "Verantwortliche Stelle — Kontakt"
+  },
+  "karten": {
+    "title": "Karten",
+    "empty": "Noch keine Karten",
+    "emptyDesc": "Lade die Karte deiner Welt hoch und platziere Locations darauf.",
+    "uploadButton": "+ Karte hochladen",
+    "back": "← Karten",
+    "countSingle": "Punkt",
+    "countPlural": "Punkte",
+    "countSingleMap": "Karte",
+    "countPluralMaps": "Karten",
+    "editMode": "Bearbeiten",
+    "viewMode": "Ansicht",
+    "placePointMode": "Punkt setzen",
+    "selectLocation": "— Location wählen —",
+    "removePlacement": "Entfernen",
+    "viewDetails": "Details öffnen →",
+    "nameLabel": "Name",
+    "namePlaceholder": "z.B. Königreich Valoria",
+    "descLabel": "Beschreibung",
+    "descPlaceholder": "Kurze Beschreibung der Karte (optional)",
+    "imageLabel": "Kartenbild",
+    "uploadImage": "↑ Bild wählen",
+    "creating": "Wird erstellt…",
+    "createButton": "Karte erstellen",
+    "cancel": "Abbrechen",
+    "nameRequired": "Name ist erforderlich.",
+    "imageRequired": "Bitte lade ein Kartenbild hoch."
   },
   "impressum": {
     "title": "Impressum",

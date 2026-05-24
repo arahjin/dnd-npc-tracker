@@ -13,6 +13,7 @@ export default function NavLinks() {
     { href: "/npc",            label: t("npcs"),           prefix: "/npc" },
     { href: "/organisationen", label: t("organisationen"), prefix: "/organisationen" },
     { href: "/locations",      label: t("locations"),      prefix: "/locations" },
+    { href: "/karten",         label: t("karten"),         prefix: "/karten" },
     { href: "/charaktere",     label: t("charaktere"),     prefix: "/charaktere" },
     { href: "/geschichte",     label: t("geschichte"),     prefix: "/geschichte" },
     { href: "/tagebuch",       label: t("tagebuch"),       prefix: "/tagebuch" },

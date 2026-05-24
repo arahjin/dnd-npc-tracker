@@ -7,7 +7,8 @@
     "charaktere": "Characters",
     "geschichte": "History",
     "tagebuch": "Journal",
-    "quests": "Quests"
+    "quests": "Quests",
+    "karten": "Maps"
   },
   "dashboard": {
     "subtitle": "Campaign Overview",
@@ -89,7 +90,8 @@
     "quests": "Loading quests",
     "tagebuch": "Loading journal",
     "geschichte": "Loading history",
-    "suche": "Searching"
+    "suche": "Searching",
+    "karten": "Loading maps"
   },
   "image": {
     "urlLabel": "Image URL (optional)",
@@ -700,6 +702,34 @@
     "adminsHintLink": "Site Settings",
     "adminsHintSuffix": ".",
     "contactHeading": "Responsible Party — Contact"
+  },
+  "karten": {
+    "title": "Maps",
+    "empty": "No maps yet",
+    "emptyDesc": "Upload your world map and place locations on it.",
+    "uploadButton": "+ Upload Map",
+    "back": "← Maps",
+    "countSingle": "Point",
+    "countPlural": "Points",
+    "countSingleMap": "Map",
+    "countPluralMaps": "Maps",
+    "editMode": "Edit",
+    "viewMode": "View",
+    "placePointMode": "Place point",
+    "selectLocation": "— Select location —",
+    "removePlacement": "Remove",
+    "viewDetails": "Open details →",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Kingdom of Valoria",
+    "descLabel": "Description",
+    "descPlaceholder": "Short description of the map (optional)",
+    "imageLabel": "Map image",
+    "uploadImage": "↑ Choose file",
+    "creating": "Creating…",
+    "createButton": "Create map",
+    "cancel": "Cancel",
+    "nameRequired": "Name is required.",
+    "imageRequired": "Please upload a map image."
   },
   "impressum": {
     "title": "Legal Notice",

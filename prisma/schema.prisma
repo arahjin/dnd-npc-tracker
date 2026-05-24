@@ -50,6 +50,7 @@ model User {
   bildGenerierungen       BildGenerierung[]
   rateLimitEvents         RateLimitEvent[]
   erstellteQuests         Quest[]        @relation("erstellteQuests")
+  kartenErstellt          Map[]          @relation("erstellteMaps")
 }
 
 // Tracks DALL-E image generation per user for rate limiting
@@ -118,6 +119,7 @@ model Kampagne {
   eintraege      JournalEntry[]
   invites        Invite[]
   quests         Quest[]
+  karten         Map[]
 }
 
 model KampagneMitglied {
@@ -273,9 +275,45 @@ model Location {
   organisationen Organisation[]
   charaktere     Charakter[]
   quests         QuestLocation[]
+  mapPlacements  MapPlacement[]
 
   @@index([kampagneId])
   @@index([erstellerId])
+}
+
+// ─── Maps ────────────────────────────────────────────────
+
+model Map {
+  id           String          @id @default(cuid())
+  kampagneId   String
+  kampagne     Kampagne        @relation(fields: [kampagneId], references: [id], onDelete: Cascade)
+  name         String
+  beschreibung String?
+  imageUrl     String
+  imageWidth   Int
+  imageHeight  Int
+  erstellerId  String?
+  ersteller    User?           @relation("erstellteMaps", fields: [erstellerId], references: [id], onDelete: SetNull)
+  placements   MapPlacement[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([kampagneId])
+  @@index([erstellerId])
+}
+
+model MapPlacement {
+  id         String   @id @default(cuid())
+  mapId      String
+  map        Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  locationId String
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  x          Float
+  y          Float
+  createdAt  DateTime @default(now())
+
+  @@index([mapId])
+  @@index([locationId])
 }
 
 // ─── Journal ─────────────────────────────────────────────
