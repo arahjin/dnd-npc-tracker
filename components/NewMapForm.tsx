@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { upload } from "@vercel/blob/client";
 
 const inputStyle: React.CSSProperties = {
   background: "#0A0A0A",
@@ -34,16 +35,14 @@ export default function NewMapForm() {
     setUploadError("");
     setUploading(true);
     try {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/upload-image", { method: "POST", body: fd });
-      const data = await res.json();
-      if (!res.ok) {
-        setUploadError(data.error ?? "Upload fehlgeschlagen.");
-        setUploading(false);
-        return;
-      }
-      const url: string = data.url;
+      // Use Vercel Blob's client-upload pattern: file goes directly from the
+      // browser to blob storage, bypassing Vercel's 4.5 MB serverless body limit.
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/maps/upload-token",
+        contentType: file.type,
+      });
+      const url = blob.url;
       // Probe dimensions
       const dims = await new Promise<{ w: number; h: number }>((resolve, reject) => {
         const img = new window.Image();
