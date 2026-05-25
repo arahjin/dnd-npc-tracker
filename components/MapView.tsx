@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import L from "leaflet";
+import "@geoman-io/leaflet-geoman-free";
+import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import {
   MapContainer,
   ImageOverlay,
@@ -50,9 +52,35 @@ type Props = {
   availableMaps?: AvailableMap[];
 };
 
-type DrawMode = null | "point" | "polygon" | "circle" | "rect" | "edit" | "delete";
+type DrawMode =
+  | null
+  | "point"
+  | "polygon"
+  | "circle"
+  | "rect"
+  | "edit"
+  | "delete"
+  | "geo";
 
 const DEFAULT_COLOR = "#C9A84C";
+
+// ── Geoman augmentation (typed loosely — Geoman doesn't ship strict types) ──
+type PMLayer = L.Layer & {
+  pm?: {
+    enable?: (opts?: Record<string, unknown>) => void;
+    disable?: () => void;
+  };
+};
+type PMMap = L.Map & {
+  pm?: {
+    addControls?: (opts: Record<string, unknown>) => void;
+    setGlobalOptions?: (opts: Record<string, unknown>) => void;
+    enableGlobalEditMode?: (opts?: Record<string, unknown>) => void;
+    disableGlobalEditMode?: () => void;
+    enableGlobalDragMode?: () => void;
+    disableGlobalDragMode?: () => void;
+  };
+};
 
 function pinIcon(opts: { color: string; icon?: string | null; privateLook: boolean }) {
   const color = opts.color || (opts.privateLook ? "#C84040" : DEFAULT_COLOR);
@@ -129,6 +157,68 @@ function MapEventHandler({ onEvent }: { onEvent: (e: DrawEvent) => void }) {
   return null;
 }
 
+/** Activates/deactivates Geoman global edit mode based on `active`. */
+function GeomanController({ active }: { active: boolean }) {
+  const map = useMap() as PMMap;
+  useEffect(() => {
+    if (!map.pm) return;
+    // Hide Geoman's built-in toolbar — we use our own buttons + programmatic API
+    try {
+      map.pm.addControls?.({
+        position: "topleft",
+        drawCircle: false,
+        drawMarker: false,
+        drawPolygon: false,
+        drawPolyline: false,
+        drawRectangle: false,
+        drawCircleMarker: false,
+        drawText: false,
+        editMode: false,
+        dragMode: false,
+        cutPolygon: false,
+        removalMode: false,
+        rotateMode: false,
+      });
+    } catch {
+      /* no-op */
+    }
+    map.pm.setGlobalOptions?.({
+      allowSelfIntersection: false,
+      snappable: false,
+      preventMarkerRemoval: true,
+    });
+    return () => {
+      try {
+        map.pm?.disableGlobalEditMode?.();
+        map.pm?.disableGlobalDragMode?.();
+      } catch {
+        /* no-op */
+      }
+    };
+  }, [map]);
+
+  useEffect(() => {
+    if (!map.pm) return;
+    if (active) {
+      try {
+        map.pm.enableGlobalEditMode?.({ allowSelfIntersection: false });
+        map.pm.enableGlobalDragMode?.();
+      } catch {
+        /* no-op */
+      }
+    } else {
+      try {
+        map.pm.disableGlobalEditMode?.();
+        map.pm.disableGlobalDragMode?.();
+      } catch {
+        /* no-op */
+      }
+    }
+  }, [map, active]);
+
+  return null;
+}
+
 export default function MapView({
   mapId,
   imageUrl,
@@ -156,6 +246,54 @@ export default function MapView({
   const [draftRect, setDraftRect] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
   const [draftCircle, setDraftCircle] = useState<{ x: number; y: number; r: number } | null>(null);
   const dragStartRef = useRef<{ x: number; y: number } | null>(null);
+
+  // Track layers per placement (for Geoman edit handlers)
+  const layerRefs = useRef<Map<string, L.Layer>>(new Map());
+
+  // ── Filters (Feature C) ───────────────────────────────────────────────────
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [filterArts, setFilterArts] = useState<Set<string> | null>(null); // null = all
+  const [filterIcons, setFilterIcons] = useState<Set<string> | null>(null); // null = all
+  const [filterVisibility, setFilterVisibility] = useState<Set<string> | null>(null); // null = all (only used for DM)
+  const [filterSearch, setFilterSearch] = useState("");
+
+  const availableArts = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of placements) {
+      if (p.location.art) set.add(p.location.art);
+    }
+    return Array.from(set).sort();
+  }, [placements]);
+
+  // "none" represents placements without an icon
+  const availableIconKeys = useMemo(() => {
+    const set = new Set<string>();
+    let hasNone = false;
+    for (const p of placements) {
+      if (p.icon && PIN_ICONS[p.icon]) set.add(p.icon);
+      else hasNone = true;
+    }
+    const keys = Array.from(set).sort();
+    if (hasNone) keys.push("__none__");
+    return keys;
+  }, [placements]);
+
+  const filteredPlacements = useMemo(() => {
+    const q = filterSearch.trim().toLowerCase();
+    return placements.filter((p) => {
+      if (filterArts && !filterArts.has(p.location.art ?? "")) return false;
+      if (filterIcons) {
+        const key = p.icon && PIN_ICONS[p.icon] ? p.icon : "__none__";
+        if (!filterIcons.has(key)) return false;
+      }
+      if (filterVisibility && canEdit) {
+        const v = p.location.sichtbarkeit === "public" ? "public" : "privat";
+        if (!filterVisibility.has(v)) return false;
+      }
+      if (q && !p.location.name.toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }, [placements, filterArts, filterIcons, filterVisibility, filterSearch, canEdit]);
 
   const bounds = useMemo<L.LatLngBoundsExpression>(
     () => [
@@ -234,29 +372,32 @@ export default function MapView({
     }
   }
 
-  async function putPlacement(id: string, payload: Record<string, unknown>) {
-    setBusy(true);
-    setError("");
-    try {
-      const res = await fetch(`/api/maps/${mapId}/placements/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Fehler beim Speichern.");
+  const putPlacement = useCallback(
+    async (id: string, payload: Record<string, unknown>) => {
+      setBusy(true);
+      setError("");
+      try {
+        const res = await fetch(`/api/maps/${mapId}/placements/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.error ?? "Fehler beim Speichern.");
+          return null;
+        }
+        setPlacements((prev) => prev.map((p) => (p.id === id ? (data as MapPlacement) : p)));
+        return data as MapPlacement;
+      } catch {
+        setError("Netzwerkfehler.");
         return null;
+      } finally {
+        setBusy(false);
       }
-      setPlacements((prev) => prev.map((p) => (p.id === id ? (data as MapPlacement) : p)));
-      return data as MapPlacement;
-    } catch {
-      setError("Netzwerkfehler.");
-      return null;
-    } finally {
-      setBusy(false);
-    }
-  }
+    },
+    [mapId],
+  );
 
   async function handleRemove(placementId: string) {
     if (!canEdit || busy) return;
@@ -373,6 +514,86 @@ export default function MapView({
     }
   }
 
+  // ── Geoman edit handlers ──────────────────────────────────────────────────
+
+  /** Convert a Leaflet layer (post-Geoman-edit) back to our normalized MapShape. */
+  const layerToShape = useCallback(
+    (layer: L.Layer, originalType: MapShape["type"]): MapShape | null => {
+      if (originalType === "point" && layer instanceof L.Marker) {
+        const { lat, lng } = layer.getLatLng();
+        const { x, y } = llToNorm(lat, lng);
+        return { type: "point", x: clamp01(x), y: clamp01(y) };
+      }
+      if (originalType === "polygon" && layer instanceof L.Polygon && !(layer instanceof L.Rectangle)) {
+        const rings = layer.getLatLngs() as L.LatLng[] | L.LatLng[][];
+        // Support nested / single ring
+        const ring = (Array.isArray(rings[0]) ? (rings[0] as L.LatLng[]) : (rings as L.LatLng[])) ?? [];
+        if (ring.length < 3) return null;
+        const points: number[][] = ring.map((ll) => {
+          const { x, y } = llToNorm(ll.lat, ll.lng);
+          return [clamp01(x), clamp01(y)];
+        });
+        return { type: "polygon", points };
+      }
+      if (originalType === "circle" && layer instanceof L.Circle) {
+        const c = layer.getLatLng();
+        const rMeters = layer.getRadius();
+        const { x, y } = llToNorm(c.lat, c.lng);
+        const r = rMeters / minSide;
+        return { type: "circle", x: clamp01(x), y: clamp01(y), r: Math.max(0.001, Math.min(r, 2)) };
+      }
+      if (originalType === "rect" && layer instanceof L.Rectangle) {
+        const b = layer.getBounds();
+        const sw = b.getSouthWest();
+        const ne = b.getNorthEast();
+        const { x: x0, y: y0 } = llToNorm(sw.lat, ne.lng); // sw lat + ne lng? We want lower-left in our coords:
+        // Our normalized rect uses (x, y) = top-left in image coords (y flipped).
+        // In leaflet image overlay: north-east has lat=imageHeight, lng=imageWidth.
+        // top-left of rect in image-coords = (min lng, max lat) → use NW corner.
+        const nw = L.latLng(ne.lat, sw.lng);
+        const seCorner = L.latLng(sw.lat, ne.lng);
+        const tl = llToNorm(nw.lat, nw.lng);
+        const br = llToNorm(seCorner.lat, seCorner.lng);
+        const xN = clamp01(Math.min(tl.x, br.x));
+        const yN = clamp01(Math.min(tl.y, br.y));
+        const wN = Math.max(0.001, Math.min(1 - xN, Math.abs(br.x - tl.x)));
+        const hN = Math.max(0.001, Math.min(1 - yN, Math.abs(br.y - tl.y)));
+        return { type: "rect", x: xN, y: yN, w: wN, h: hN };
+        // (x0/y0 kept above to satisfy potential unused-var if any — but we use only computed)
+        void x0; void y0;
+      }
+      return null;
+    },
+    [llToNorm, minSide],
+  );
+
+  // Attach Geoman event listeners when a layer ref is set (only in geo-edit mode).
+  const attachGeomanHandlers = useCallback(
+    (placement: MapPlacement, layer: L.Layer | null) => {
+      if (!layer) {
+        layerRefs.current.delete(placement.id);
+        return;
+      }
+      layerRefs.current.set(placement.id, layer);
+
+      const shapeType = (placement.shape?.type ?? "point") as MapShape["type"];
+      // Remove existing handlers, re-attach.
+      layer.off("pm:edit");
+      layer.off("pm:dragend");
+      layer.off("pm:markerdragend");
+
+      const handler = () => {
+        const shape = layerToShape(layer, shapeType);
+        if (!shape) return;
+        void putPlacement(placement.id, { shape });
+      };
+      layer.on("pm:edit", handler);
+      layer.on("pm:dragend", handler);
+      layer.on("pm:markerdragend", handler);
+    },
+    [layerToShape, putPlacement],
+  );
+
   // ── Rendering helpers ────────────────────────────────────────────────────
 
   function placementClick(p: MapPlacement) {
@@ -382,6 +603,10 @@ export default function MapView({
     }
     if (editMode && drawMode === "edit") {
       setEditingPlacementId(p.id);
+      return;
+    }
+    if (editMode && drawMode === "geo") {
+      // ignore clicks in geometry-edit mode (Geoman handles interactions)
       return;
     }
     if (p.linkedMapId) {
@@ -397,6 +622,8 @@ export default function MapView({
     const isFocused = focusedPlacementId === p.id;
     const focusedStyle = isFocused ? { ...fillOpts, weight: 3, fillOpacity: 0.4 } : fillOpts;
     const handleClick = () => placementClick(p);
+    const refCb = (layer: L.Layer | null) => attachGeomanHandlers(p, layer);
+    const popupBlocked = editMode && (drawMode === "edit" || drawMode === "delete" || drawMode === "geo");
 
     if (shape.type === "point") {
       const [lat, lng] = normToLL(shape.x, shape.y);
@@ -406,8 +633,9 @@ export default function MapView({
           position={[lat, lng]}
           icon={pinIcon({ color, icon: p.icon, privateLook })}
           eventHandlers={{ click: handleClick }}
+          ref={refCb}
         >
-          {!p.linkedMapId && (!editMode || (drawMode !== "edit" && drawMode !== "delete")) && (
+          {!p.linkedMapId && !popupBlocked && (
             <Popup>{renderPopupBody(p)}</Popup>
           )}
         </Marker>
@@ -421,8 +649,9 @@ export default function MapView({
           positions={positions}
           pathOptions={focusedStyle}
           eventHandlers={{ click: handleClick }}
+          ref={refCb}
         >
-          {!p.linkedMapId && (!editMode || (drawMode !== "edit" && drawMode !== "delete")) && (
+          {!p.linkedMapId && !popupBlocked && (
             <Popup>{renderPopupBody(p)}</Popup>
           )}
         </Polygon>
@@ -438,8 +667,9 @@ export default function MapView({
           radius={rPx}
           pathOptions={focusedStyle}
           eventHandlers={{ click: handleClick }}
+          ref={refCb}
         >
-          {!p.linkedMapId && (!editMode || (drawMode !== "edit" && drawMode !== "delete")) && (
+          {!p.linkedMapId && !popupBlocked && (
             <Popup>{renderPopupBody(p)}</Popup>
           )}
         </Circle>
@@ -454,8 +684,9 @@ export default function MapView({
           bounds={[sw, ne]}
           pathOptions={focusedStyle}
           eventHandlers={{ click: handleClick }}
+          ref={refCb}
         >
-          {!p.linkedMapId && (!editMode || (drawMode !== "edit" && drawMode !== "delete")) && (
+          {!p.linkedMapId && !popupBlocked && (
             <Popup>{renderPopupBody(p)}</Popup>
           )}
         </Rectangle>
@@ -497,13 +728,41 @@ export default function MapView({
     ? placements.find((p) => p.id === editingPlacementId) ?? null
     : null;
 
-  const cursor = drawMode === "point" || drawMode === "polygon"
-    ? "crosshair"
-    : drawMode === "circle" || drawMode === "rect"
+  const cursor =
+    drawMode === "point" || drawMode === "polygon"
       ? "crosshair"
-      : drawMode === "delete"
-        ? "not-allowed"
-        : undefined;
+      : drawMode === "circle" || drawMode === "rect"
+        ? "crosshair"
+        : drawMode === "delete"
+          ? "not-allowed"
+          : undefined;
+
+  // helper toggles for filter set state
+  function toggleInSet(
+    current: Set<string> | null,
+    all: string[],
+    value: string,
+  ): Set<string> | null {
+    const base = current ?? new Set(all);
+    const next = new Set(base);
+    if (next.has(value)) next.delete(value);
+    else next.add(value);
+    // If all selected → represent as null (default)
+    if (next.size === all.length) return null;
+    return next;
+  }
+
+  function isChecked(current: Set<string> | null, value: string): boolean {
+    if (current === null) return true;
+    return current.has(value);
+  }
+
+  function visibleVisibilities(): string[] {
+    return ["public", "privat"];
+  }
+
+  const totalPlacements = placements.length;
+  const visibleCount = filteredPlacements.length;
 
   return (
     <div>
@@ -541,19 +800,166 @@ export default function MapView({
                   </option>
                 ))}
               </select>
-              <ToolbarButton active={drawMode === "point"} onClick={() => setDrawMode(drawMode === "point" ? null : "point")} title={t("drawPoint")}>📍</ToolbarButton>
-              <ToolbarButton active={drawMode === "polygon"} onClick={() => setDrawMode(drawMode === "polygon" ? null : "polygon")} title={t("drawPolygon")}>⬢</ToolbarButton>
-              <ToolbarButton active={drawMode === "circle"} onClick={() => setDrawMode(drawMode === "circle" ? null : "circle")} title={t("drawCircle")}>⭕</ToolbarButton>
-              <ToolbarButton active={drawMode === "rect"} onClick={() => setDrawMode(drawMode === "rect" ? null : "rect")} title={t("drawRect")}>▭</ToolbarButton>
-              <ToolbarButton active={drawMode === "edit"} onClick={() => setDrawMode(drawMode === "edit" ? null : "edit")} title={t("editShape")}>✏️</ToolbarButton>
-              <ToolbarButton active={drawMode === "delete"} onClick={() => setDrawMode(drawMode === "delete" ? null : "delete")} title={t("deleteShape")}>🗑️</ToolbarButton>
-              {drawMode && (
+              <ToolbarButton
+                active={drawMode === "point"}
+                onClick={() => setDrawMode(drawMode === "point" ? null : "point")}
+                title={t("drawPoint")}
+              >
+                📍
+              </ToolbarButton>
+              <ToolbarButton
+                active={drawMode === "polygon"}
+                onClick={() => setDrawMode(drawMode === "polygon" ? null : "polygon")}
+                title={t("drawPolygon")}
+              >
+                ⬢
+              </ToolbarButton>
+              <ToolbarButton
+                active={drawMode === "circle"}
+                onClick={() => setDrawMode(drawMode === "circle" ? null : "circle")}
+                title={t("drawCircle")}
+              >
+                ⭕
+              </ToolbarButton>
+              <ToolbarButton
+                active={drawMode === "rect"}
+                onClick={() => setDrawMode(drawMode === "rect" ? null : "rect")}
+                title={t("drawRect")}
+              >
+                ▭
+              </ToolbarButton>
+              <ToolbarButton
+                active={drawMode === "edit"}
+                onClick={() => setDrawMode(drawMode === "edit" ? null : "edit")}
+                title={t("editShape")}
+              >
+                ✏️
+              </ToolbarButton>
+              <ToolbarButton
+                active={drawMode === "geo"}
+                onClick={() => setDrawMode(drawMode === "geo" ? null : "geo")}
+                title={t("editGeometry")}
+              >
+                🔧
+              </ToolbarButton>
+              <ToolbarButton
+                active={drawMode === "delete"}
+                onClick={() => setDrawMode(drawMode === "delete" ? null : "delete")}
+                title={t("deleteShape")}
+              >
+                🗑️
+              </ToolbarButton>
+              {drawMode === "geo" && (
+                <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
+                  {t("editGeometryHint")}
+                </span>
+              )}
+              {drawMode && drawMode !== "geo" && (
                 <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
                   {t("drawHint")}
                 </span>
               )}
             </>
           )}
+        </div>
+      )}
+
+      {/* Filter Bar (Feature C) */}
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setFilterOpen((v) => !v)}
+          className="font-cinzel text-sm px-3 py-2"
+          style={{
+            background: filterOpen ? "var(--dnd-gold)" : "var(--dnd-bg-card)",
+            border: "1px solid " + (filterOpen ? "var(--dnd-gold)" : "var(--dnd-border)"),
+            color: filterOpen ? "#1A1100" : "var(--dnd-text)",
+            cursor: "pointer",
+          }}
+        >
+          {t("filterToggle")}
+        </button>
+        <input
+          type="text"
+          value={filterSearch}
+          onChange={(e) => setFilterSearch(e.target.value)}
+          placeholder={t("filterSearch")}
+          className="font-cinzel text-sm px-3 py-2 outline-none tracking-wide"
+          style={{
+            background: "var(--dnd-bg-card)",
+            border: "1px solid var(--dnd-border)",
+            color: "var(--dnd-text)",
+            minWidth: 180,
+          }}
+        />
+        <span
+          className="font-cinzel text-xs"
+          style={{ color: "var(--dnd-text-muted)" }}
+        >
+          {t("filterShowing", { visible: visibleCount, total: totalPlacements })}
+        </span>
+      </div>
+
+      {filterOpen && (
+        <div
+          className="mb-3 p-3"
+          style={{
+            background: "var(--dnd-bg-card)",
+            border: "1px solid var(--dnd-border)",
+          }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* By Art */}
+            <FilterSection
+              title={t("filterByArt")}
+              all={availableArts}
+              current={filterArts}
+              onChange={setFilterArts}
+              onAll={() => setFilterArts(null)}
+              onNone={() => setFilterArts(new Set())}
+              renderLabel={(v) => v}
+              allLabel={t("filterShowAll")}
+              noneLabel={t("filterHideAll")}
+              isChecked={isChecked}
+              toggle={(val) => setFilterArts(toggleInSet(filterArts, availableArts, val))}
+            />
+            {/* By Icon */}
+            <FilterSection
+              title={t("filterByIcon")}
+              all={availableIconKeys}
+              current={filterIcons}
+              onChange={setFilterIcons}
+              onAll={() => setFilterIcons(null)}
+              onNone={() => setFilterIcons(new Set())}
+              renderLabel={(v) =>
+                v === "__none__"
+                  ? t("iconNone")
+                  : `${PIN_ICONS[v] ?? ""} ${t(`icon.${v}` as never)}`
+              }
+              allLabel={t("filterShowAll")}
+              noneLabel={t("filterHideAll")}
+              isChecked={isChecked}
+              toggle={(val) => setFilterIcons(toggleInSet(filterIcons, availableIconKeys, val))}
+            />
+            {/* By Visibility — DM only */}
+            {canEdit && (
+              <FilterSection
+                title={t("filterByVisibility")}
+                all={visibleVisibilities()}
+                current={filterVisibility}
+                onChange={setFilterVisibility}
+                onAll={() => setFilterVisibility(null)}
+                onNone={() => setFilterVisibility(new Set())}
+                renderLabel={(v) => (v === "public" ? t("visibilityPublic") : t("visibilityPrivate"))}
+                allLabel={t("filterShowAll")}
+                noneLabel={t("filterHideAll")}
+                isChecked={isChecked}
+                toggle={(val) =>
+                  setFilterVisibility(toggleInSet(filterVisibility, visibleVisibilities(), val))
+                }
+              />
+            )}
+          </div>
         </div>
       )}
 
@@ -589,9 +995,10 @@ export default function MapView({
           <FitBounds bounds={bounds} />
           <FocusOnPlacement focus={focusTarget} />
           <ImageOverlay url={imageUrl} bounds={bounds} />
-          {canEdit && editMode && <MapEventHandler onEvent={handleMapEvent} />}
+          {canEdit && editMode && drawMode !== "geo" && <MapEventHandler onEvent={handleMapEvent} />}
+          {canEdit && <GeomanController active={editMode && drawMode === "geo"} />}
 
-          {placements.map(renderPlacement)}
+          {filteredPlacements.map(renderPlacement)}
 
           {/* Drafts */}
           {polygonDraft.length > 0 && (
@@ -637,6 +1044,111 @@ export default function MapView({
           busy={busy}
         />
       )}
+
+    </div>
+  );
+}
+
+function clamp01(n: number): number {
+  if (!Number.isFinite(n)) return 0;
+  if (n < 0) return 0;
+  if (n > 1) return 1;
+  return n;
+}
+
+function FilterSection<T extends string>({
+  title,
+  all,
+  current,
+  onChange: _onChange,
+  onAll,
+  onNone,
+  renderLabel,
+  allLabel,
+  noneLabel,
+  isChecked,
+  toggle,
+}: {
+  title: string;
+  all: T[];
+  current: Set<string> | null;
+  onChange: (next: Set<string> | null) => void;
+  onAll: () => void;
+  onNone: () => void;
+  renderLabel: (val: T) => string;
+  allLabel: string;
+  noneLabel: string;
+  isChecked: (current: Set<string> | null, value: string) => boolean;
+  toggle: (val: T) => void;
+}) {
+  void _onChange;
+  if (all.length === 0) {
+    return (
+      <div>
+        <p
+          className="font-cinzel text-xs tracking-[0.2em] uppercase mb-2"
+          style={{ color: "var(--dnd-label)" }}
+        >
+          {title}
+        </p>
+        <p className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>
+          —
+        </p>
+      </div>
+    );
+  }
+  return (
+    <div>
+      <p
+        className="font-cinzel text-xs tracking-[0.2em] uppercase mb-2"
+        style={{ color: "var(--dnd-label)" }}
+      >
+        {title}
+      </p>
+      <div className="flex gap-2 mb-2">
+        <button
+          type="button"
+          onClick={onAll}
+          className="font-cinzel text-xs px-2 py-1"
+          style={{
+            background: "transparent",
+            border: "1px solid var(--dnd-border)",
+            color: "var(--dnd-text-muted)",
+            cursor: "pointer",
+          }}
+        >
+          {allLabel}
+        </button>
+        <button
+          type="button"
+          onClick={onNone}
+          className="font-cinzel text-xs px-2 py-1"
+          style={{
+            background: "transparent",
+            border: "1px solid var(--dnd-border)",
+            color: "var(--dnd-text-muted)",
+            cursor: "pointer",
+          }}
+        >
+          {noneLabel}
+        </button>
+      </div>
+      <div className="flex flex-col gap-1 max-h-44 overflow-y-auto">
+        {all.map((val) => (
+          <label
+            key={val}
+            className="font-cinzel text-xs flex items-center gap-2 cursor-pointer"
+            style={{ color: "var(--dnd-text)" }}
+          >
+            <input
+              type="checkbox"
+              checked={isChecked(current, val)}
+              onChange={() => toggle(val)}
+            />
+            <span>{renderLabel(val)}</span>
+          </label>
+        ))}
+      </div>
     </div>
   );
 }
@@ -798,7 +1310,7 @@ function PlacementEditDialog({
                   key={k}
                   type="button"
                   onClick={() => setIcon(k)}
-                  title={t(`icon.${k}`)}
+                  title={t(`icon.${k}` as never)}
                   style={{
                     padding: 6,
                     background: icon === k ? "var(--dnd-gold)" : "#0A0A0A",

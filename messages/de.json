@@ -776,7 +776,25 @@
       "magical": "Magisch",
       "temple": "Tempel",
       "inn": "Gasthaus"
-    }
+    },
+    "editGeometry": "Geometrie bearbeiten",
+    "editGeometryHint": "Klicke auf Punkte oder Linien, um sie zu verschieben.",
+    "filter": "Filter",
+    "filterByArt": "Nach Art",
+    "filterByIcon": "Nach Symbol",
+    "filterByVisibility": "Sichtbarkeit",
+    "filterSearch": "Name...",
+    "filterAll": "Alle",
+    "filterNone": "Keine",
+    "filterShowing": "{visible} von {total} {visible, plural, one {Punkt} other {Punkten}}",
+    "searchPlaceholder": "Karte suchen...",
+    "noSearchResults": "Keine Karten gefunden.",
+    "filterToggle": "Filter",
+    "filterShowAll": "Alle anzeigen",
+    "filterHideAll": "Alle ausblenden",
+    "iconNone": "Kein Symbol",
+    "visibilityPublic": "Öffentlich",
+    "visibilityPrivate": "Privat"
   },
   "impressum": {
     "title": "Impressum",

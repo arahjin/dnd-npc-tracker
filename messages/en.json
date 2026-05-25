@@ -776,7 +776,25 @@
       "magical": "Magical",
       "temple": "Temple",
       "inn": "Inn"
-    }
+    },
+    "editGeometry": "Edit geometry",
+    "editGeometryHint": "Click points or lines to move them.",
+    "filter": "Filter",
+    "filterByArt": "By type",
+    "filterByIcon": "By icon",
+    "filterByVisibility": "Visibility",
+    "filterSearch": "Name...",
+    "filterAll": "All",
+    "filterNone": "None",
+    "filterShowing": "{visible} of {total} {total, plural, one {point} other {points}}",
+    "searchPlaceholder": "Search maps...",
+    "noSearchResults": "No maps found.",
+    "filterToggle": "Filter",
+    "filterShowAll": "Show all",
+    "filterHideAll": "Hide all",
+    "iconNone": "No icon",
+    "visibilityPublic": "Public",
+    "visibilityPrivate": "Private"
   },
   "impressum": {
     "title": "Legal Notice",

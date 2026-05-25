@@ -3,7 +3,7 @@ import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { requireKampagne } from "@/lib/kampagne";
 import { stripMentions } from "@/lib/mentions";
-import { IconPerson, IconOrganisation, IconSword, IconDice, IconPin, IconSearch } from "@/components/Icons";
+import { IconPerson, IconOrganisation, IconSword, IconDice, IconPin, IconSearch, IconMap } from "@/components/Icons";
 
 function TagIcon({ typ }: { typ: string }) {
   const p = { size: 11 };
@@ -35,7 +35,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
     ? { kampagneId }
     : { kampagneId, OR: [{ typ: "GESCHICHTE" as const }, { AND: [{ typ: "TAGEBUCH" as const }, { userId }] }] };
 
-  const [directNpcs, directOrgs, directChars, locs, textEntries] = query
+  const [directNpcs, directOrgs, directChars, locs, textEntries, maps] = query
     ? await Promise.all([
         prisma.nPC.findMany({
           where: {
@@ -106,8 +106,19 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
           orderBy: { createdAt: "desc" },
           include: { user: { select: { id: true, name: true } }, tags: true },
         }),
+        prisma.map.findMany({
+          where: {
+            kampagneId,
+            OR: [
+              { name: { contains: query, mode: "insensitive" } },
+              { beschreibung: { contains: query, mode: "insensitive" } },
+            ],
+          },
+          orderBy: { name: "asc" },
+          select: { id: true, name: true, beschreibung: true, imageUrl: true },
+        }),
       ])
-    : [[], [], [], [], []];
+    : [[], [], [], [], [], []];
 
   // Merge NPCs/Orgs/Chars linked to matching Locations (via many-to-many relation)
   const locIds = locs.map((l) => l.id);
@@ -213,7 +224,7 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
     for (const c of extraChars) nameMap.set(c.id, { name: c.name, typ: "CHARAKTER" });
   }
 
-  const total = npcs.length + orgs.length + chars.length + allLocs.length + entries.length;
+  const total = npcs.length + orgs.length + chars.length + allLocs.length + entries.length + maps.length;
 
   return (
     <main className="min-h-screen" style={{ background: "var(--dnd-bg)" }}>
@@ -321,6 +332,26 @@ export default async function SuchePage({ searchParams }: { searchParams: Promis
                   <div className="flex-1 min-w-0">
                     <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{loc.name}</p>
                     {loc.art && <p className="text-xs" style={{ color: "var(--dnd-text-muted)" }}>{loc.art}</p>}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {maps.length > 0 && (
+          <section className="mb-10">
+            <SectionHeader label="Karten" count={maps.length} />
+            <div className="space-y-2">
+              {maps.map((m) => (
+                <Link key={m.id} href={`/karten/${m.id}`} className="flex items-center gap-4 p-3 transition-all group"
+                  style={{ background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)" }}>
+                  <div className="relative w-10 h-10 shrink-0 overflow-hidden" style={{ background: "#0A0A0A" }}>
+                    {m.imageUrl ? <Image src={m.imageUrl} alt={m.name} fill sizes="40px" className="object-cover" /> : <div className="flex h-full items-center justify-center"><IconMap size={22} color="var(--dnd-text-muted)" /></div>}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-cinzel text-sm font-semibold truncate" style={{ color: "var(--dnd-heading)" }}>{m.name}</p>
+                    {m.beschreibung && <p className="text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>{m.beschreibung}</p>}
                   </div>
                 </Link>
               ))}
