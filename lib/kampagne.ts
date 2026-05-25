@@ -14,8 +14,12 @@ export type KampagneCtx = {
 /** Use in Server Components / Pages. Redirects to /kampagnen if no valid campaign. */
 export async function requireKampagne(): Promise<KampagneCtx> {
   const session = await auth();
-  const userId = session!.user.id;
-  const isAdmin = session!.user.role === "ADMIN";
+  // Middleware is supposed to gate unauthenticated traffic, but a stale cookie,
+  // an expired JWT, or any small gap can still land us here without a session —
+  // bail out to login instead of throwing "Cannot read properties of null".
+  if (!session?.user?.id) redirect("/login");
+  const userId = session.user.id;
+  const isAdmin = session.user.role === "ADMIN";
 
   const cookieStore = await cookies();
   const kampagneId = cookieStore.get("aktiveKampagne")?.value ?? null;
