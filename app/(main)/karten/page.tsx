@@ -5,6 +5,10 @@ import { requireKampagne } from "@/lib/kampagne";
 import { IconMap } from "@/components/Icons";
 import KartenList, { type KartenListItem } from "@/components/KartenList";
 
+// Always render fresh: a player can otherwise see a stale list when the DM
+// uploads a new map.
+export const dynamic = "force-dynamic";
+
 export default async function KartenPage() {
   const ctx = await requireKampagne();
   const t = await getTranslations("karten");

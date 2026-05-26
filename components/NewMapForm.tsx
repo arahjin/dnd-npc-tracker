@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { upload } from "@vercel/blob/client";
+import imageCompression from "browser-image-compression";
 
 const inputStyle: React.CSSProperties = {
   background: "#0A0A0A",
@@ -38,12 +39,24 @@ export default function NewMapForm({ availableMaps = [] }: { availableMaps?: Ava
     setUploadError("");
     setUploading(true);
     try {
+      // Client-side compression first: keeps storage/bandwidth modest and makes
+      // the map render fast even on phones. Skip for GIFs (animation would break).
+      const processed = file.type !== "image/gif"
+        ? await imageCompression(file, {
+            maxSizeMB: 8,
+            maxWidthOrHeight: 4096,
+            useWebWorker: true,
+            initialQuality: 0.85,
+            fileType: file.type === "image/png" ? "image/png" : "image/jpeg",
+          })
+        : file;
+
       // Use Vercel Blob's client-upload pattern: file goes directly from the
       // browser to blob storage, bypassing Vercel's 4.5 MB serverless body limit.
-      const blob = await upload(file.name, file, {
+      const blob = await upload(processed.name || file.name, processed, {
         access: "public",
         handleUploadUrl: "/api/maps/upload-token",
-        contentType: file.type,
+        contentType: processed.type,
       });
       const url = blob.url;
       // Probe dimensions

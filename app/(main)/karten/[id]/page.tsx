@@ -7,6 +7,9 @@ import MapViewLoader from "@/components/MapViewLoader";
 import type { MapPlacement } from "@/components/MapView";
 import type { MapShape } from "@/lib/mapShapes";
 
+// Always render fresh so newly added placements show up for everyone.
+export const dynamic = "force-dynamic";
+
 export default async function KarteDetailPage({
   params,
 }: {

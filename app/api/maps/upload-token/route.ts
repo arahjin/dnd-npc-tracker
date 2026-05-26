@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       onBeforeGenerateToken: async () => ({
         allowedContentTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
         addRandomSuffix: true,
-        maximumSizeInBytes: 25 * 1024 * 1024, // 25 MB
+        maximumSizeInBytes: 50 * 1024 * 1024, // 50 MB — client compresses oversized images before upload
         tokenPayload: JSON.stringify({ userId: session.user!.id, kampagneId: ctx.kampagneId }),
       }),
       onUploadCompleted: async () => {
