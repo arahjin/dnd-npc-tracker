@@ -723,6 +723,7 @@
     "targetTypeLocation": "📍 Location",
     "targetTypeQuest": "📜 Quest",
     "filterByType": "By type",
+    "imageLoadError": "Could not load the map image. URL:",
     "removePlacement": "Remove",
     "viewDetails": "Open details →",
     "nameLabel": "Name",

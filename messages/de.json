@@ -723,6 +723,7 @@
     "targetTypeLocation": "📍 Location",
     "targetTypeQuest": "📜 Quest",
     "filterByType": "Nach Typ",
+    "imageLoadError": "Karten-Bild konnte nicht geladen werden. URL prüfen:",
     "removePlacement": "Entfernen",
     "viewDetails": "Details öffnen →",
     "nameLabel": "Name",

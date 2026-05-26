@@ -288,6 +288,7 @@ export default function MapView({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>("");
   const [editingPlacementId, setEditingPlacementId] = useState<string | null>(null);
+  const [imageStatus, setImageStatus] = useState<"loading" | "ok" | "error">("loading");
 
   // Polygon draft
   const [polygonDraft, setPolygonDraft] = useState<[number, number][]>([]);
@@ -372,6 +373,24 @@ export default function MapView({
     (x: number, y: number): [number, number] => [imageHeight * (1 - y), imageWidth * x],
     [imageWidth, imageHeight],
   );
+
+  // Probe the image URL on mount so we can show a clear error instead of an
+  // empty/broken overlay when the blob is missing, expired, or blocked.
+  useEffect(() => {
+    let cancelled = false;
+    setImageStatus("loading");
+    const probe = new window.Image();
+    probe.onload = () => { if (!cancelled) setImageStatus("ok"); };
+    probe.onerror = () => {
+      if (!cancelled) {
+        setImageStatus("error");
+        // Console log helps when the user reports back what they see.
+        console.error("[MapView] image failed to load:", imageUrl);
+      }
+    };
+    probe.src = imageUrl;
+    return () => { cancelled = true; };
+  }, [imageUrl]);
 
   // Reset draw mode when leaving edit mode
   useEffect(() => {
@@ -1115,6 +1134,22 @@ export default function MapView({
         </p>
       )}
 
+      {imageStatus === "error" && (
+        <div
+          className="font-cinzel text-xs mb-2 px-3 py-2"
+          style={{ background: "#200D0D", border: "1px solid #7F1D1D", color: "#F87171" }}
+        >
+          {t("imageLoadError")}{" "}
+          <a
+            href={imageUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: "#FCA5A5", textDecoration: "underline", wordBreak: "break-all" }}
+          >
+            {imageUrl}
+          </a>
+        </div>
+      )}
       <div
         style={{
           width: "100%",
