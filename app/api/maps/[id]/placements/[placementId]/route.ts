@@ -44,6 +44,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     icon?: unknown;
     linkedMapId?: unknown;
     locationId?: unknown;
+    questId?: unknown;
   };
 
   type UpdateData = {
@@ -53,7 +54,8 @@ export async function PUT(req: NextRequest, { params }: Params) {
     color?: string | null;
     icon?: string | null;
     linkedMapId?: string | null;
-    locationId?: string;
+    locationId?: string | null;
+    questId?: string | null;
   };
   const data: UpdateData = {};
 
@@ -132,17 +134,45 @@ export async function PUT(req: NextRequest, { params }: Params) {
     }
   }
 
-  // locationId
-  if (b.locationId !== undefined) {
-    if (typeof b.locationId !== "string" || !b.locationId) {
-      return NextResponse.json({ error: "Location erforderlich." }, { status: 400 });
+  // Target: locationId or questId — when either is provided, swap the target.
+  // Exactly one must remain set on the row.
+  const locProvided = b.locationId !== undefined;
+  const questProvided = b.questId !== undefined;
+  if (locProvided || questProvided) {
+    const newLocationId =
+      locProvided && typeof b.locationId === "string" && b.locationId.length > 0 ? b.locationId : null;
+    const newQuestId =
+      questProvided && typeof b.questId === "string" && b.questId.length > 0 ? b.questId : null;
+
+    // Resolve the effective final state. If only one of the keys was provided,
+    // assume the OTHER target should be cleared (swap semantics).
+    const finalLocationId = locProvided ? newLocationId : questProvided ? null : existing.locationId;
+    const finalQuestId = questProvided ? newQuestId : locProvided ? null : existing.questId;
+
+    if ((finalLocationId && finalQuestId) || (!finalLocationId && !finalQuestId)) {
+      return NextResponse.json(
+        { error: "Genau ein Ziel (Location oder Quest) muss angegeben werden." },
+        { status: 400 },
+      );
     }
-    const loc = await prisma.location.findFirst({
-      where: { id: b.locationId, kampagneId: ctx.kampagneId },
-      select: { id: true },
-    });
-    if (!loc) return NextResponse.json({ error: "Location nicht gefunden." }, { status: 400 });
-    data.locationId = b.locationId;
+
+    if (finalLocationId && finalLocationId !== existing.locationId) {
+      const loc = await prisma.location.findFirst({
+        where: { id: finalLocationId, kampagneId: ctx.kampagneId },
+        select: { id: true },
+      });
+      if (!loc) return NextResponse.json({ error: "Location nicht gefunden." }, { status: 400 });
+    }
+    if (finalQuestId && finalQuestId !== existing.questId) {
+      const quest = await prisma.quest.findFirst({
+        where: { id: finalQuestId, kampagneId: ctx.kampagneId },
+        select: { id: true },
+      });
+      if (!quest) return NextResponse.json({ error: "Quest gehört nicht zu dieser Kampagne." }, { status: 400 });
+    }
+
+    data.locationId = finalLocationId;
+    data.questId = finalQuestId;
   }
 
   const updated = await prisma.mapPlacement.update({
@@ -150,6 +180,7 @@ export async function PUT(req: NextRequest, { params }: Params) {
     data,
     include: {
       location: { select: { id: true, name: true, art: true, sichtbarkeit: true } },
+      quest: { select: { id: true, title: true, status: true, sichtbarkeit: true } },
       linkedMap: { select: { id: true, name: true } },
     },
   });

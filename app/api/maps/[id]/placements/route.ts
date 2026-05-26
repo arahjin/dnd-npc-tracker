@@ -25,6 +25,7 @@ export async function POST(req: NextRequest, { params }: Params) {
   }
   const b = body as {
     locationId?: unknown;
+    questId?: unknown;
     x?: unknown;
     y?: unknown;
     shape?: unknown;
@@ -33,8 +34,14 @@ export async function POST(req: NextRequest, { params }: Params) {
     linkedMapId?: unknown;
   };
 
-  const locationId = typeof b.locationId === "string" ? b.locationId : "";
-  if (!locationId) return NextResponse.json({ error: "Location erforderlich." }, { status: 400 });
+  const locationId = typeof b.locationId === "string" && b.locationId.length > 0 ? b.locationId : null;
+  const questId = typeof b.questId === "string" && b.questId.length > 0 ? b.questId : null;
+  if ((locationId && questId) || (!locationId && !questId)) {
+    return NextResponse.json(
+      { error: "Genau ein Ziel (Location oder Quest) muss angegeben werden." },
+      { status: 400 },
+    );
+  }
 
   // Resolve shape: either passed explicitly, or built from {x,y} for backwards compat.
   let shape: MapShape;
@@ -91,11 +98,19 @@ export async function POST(req: NextRequest, { params }: Params) {
     linkedMapId = b.linkedMapId;
   }
 
-  const location = await prisma.location.findFirst({
-    where: { id: locationId, kampagneId: ctx.kampagneId },
-    select: { id: true },
-  });
-  if (!location) return NextResponse.json({ error: "Location nicht gefunden." }, { status: 400 });
+  if (locationId) {
+    const location = await prisma.location.findFirst({
+      where: { id: locationId, kampagneId: ctx.kampagneId },
+      select: { id: true },
+    });
+    if (!location) return NextResponse.json({ error: "Location nicht gefunden." }, { status: 400 });
+  } else if (questId) {
+    const quest = await prisma.quest.findFirst({
+      where: { id: questId, kampagneId: ctx.kampagneId },
+      select: { id: true },
+    });
+    if (!quest) return NextResponse.json({ error: "Quest gehört nicht zu dieser Kampagne." }, { status: 400 });
+  }
 
   // Derive x/y from shape for the legacy columns (so existing list/queries still work).
   const center = shape.type === "point"
@@ -110,6 +125,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     data: {
       mapId,
       locationId,
+      questId,
       x: center.x,
       y: center.y,
       shape: shape as object,
@@ -119,6 +135,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     },
     include: {
       location: { select: { id: true, name: true, art: true, sichtbarkeit: true } },
+      quest: { select: { id: true, title: true, status: true, sichtbarkeit: true } },
       linkedMap: { select: { id: true, name: true } },
     },
   });

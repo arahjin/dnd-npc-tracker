@@ -308,22 +308,26 @@ model Map {
 }
 
 model MapPlacement {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   mapId       String
-  map         Map      @relation(fields: [mapId], references: [id], onDelete: Cascade)
-  locationId  String
-  location    Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  map         Map       @relation(fields: [mapId], references: [id], onDelete: Cascade)
+  // Exactly one of locationId / questId must be set (enforced app-side).
+  locationId  String?
+  location    Location? @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  questId     String?
+  quest       Quest?    @relation(fields: [questId], references: [id], onDelete: Cascade)
   x           Float
   y           Float
   shape       Json?
   color       String?
   icon        String?
   linkedMapId String?
-  linkedMap   Map?     @relation("PlacementLinkedMap", fields: [linkedMapId], references: [id], onDelete: SetNull)
-  createdAt   DateTime @default(now())
+  linkedMap   Map?      @relation("PlacementLinkedMap", fields: [linkedMapId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
 
   @@index([mapId])
   @@index([locationId])
+  @@index([questId])
   @@index([linkedMapId])
 }
 
@@ -388,6 +392,7 @@ model Quest {
   journalEntries QuestJournalEntry[]
   vorlaeuferVon  QuestRelation[]     @relation("nachfolgerQuest")
   nachfolgerVon  QuestRelation[]     @relation("vorlaeuferQuest")
+  mapPlacements  MapPlacement[]
 
   @@index([kampagneId])
   @@index([kampagneId, status])

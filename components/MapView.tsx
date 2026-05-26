@@ -35,10 +35,12 @@ export type MapPlacement = {
   icon: string | null;
   linkedMapId: string | null;
   linkedMap?: { id: string; name: string } | null;
-  location: { id: string; name: string; art: string | null; sichtbarkeit: string };
+  location: { id: string; name: string; art: string | null; sichtbarkeit: string } | null;
+  quest: { id: string; title: string; status: string; sichtbarkeit: string } | null;
 };
 
 type AvailableLocation = { id: string; name: string };
+type AvailableQuest = { id: string; title: string; status: string };
 type AvailableMap = { id: string; name: string };
 
 type Props = {
@@ -49,8 +51,51 @@ type Props = {
   placements: MapPlacement[];
   canEdit: boolean;
   availableLocations: AvailableLocation[];
+  availableQuests?: AvailableQuest[];
   availableMaps?: AvailableMap[];
 };
+
+type TargetKind = "location" | "quest";
+
+/** Resolves a placement into a uniform target descriptor regardless of type. */
+function targetOf(p: MapPlacement):
+  | {
+      kind: TargetKind;
+      id: string;
+      name: string;
+      sub: string | null;
+      sichtbarkeit: string;
+      detailHref: string;
+      defaultColor: string;
+      defaultIcon: string;
+    }
+  | null {
+  if (p.quest) {
+    return {
+      kind: "quest",
+      id: p.quest.id,
+      name: p.quest.title,
+      sub: p.quest.status,
+      sichtbarkeit: p.quest.sichtbarkeit,
+      detailHref: `/quests/${p.quest.id}`,
+      defaultColor: DEFAULT_QUEST_COLOR,
+      defaultIcon: "📜",
+    };
+  }
+  if (p.location) {
+    return {
+      kind: "location",
+      id: p.location.id,
+      name: p.location.name,
+      sub: p.location.art,
+      sichtbarkeit: p.location.sichtbarkeit,
+      detailHref: `/locations/${p.location.id}`,
+      defaultColor: DEFAULT_COLOR,
+      defaultIcon: "📍",
+    };
+  }
+  return null;
+}
 
 type DrawMode =
   | null
@@ -63,6 +108,7 @@ type DrawMode =
   | "geo";
 
 const DEFAULT_COLOR = "#C9A84C";
+const DEFAULT_QUEST_COLOR = "#3B82F6";
 
 // ── Geoman augmentation (typed loosely — Geoman doesn't ship strict types) ──
 type PMLayer = L.Layer & {
@@ -82,10 +128,10 @@ type PMMap = L.Map & {
   };
 };
 
-function pinIcon(opts: { color: string; icon?: string | null; privateLook: boolean }) {
+function pinIcon(opts: { color: string; icon?: string | null; privateLook: boolean; fallbackGlyph?: string }) {
   const color = opts.color || (opts.privateLook ? "#C84040" : DEFAULT_COLOR);
-  if (opts.icon && PIN_ICONS[opts.icon]) {
-    const emoji = PIN_ICONS[opts.icon];
+  const emoji = opts.icon && PIN_ICONS[opts.icon] ? PIN_ICONS[opts.icon] : opts.fallbackGlyph;
+  if (emoji) {
     const html = `<div style="display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#0E0E0E;border:2px solid ${color};font-size:18px;line-height:1;color:${color};">${emoji}</div>`;
     return L.divIcon({
       html,
@@ -227,6 +273,7 @@ export default function MapView({
   placements: initialPlacements,
   canEdit,
   availableLocations,
+  availableQuests = [],
   availableMaps = [],
 }: Props) {
   const t = useTranslations("karten");
@@ -235,7 +282,9 @@ export default function MapView({
   const [placements, setPlacements] = useState<MapPlacement[]>(initialPlacements);
   const [editMode, setEditMode] = useState(false);
   const [drawMode, setDrawMode] = useState<DrawMode>(null);
+  const [drawTargetType, setDrawTargetType] = useState<TargetKind>("location");
   const [selectedLocationId, setSelectedLocationId] = useState<string>("");
+  const [selectedQuestId, setSelectedQuestId] = useState<string>("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>("");
   const [editingPlacementId, setEditingPlacementId] = useState<string | null>(null);
@@ -255,12 +304,13 @@ export default function MapView({
   const [filterArts, setFilterArts] = useState<Set<string> | null>(null); // null = all
   const [filterIcons, setFilterIcons] = useState<Set<string> | null>(null); // null = all
   const [filterVisibility, setFilterVisibility] = useState<Set<string> | null>(null); // null = all (only used for DM)
+  const [filterTypes, setFilterTypes] = useState<Set<string> | null>(null); // null = all
   const [filterSearch, setFilterSearch] = useState("");
 
   const availableArts = useMemo(() => {
     const set = new Set<string>();
     for (const p of placements) {
-      if (p.location.art) set.add(p.location.art);
+      if (p.location?.art) set.add(p.location.art);
     }
     return Array.from(set).sort();
   }, [placements]);
@@ -281,19 +331,25 @@ export default function MapView({
   const filteredPlacements = useMemo(() => {
     const q = filterSearch.trim().toLowerCase();
     return placements.filter((p) => {
-      if (filterArts && !filterArts.has(p.location.art ?? "")) return false;
+      const target = targetOf(p);
+      if (!target) return false;
+      if (filterTypes && !filterTypes.has(target.kind)) return false;
+      // Art filter only applies to Location placements; quests pass through.
+      if (filterArts && target.kind === "location") {
+        if (!filterArts.has(p.location?.art ?? "")) return false;
+      }
       if (filterIcons) {
         const key = p.icon && PIN_ICONS[p.icon] ? p.icon : "__none__";
         if (!filterIcons.has(key)) return false;
       }
       if (filterVisibility && canEdit) {
-        const v = p.location.sichtbarkeit === "public" ? "public" : "privat";
+        const v = target.sichtbarkeit === "public" ? "public" : "privat";
         if (!filterVisibility.has(v)) return false;
       }
-      if (q && !p.location.name.toLowerCase().includes(q)) return false;
+      if (q && !target.name.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [placements, filterArts, filterIcons, filterVisibility, filterSearch, canEdit]);
+  }, [placements, filterTypes, filterArts, filterIcons, filterVisibility, filterSearch, canEdit]);
 
   const bounds = useMemo<L.LatLngBoundsExpression>(
     () => [
@@ -337,7 +393,7 @@ export default function MapView({
   }, [drawMode]);
 
   // Focus from URL: ?placement=ID
-  const focusedPlacementId = searchParams.get("placement");
+  const focusedPlacementId = searchParams.get("placement") ?? searchParams.get("focus");
   const focusTarget = useMemo(() => {
     if (!focusedPlacementId) return null;
     const p = placements.find((pl) => pl.id === focusedPlacementId);
@@ -420,18 +476,32 @@ export default function MapView({
     }
   }
 
+  /** Builds the target payload chunk based on the current draw target type. */
+  function drawTargetPayload(): Record<string, string> | null {
+    if (drawTargetType === "quest") {
+      if (!selectedQuestId) {
+        setError(t("selectQuestFirst"));
+        return null;
+      }
+      return { questId: selectedQuestId };
+    }
+    if (!selectedLocationId) {
+      setError(t("selectLocationFirst"));
+      return null;
+    }
+    return { locationId: selectedLocationId };
+  }
+
   function handleMapEvent(ev: DrawEvent) {
     if (!canEdit || !editMode) return;
 
     const { x, y } = "lat" in ev ? llToNorm(ev.lat, ev.lng) : { x: 0, y: 0 };
 
     if (drawMode === "point" && ev.kind === "click") {
-      if (!selectedLocationId) {
-        setError(t("selectLocationFirst"));
-        return;
-      }
+      const target = drawTargetPayload();
+      if (!target) return;
       if (x < 0 || x > 1 || y < 0 || y > 1) return;
-      void postPlacement({ locationId: selectedLocationId, shape: { type: "point", x, y } });
+      void postPlacement({ ...target, shape: { type: "point", x, y } });
       setDrawMode(null);
       return;
     }
@@ -440,8 +510,8 @@ export default function MapView({
       if (ev.kind === "click") {
         setPolygonDraft((prev) => [...prev, [x, y]]);
       } else if (ev.kind === "dblclick") {
-        if (!selectedLocationId) {
-          setError(t("selectLocationFirst"));
+        const target = drawTargetPayload();
+        if (!target) {
           setPolygonDraft([]);
           return;
         }
@@ -451,7 +521,7 @@ export default function MapView({
           return;
         }
         void postPlacement({
-          locationId: selectedLocationId,
+          ...target,
           shape: { type: "polygon", points: polygonDraft },
         });
         setPolygonDraft([]);
@@ -471,11 +541,10 @@ export default function MapView({
         const rPx = Math.sqrt(dx * dx + dy * dy);
         setDraftCircle({ x: s.x, y: s.y, r: rPx / minSide });
       } else if (ev.kind === "mouseup" && dragStartRef.current && draftCircle) {
-        if (!selectedLocationId) {
-          setError(t("selectLocationFirst"));
-        } else if (draftCircle.r > 0.005) {
+        const target = drawTargetPayload();
+        if (target && draftCircle.r > 0.005) {
           void postPlacement({
-            locationId: selectedLocationId,
+            ...target,
             shape: { type: "circle", x: draftCircle.x, y: draftCircle.y, r: draftCircle.r },
           });
           setDrawMode(null);
@@ -498,11 +567,10 @@ export default function MapView({
         const h = Math.abs(y - s.y);
         setDraftRect({ x: x0, y: y0, w, h });
       } else if (ev.kind === "mouseup" && draftRect) {
-        if (!selectedLocationId) {
-          setError(t("selectLocationFirst"));
-        } else if (draftRect.w > 0.005 && draftRect.h > 0.005) {
+        const target = drawTargetPayload();
+        if (target && draftRect.w > 0.005 && draftRect.h > 0.005) {
           void postPlacement({
-            locationId: selectedLocationId,
+            ...target,
             shape: { type: "rect", x: draftRect.x, y: draftRect.y, w: draftRect.w, h: draftRect.h },
           });
           setDrawMode(null);
@@ -615,9 +683,11 @@ export default function MapView({
   }
 
   function renderPlacement(p: MapPlacement) {
+    const target = targetOf(p);
+    if (!target) return null;
     const shape = p.shape ?? ({ type: "point", x: p.x, y: p.y } as MapShape);
-    const privateLook = p.location.sichtbarkeit !== "public";
-    const color = p.color || (privateLook ? "#C84040" : DEFAULT_COLOR);
+    const privateLook = target.sichtbarkeit !== "public";
+    const color = p.color || (privateLook ? "#C84040" : target.defaultColor);
     const fillOpts = { color, weight: 2, fillColor: color, fillOpacity: 0.25 };
     const isFocused = focusedPlacementId === p.id;
     const focusedStyle = isFocused ? { ...fillOpts, weight: 3, fillOpacity: 0.4 } : fillOpts;
@@ -627,11 +697,18 @@ export default function MapView({
 
     if (shape.type === "point") {
       const [lat, lng] = normToLL(shape.x, shape.y);
+      // For quest pins without an explicit icon set, fall back to the scroll glyph.
+      const effectiveIcon = p.icon ?? (target.kind === "quest" ? null : null);
       return (
         <Marker
           key={p.id}
           position={[lat, lng]}
-          icon={pinIcon({ color, icon: p.icon, privateLook })}
+          icon={pinIcon({
+            color,
+            icon: effectiveIcon,
+            privateLook,
+            fallbackGlyph: target.kind === "quest" ? "📜" : undefined,
+          })}
           eventHandlers={{ click: handleClick }}
           ref={refCb}
         >
@@ -696,19 +773,21 @@ export default function MapView({
   }
 
   function renderPopupBody(p: MapPlacement) {
+    const target = targetOf(p);
+    if (!target) return null;
     return (
       <div style={{ minWidth: 160 }}>
         <div
           className="font-cinzel"
           style={{ fontSize: "0.95rem", fontWeight: 600, color: "#1A1100", marginBottom: 4 }}
         >
-          {p.location.name}
+          {target.name}
         </div>
-        {p.location.art && (
-          <div style={{ fontSize: "0.75rem", color: "#444", marginBottom: 6 }}>{p.location.art}</div>
+        {target.sub && (
+          <div style={{ fontSize: "0.75rem", color: "#444", marginBottom: 6 }}>{target.sub}</div>
         )}
         <Link
-          href={`/locations/${p.location.id}`}
+          href={target.detailHref}
           className="font-cinzel"
           style={{
             fontSize: "0.7rem",
@@ -783,23 +862,73 @@ export default function MapView({
 
           {editMode && (
             <>
-              <select
-                value={selectedLocationId}
-                onChange={(e) => setSelectedLocationId(e.target.value)}
-                className="font-cinzel text-sm px-3 py-2 outline-none tracking-wide"
-                style={{
-                  background: "var(--dnd-bg-card)",
-                  border: "1px solid var(--dnd-border)",
-                  color: "var(--dnd-text)",
-                }}
-              >
-                <option value="">{t("selectLocation")}</option>
-                {availableLocations.map((loc) => (
-                  <option key={loc.id} value={loc.id}>
-                    {loc.name}
-                  </option>
-                ))}
-              </select>
+              {/* Target-Type Toggle: Location vs Quest */}
+              <div className="flex" style={{ border: "1px solid var(--dnd-border)" }}>
+                <button
+                  type="button"
+                  onClick={() => setDrawTargetType("location")}
+                  className="font-cinzel text-xs px-3 py-2"
+                  style={{
+                    background: drawTargetType === "location" ? "var(--dnd-gold)" : "var(--dnd-bg-card)",
+                    color: drawTargetType === "location" ? "#1A1100" : "var(--dnd-text)",
+                    cursor: "pointer",
+                    borderRight: "1px solid var(--dnd-border)",
+                  }}
+                  title={t("targetTypeLocation")}
+                >
+                  {t("targetTypeLocation")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDrawTargetType("quest")}
+                  className="font-cinzel text-xs px-3 py-2"
+                  style={{
+                    background: drawTargetType === "quest" ? "var(--dnd-gold)" : "var(--dnd-bg-card)",
+                    color: drawTargetType === "quest" ? "#1A1100" : "var(--dnd-text)",
+                    cursor: "pointer",
+                  }}
+                  title={t("targetTypeQuest")}
+                >
+                  {t("targetTypeQuest")}
+                </button>
+              </div>
+              {drawTargetType === "location" ? (
+                <select
+                  value={selectedLocationId}
+                  onChange={(e) => setSelectedLocationId(e.target.value)}
+                  className="font-cinzel text-sm px-3 py-2 outline-none tracking-wide"
+                  style={{
+                    background: "var(--dnd-bg-card)",
+                    border: "1px solid var(--dnd-border)",
+                    color: "var(--dnd-text)",
+                  }}
+                >
+                  <option value="">{t("selectLocation")}</option>
+                  {availableLocations.map((loc) => (
+                    <option key={loc.id} value={loc.id}>
+                      {loc.name}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <select
+                  value={selectedQuestId}
+                  onChange={(e) => setSelectedQuestId(e.target.value)}
+                  className="font-cinzel text-sm px-3 py-2 outline-none tracking-wide"
+                  style={{
+                    background: "var(--dnd-bg-card)",
+                    border: "1px solid var(--dnd-border)",
+                    color: "var(--dnd-text)",
+                  }}
+                >
+                  <option value="">{t("selectQuest")}</option>
+                  {availableQuests.map((q) => (
+                    <option key={q.id} value={q.id}>
+                      {q.title}
+                    </option>
+                  ))}
+                </select>
+              )}
               <ToolbarButton
                 active={drawMode === "point"}
                 onClick={() => setDrawMode(drawMode === "point" ? null : "point")}
@@ -908,7 +1037,21 @@ export default function MapView({
             border: "1px solid var(--dnd-border)",
           }}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* By Type (location/quest) */}
+            <FilterSection
+              title={t("filterByType")}
+              all={["location", "quest"]}
+              current={filterTypes}
+              onChange={setFilterTypes}
+              onAll={() => setFilterTypes(null)}
+              onNone={() => setFilterTypes(new Set())}
+              renderLabel={(v) => (v === "quest" ? t("targetTypeQuest") : t("targetTypeLocation"))}
+              allLabel={t("filterShowAll")}
+              noneLabel={t("filterHideAll")}
+              isChecked={isChecked}
+              toggle={(val) => setFilterTypes(toggleInSet(filterTypes, ["location", "quest"], val))}
+            />
             {/* By Art */}
             <FilterSection
               title={t("filterByArt")}
@@ -1031,6 +1174,7 @@ export default function MapView({
         <PlacementEditDialog
           placement={editing}
           availableLocations={availableLocations}
+          availableQuests={availableQuests}
           availableMaps={availableMaps.filter((m) => m.id !== mapId)}
           onClose={() => setEditingPlacementId(null)}
           onSave={async (payload) => {
@@ -1186,6 +1330,7 @@ function ToolbarButton({
 function PlacementEditDialog({
   placement,
   availableLocations,
+  availableQuests,
   availableMaps,
   onClose,
   onSave,
@@ -1194,6 +1339,7 @@ function PlacementEditDialog({
 }: {
   placement: MapPlacement;
   availableLocations: { id: string; name: string }[];
+  availableQuests: { id: string; title: string; status: string }[];
   availableMaps: { id: string; name: string }[];
   onClose: () => void;
   onSave: (payload: Record<string, unknown>) => Promise<void>;
@@ -1204,7 +1350,10 @@ function PlacementEditDialog({
   const [color, setColor] = useState(placement.color ?? "");
   const [icon, setIcon] = useState(placement.icon ?? "");
   const [linkedMapId, setLinkedMapId] = useState(placement.linkedMapId ?? "");
-  const [locationId, setLocationId] = useState(placement.location.id);
+  const initialKind: TargetKind = placement.quest ? "quest" : "location";
+  const [targetKind, setTargetKind] = useState<TargetKind>(initialKind);
+  const [locationId, setLocationId] = useState(placement.location?.id ?? "");
+  const [questId, setQuestId] = useState(placement.quest?.id ?? "");
 
   const shapeType = (placement.shape?.type ?? "point") as MapShape["type"];
   const canIcon = shapeType === "point";
@@ -1240,20 +1389,75 @@ function PlacementEditDialog({
         </h3>
 
         <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-1" style={{ color: "var(--dnd-text-muted)" }}>
-          {t("selectLocation")}
+          {t("targetTypeLabel")}
         </label>
-        <select
-          value={locationId}
-          onChange={(e) => setLocationId(e.target.value)}
-          className="font-cinzel text-sm w-full px-3 py-2 mb-3"
-          style={{ background: "#0A0A0A", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
-        >
-          {availableLocations.map((l) => (
-            <option key={l.id} value={l.id}>
-              {l.name}
-            </option>
-          ))}
-        </select>
+        <div className="flex mb-3" style={{ border: "1px solid var(--dnd-border)" }}>
+          <button
+            type="button"
+            onClick={() => setTargetKind("location")}
+            className="font-cinzel text-xs flex-1 px-3 py-2"
+            style={{
+              background: targetKind === "location" ? "var(--dnd-gold)" : "#0A0A0A",
+              color: targetKind === "location" ? "#1A1100" : "var(--dnd-text)",
+              cursor: "pointer",
+              borderRight: "1px solid var(--dnd-border)",
+            }}
+          >
+            {t("targetTypeLocation")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setTargetKind("quest")}
+            className="font-cinzel text-xs flex-1 px-3 py-2"
+            style={{
+              background: targetKind === "quest" ? "var(--dnd-gold)" : "#0A0A0A",
+              color: targetKind === "quest" ? "#1A1100" : "var(--dnd-text)",
+              cursor: "pointer",
+            }}
+          >
+            {t("targetTypeQuest")}
+          </button>
+        </div>
+
+        {targetKind === "location" ? (
+          <>
+            <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-1" style={{ color: "var(--dnd-text-muted)" }}>
+              {t("selectLocation")}
+            </label>
+            <select
+              value={locationId}
+              onChange={(e) => setLocationId(e.target.value)}
+              className="font-cinzel text-sm w-full px-3 py-2 mb-3"
+              style={{ background: "#0A0A0A", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
+            >
+              <option value="">—</option>
+              {availableLocations.map((l) => (
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
+              ))}
+            </select>
+          </>
+        ) : (
+          <>
+            <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-1" style={{ color: "var(--dnd-text-muted)" }}>
+              {t("selectQuest")}
+            </label>
+            <select
+              value={questId}
+              onChange={(e) => setQuestId(e.target.value)}
+              className="font-cinzel text-sm w-full px-3 py-2 mb-3"
+              style={{ background: "#0A0A0A", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
+            >
+              <option value="">—</option>
+              {availableQuests.map((q) => (
+                <option key={q.id} value={q.id}>
+                  {q.title}
+                </option>
+              ))}
+            </select>
+          </>
+        )}
 
         <label className="font-cinzel text-xs tracking-[0.15em] uppercase block mb-1" style={{ color: "var(--dnd-text-muted)" }}>
           {t("pinColor")}
@@ -1347,10 +1551,12 @@ function PlacementEditDialog({
         <div className="flex items-center gap-3">
           <button
             type="button"
-            disabled={busy}
+            disabled={busy || (targetKind === "location" ? !locationId : !questId)}
             onClick={() =>
               onSave({
-                locationId,
+                ...(targetKind === "location"
+                  ? { locationId, questId: null }
+                  : { questId, locationId: null }),
                 color: color || null,
                 icon: canIcon ? icon || null : null,
                 linkedMapId: linkedMapId || null,

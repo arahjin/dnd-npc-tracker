@@ -19,13 +19,14 @@ export default async function KarteDetailPage({
   const ctx = await requireKampagne();
   const t = await getTranslations("karten");
 
-  const [map, availableLocations, allMaps] = await Promise.all([
+  const [map, availableLocations, availableQuests, allMaps] = await Promise.all([
     prisma.map.findFirst({
       where: { id, kampagneId: ctx.kampagneId },
       include: {
         placements: {
           include: {
             location: { select: { id: true, name: true, art: true, sichtbarkeit: true } },
+            quest: { select: { id: true, title: true, status: true, sichtbarkeit: true } },
             linkedMap: { select: { id: true, name: true } },
           },
         },
@@ -36,6 +37,11 @@ export default async function KarteDetailPage({
       where: { kampagneId: ctx.kampagneId },
       orderBy: { name: "asc" },
       select: { id: true, name: true },
+    }),
+    prisma.quest.findMany({
+      where: { kampagneId: ctx.kampagneId },
+      orderBy: { title: "asc" },
+      select: { id: true, title: true, status: true },
     }),
     prisma.map.findMany({
       where: { kampagneId: ctx.kampagneId },
@@ -57,32 +63,30 @@ export default async function KarteDetailPage({
     cursor = cursor.parentMapId ? mapsById.get(cursor.parentMapId) : undefined;
   }
 
+  const mapPlacementToShape = (p: (typeof map.placements)[number]): MapPlacement => ({
+    id: p.id,
+    x: p.x,
+    y: p.y,
+    shape: (p.shape as unknown as MapShape | null) ?? null,
+    color: p.color,
+    icon: p.icon,
+    linkedMapId: p.linkedMapId,
+    linkedMap: p.linkedMap,
+    location: p.location,
+    quest: p.quest,
+  });
+
   const visiblePlacements: MapPlacement[] =
     ctx.isDM || ctx.isAdmin
-      ? map.placements.map((p) => ({
-          id: p.id,
-          x: p.x,
-          y: p.y,
-          shape: (p.shape as unknown as MapShape | null) ?? null,
-          color: p.color,
-          icon: p.icon,
-          linkedMapId: p.linkedMapId,
-          linkedMap: p.linkedMap,
-          location: p.location,
-        }))
+      ? map.placements.map(mapPlacementToShape)
       : map.placements
-          .filter((p) => p.location.sichtbarkeit === "public")
-          .map((p) => ({
-            id: p.id,
-            x: p.x,
-            y: p.y,
-            shape: (p.shape as unknown as MapShape | null) ?? null,
-            color: p.color,
-            icon: p.icon,
-            linkedMapId: p.linkedMapId,
-            linkedMap: p.linkedMap,
-            location: p.location,
-          }));
+          .filter((p) => {
+            // Hide private targets from players
+            if (p.location && p.location.sichtbarkeit !== "public") return false;
+            if (p.quest && p.quest.sichtbarkeit !== "public") return false;
+            return p.location || p.quest;
+          })
+          .map(mapPlacementToShape);
 
   const canEdit = ctx.isDM || ctx.isAdmin;
   const availableMaps = allMaps.map((m) => ({ id: m.id, name: m.name }));
@@ -159,6 +163,7 @@ export default async function KarteDetailPage({
           placements={visiblePlacements}
           canEdit={canEdit}
           availableLocations={availableLocations}
+          availableQuests={availableQuests}
           availableMaps={availableMaps}
         />
 

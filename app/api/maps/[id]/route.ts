@@ -16,6 +16,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
       placements: {
         include: {
           location: { select: { id: true, name: true, art: true, sichtbarkeit: true } },
+          quest: { select: { id: true, title: true, status: true, sichtbarkeit: true } },
           linkedMap: { select: { id: true, name: true } },
         },
       },
@@ -26,7 +27,11 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const placements =
     ctx.isDM || ctx.isAdmin
       ? map.placements
-      : map.placements.filter((p) => p.location.sichtbarkeit === "public");
+      : map.placements.filter((p) => {
+          if (p.location && p.location.sichtbarkeit !== "public") return false;
+          if (p.quest && p.quest.sichtbarkeit !== "public") return false;
+          return p.location || p.quest;
+        });
 
   return NextResponse.json({ ...map, placements });
 }

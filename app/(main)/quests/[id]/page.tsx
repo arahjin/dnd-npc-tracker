@@ -56,6 +56,10 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
       journalEntries: { include: { entry: { select: { id: true, titel: true, typ: true, createdAt: true } } } },
       vorlaeuferVon: { include: { nachfolgerQuest: { select: { id: true, title: true, status: true } } } },
       nachfolgerVon: { include: { vorlaeuferQuest: { select: { id: true, title: true, status: true } } } },
+      mapPlacements: {
+        select: { id: true, map: { select: { id: true, name: true } } },
+        orderBy: { createdAt: "asc" },
+      },
     },
   });
 
@@ -243,6 +247,24 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
                 >
                   {qc.charakter.name}
                   {qc.rolle && <span style={{ color: "var(--dnd-text-muted)", marginLeft: "6px" }}>· {qc.rolle}</span>}
+                </Link>
+              ))}
+            </div>
+          </SectionBox>
+        )}
+
+        {/* Auf Karten */}
+        {quest.mapPlacements && quest.mapPlacements.length > 0 && (
+          <SectionBox title={`Auf Karten (${quest.mapPlacements.length})`}>
+            <div className="flex flex-wrap gap-2">
+              {quest.mapPlacements.map((mp) => (
+                <Link
+                  key={mp.id}
+                  href={`/karten/${mp.map.id}?placement=${mp.id}`}
+                  className="font-cinzel text-xs px-3 py-1.5"
+                  style={{ background: "#141414", border: "1px solid var(--dnd-border)", color: "var(--dnd-heading)", textDecoration: "none" }}
+                >
+                  {mp.map.name}
                 </Link>
               ))}
             </div>
