@@ -23,15 +23,17 @@ export default function DetailModal({ children }: { children: React.ReactNode })
 
   return (
     <>
-      {/* Backdrop — semi-transparent, shows the list page behind */}
+      {/* Backdrop — semi-transparent, shows the list page behind.
+          z-indices are deliberately well above Leaflet's panes (which go up
+          to 700 for popups) so map content can't bleed through the modal. */}
       <div
-        className="fixed inset-0 z-40"
-        style={{ background: "rgba(4, 0, 0, 0.78)" }}
+        className="fixed inset-0"
+        style={{ background: "rgba(4, 0, 0, 0.78)", zIndex: 9000 }}
         onClick={close}
       />
 
       {/* Scrollable overlay layer */}
-      <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 overflow-y-auto" style={{ zIndex: 9001 }}>
         <div className="flex min-h-full items-start justify-center py-8 px-4">
           {/* Modal panel */}
           <div
