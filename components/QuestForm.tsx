@@ -12,7 +12,7 @@ import {
   QUEST_CHAR_ROLLEN,
 } from "@/lib/constants";
 import { useTranslations } from "next-intl";
-import BBCodeHelp from "./BBCodeHelp";
+import BBTextarea from "./BBTextarea";
 
 type QuestData = {
   title: string;
@@ -293,29 +293,27 @@ export default function QuestForm({
       {/* Summary */}
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("summaryLabel")}</label>
-        <textarea
+        <BBTextarea
           value={form.summary}
-          onChange={(e) => set("summary", e.target.value)}
+          onChange={(v) => set("summary", v)}
           placeholder={t("summaryPlaceholder")}
           rows={2}
           className={inputClass + " resize-none"}
           style={inputStyle}
         />
-        <BBCodeHelp />
       </div>
 
       {/* Description */}
       <div>
         <label className={labelStyle} style={{ color: "var(--dnd-label)" }}>{t("beschreibungLabel")}</label>
-        <textarea
+        <BBTextarea
           value={form.description}
-          onChange={(e) => set("description", e.target.value)}
+          onChange={(v) => set("description", v)}
           placeholder={t("questDescriptionPlaceholder")}
           rows={5}
           className={inputClass + " resize-none"}
           style={inputStyle}
         />
-        <BBCodeHelp />
       </div>
 
       {/* Reward */}
@@ -337,15 +335,14 @@ export default function QuestForm({
           <label className={labelStyle} style={{ color: "#FCA5A5" }}>
             {t("gmNotesLabel")} <span className="normal-case tracking-normal font-sans text-xs" style={{ opacity: 0.6 }}>{t("gmNotesHint")}</span>
           </label>
-          <textarea
+          <BBTextarea
             value={form.gmNotes}
-            onChange={(e) => set("gmNotes", e.target.value)}
+            onChange={(v) => set("gmNotes", v)}
             placeholder={t("gmNotesPlaceholder")}
             rows={3}
             className={inputClass + " resize-none"}
             style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }}
           />
-          <BBCodeHelp />
         </div>
       )}
 

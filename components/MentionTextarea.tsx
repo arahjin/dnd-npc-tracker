@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MENTION_REGEX, type MentionOption } from "@/lib/mentions";
 import { IconPerson, IconOrganisation, IconSword, IconPin } from "@/components/Icons";
-import BBCodeHelp from "@/components/BBCodeHelp";
+import BBCodeToolbar from "@/components/BBCodeToolbar";
 
 // Short text prefix for DOM-based chips (SVG can't be used in textContent)
 const CHIP_PREFIX: Record<string, string> = {
@@ -34,7 +34,7 @@ interface Props {
   required?: boolean;
   className?: string;
   style?: React.CSSProperties;
-  /** Render a collapsible BB-Code formatting hint under the editor. */
+  /** Render a BB-Code formatting toolbar above the editor. */
   showFormattingHelp?: boolean;
 }
 
@@ -236,6 +236,20 @@ export default function MentionTextarea({
     requestAnimationFrame(() => { syncValue(); el.focus(); });
   }
 
+  /** Insert raw BB-Code text. Wraps the current selection when `close` is set. */
+  function insertBBCode(open: string, close?: string) {
+    const el = editorRef.current;
+    if (!el) return;
+    el.focus();
+    const sel = window.getSelection();
+    const selected = sel && sel.rangeCount > 0 ? sel.toString() : "";
+    const text = close ? `${open}${selected}${close}` : open;
+    // execCommand("insertText") is deprecated but remains the cleanest way to
+    // inject plain text into a contenteditable while keeping the cursor sane.
+    document.execCommand("insertText", false, text);
+    syncValue();
+  }
+
   function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
     if (e.key === "Enter") {
       if (query !== null && filtered.length > 0) {
@@ -272,6 +286,7 @@ export default function MentionTextarea({
 
   return (
     <div className="relative" style={{ zIndex: query !== null && filtered.length > 0 ? 1000 : "auto" }}>
+      {showFormattingHelp && <BBCodeToolbar onInsert={insertBBCode} />}
       {/* Contenteditable editor */}
       <div
         ref={editorRef}
@@ -346,7 +361,6 @@ export default function MentionTextarea({
         </div>
       )}
 
-      {showFormattingHelp && <BBCodeHelp />}
     </div>
   );
 }

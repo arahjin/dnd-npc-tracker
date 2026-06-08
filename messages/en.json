@@ -826,6 +826,8 @@
     "code": "Code",
     "list": "List",
     "heading": "Heading",
-    "hr": "Divider"
+    "hr": "Divider",
+    "linkPrompt": "Enter URL (https://...)",
+    "linkInvalid": "Please enter a full URL starting with https:// or http://."
   }
 }

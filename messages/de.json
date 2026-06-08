@@ -826,6 +826,8 @@
     "code": "Code",
     "list": "Liste",
     "heading": "Überschrift",
-    "hr": "Trennlinie"
+    "hr": "Trennlinie",
+    "linkPrompt": "URL eingeben (https://...)",
+    "linkInvalid": "Bitte eine vollständige URL mit https:// oder http:// angeben."
   }
 }
