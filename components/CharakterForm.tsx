@@ -245,7 +245,7 @@ export default function CharakterForm({ initial, id, availableOrgs = [], initial
         </label>
         <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
           rows={6} className={inputClass + " resize-none"} style={inputStyle}
-          placeholder={t("notizenPlaceholder")} />
+          placeholder={t("notizenPlaceholder")} showFormattingHelp />
       </div>
 
       {/* Sichtbarkeit */}

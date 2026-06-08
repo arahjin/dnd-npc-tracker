@@ -228,9 +228,11 @@ export default async function NPCDetail({ params }: { params: Promise<{ id: stri
                   </h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "1.1rem" }}>
-                    <RenderMentions text={npc.notizen} />
-                  </p>
+                  <RenderMentions
+                    text={npc.notizen}
+                    className="text-base leading-relaxed"
+                    style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", fontSize: "1.1rem" }}
+                  />
                 </div>
               </div>
             )}

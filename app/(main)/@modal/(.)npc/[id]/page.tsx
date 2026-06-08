@@ -179,9 +179,11 @@ export default async function NPCModal({ params }: { params: Promise<{ id: strin
                   <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Notizen</h2>
                 </div>
                 <div className="px-4 py-4">
-                  <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}>
-                    <RenderMentions text={npc.notizen} />
-                  </p>
+                  <RenderMentions
+                    text={npc.notizen}
+                    className="text-base leading-relaxed"
+                    style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}
+                  />
                 </div>
               </div>
             )}

@@ -185,6 +185,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
               value={inhalt} onChange={setInhalt} tagOptions={tagOptions} rows={6} required
               placeholder={t("contentPlaceholder")}
               className="w-full px-4 py-2 outline-none resize-none" style={inputStyle}
+              showFormattingHelp
             />
           </div>
           <div className="flex gap-3">
@@ -228,6 +229,7 @@ export default function JournalView({ typ, userId, isDM, tagOptions }: Props) {
                       <MentionTextarea
                         value={editInhalt} onChange={setEditInhalt} tagOptions={tagOptions} rows={6} required
                         className="w-full px-4 py-2 outline-none resize-none" style={inputStyle}
+                        showFormattingHelp
                       />
                     </div>
                     <div className="flex gap-3">

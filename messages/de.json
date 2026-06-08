@@ -811,5 +811,21 @@
     "adminsHintLink": "Website-Einstellungen",
     "adminsHintSuffix": "bearbeiten.",
     "contactHeading": "Kontakt"
+  },
+  "bbcode": {
+    "helpToggle": "Formatierung anzeigen",
+    "helpHide": "Formatierung verbergen",
+    "helpTitle": "BB-Code Formatierung",
+    "bold": "fett",
+    "italic": "kursiv",
+    "underline": "unterstrichen",
+    "strike": "durchgestrichen",
+    "color": "Farbe",
+    "link": "Link",
+    "quote": "Zitat",
+    "code": "Code",
+    "list": "Liste",
+    "heading": "Überschrift",
+    "hr": "Trennlinie"
   }
 }

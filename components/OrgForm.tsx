@@ -147,7 +147,8 @@ export default function OrgForm({ initial, id, availableLocations = [], onSucces
         </label>
         <MentionTextarea value={form.beschreibung} onChange={(v) => set("beschreibung", v)}
           placeholder={t("orgBeschreibungPlaceholder")}
-          rows={5} className={inputClass + " resize-none"} style={inputStyle} />
+          rows={5} className={inputClass + " resize-none"} style={inputStyle}
+          showFormattingHelp />
       </div>
 
       {/* Sichtbarkeit */}

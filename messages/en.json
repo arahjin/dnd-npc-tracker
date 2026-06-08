@@ -811,5 +811,21 @@
     "adminsHintLink": "Site Settings",
     "adminsHintSuffix": ".",
     "contactHeading": "Contact"
+  },
+  "bbcode": {
+    "helpToggle": "Show formatting",
+    "helpHide": "Hide formatting",
+    "helpTitle": "BB-Code Formatting",
+    "bold": "bold",
+    "italic": "italic",
+    "underline": "underline",
+    "strike": "strikethrough",
+    "color": "Color",
+    "link": "Link",
+    "quote": "Quote",
+    "code": "Code",
+    "list": "List",
+    "heading": "Heading",
+    "hr": "Divider"
   }
 }

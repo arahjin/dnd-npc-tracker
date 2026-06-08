@@ -298,7 +298,8 @@ export default function NPCForm({ initial, id, availableOrgs = [], initialOrgs =
         </label>
         <MentionTextarea value={form.notizen} onChange={(v) => set("notizen", v)}
           placeholder={t("notizenPlaceholder")}
-          rows={6} className={inputClass + " resize-none"} style={inputStyle} />
+          rows={6} className={inputClass + " resize-none"} style={inputStyle}
+          showFormattingHelp />
       </div>
 
       {/* Sichtbarkeit */}

@@ -12,6 +12,7 @@ import {
   QUEST_CHAR_ROLLEN,
 } from "@/lib/constants";
 import { useTranslations } from "next-intl";
+import BBCodeHelp from "./BBCodeHelp";
 
 type QuestData = {
   title: string;
@@ -300,6 +301,7 @@ export default function QuestForm({
           className={inputClass + " resize-none"}
           style={inputStyle}
         />
+        <BBCodeHelp />
       </div>
 
       {/* Description */}
@@ -313,6 +315,7 @@ export default function QuestForm({
           className={inputClass + " resize-none"}
           style={inputStyle}
         />
+        <BBCodeHelp />
       </div>
 
       {/* Reward */}
@@ -342,6 +345,7 @@ export default function QuestForm({
             className={inputClass + " resize-none"}
             style={{ ...inputStyle, border: "1px solid #991B1B", background: "#120808" }}
           />
+          <BBCodeHelp />
         </div>
       )}
 

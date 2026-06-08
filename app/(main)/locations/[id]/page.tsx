@@ -145,7 +145,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
                 <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Flora & Fauna</h2>
               </div>
               <div className="px-4 py-4">
-                <p className="text-sm leading-relaxed" style={{ color: "var(--dnd-text)" }}><RenderMentions text={location.floraFauna} /></p>
+                <RenderMentions text={location.floraFauna} className="text-sm leading-relaxed" style={{ color: "var(--dnd-text)" }} />
               </div>
             </div>
           )}
@@ -158,7 +158,7 @@ export default async function LocationDetailPage({ params }: { params: Promise<{
               <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Wissenswertes</h2>
             </div>
             <div className="px-4 py-4">
-              <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)" }}><RenderMentions text={location.wissenswertes} /></p>
+              <RenderMentions text={location.wissenswertes} className="text-base leading-relaxed" style={{ color: "var(--dnd-text)" }} />
             </div>
           </div>
         )}

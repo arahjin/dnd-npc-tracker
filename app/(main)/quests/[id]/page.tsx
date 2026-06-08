@@ -6,6 +6,7 @@ import { canSeePrivate } from "@/lib/visibility";
 import { IconLock, IconScroll } from "@/components/Icons";
 import QuestObjectivesChecklist from "@/components/QuestObjectivesChecklist";
 import QuestDeleteButton from "@/components/QuestDeleteButton";
+import RenderRichText from "@/components/RenderRichText";
 
 const STATUS_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   Aktiv:         { bg: "#0D2010", text: "#4ADE80", border: "#166534" },
@@ -127,9 +128,11 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
 
         {/* Summary */}
         {quest.summary && (
-          <p className="text-base italic leading-relaxed" style={{ color: "var(--dnd-text-muted)", fontFamily: "var(--font-roboto), sans-serif" }}>
-            {quest.summary}
-          </p>
+          <RenderRichText
+            text={quest.summary}
+            className="text-base italic leading-relaxed"
+            style={{ color: "var(--dnd-text-muted)", fontFamily: "var(--font-roboto), sans-serif" }}
+          />
         )}
 
         {/* Objectives */}
@@ -146,9 +149,11 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
         {/* Description */}
         {quest.description && (
           <SectionBox title="Beschreibung">
-            <p className="text-sm leading-relaxed" style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif", whiteSpace: "pre-wrap" }}>
-              {quest.description}
-            </p>
+            <RenderRichText
+              text={quest.description}
+              className="text-sm leading-relaxed"
+              style={{ color: "var(--dnd-text)", fontFamily: "var(--font-roboto), sans-serif" }}
+            />
           </SectionBox>
         )}
 
@@ -170,9 +175,11 @@ export default async function QuestDetail({ params }: { params: Promise<{ id: st
               </h2>
             </div>
             <div className="px-4 py-3">
-              <p className="text-sm leading-relaxed" style={{ color: "#FCA5A5", fontFamily: "var(--font-roboto), sans-serif", whiteSpace: "pre-wrap" }}>
-                {quest.gmNotes}
-              </p>
+              <RenderRichText
+                text={quest.gmNotes}
+                className="text-sm leading-relaxed"
+                style={{ color: "#FCA5A5", fontFamily: "var(--font-roboto), sans-serif" }}
+              />
             </div>
           </div>
         )}

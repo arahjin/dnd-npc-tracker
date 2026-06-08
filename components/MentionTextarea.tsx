@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { MENTION_REGEX, type MentionOption } from "@/lib/mentions";
 import { IconPerson, IconOrganisation, IconSword, IconPin } from "@/components/Icons";
+import BBCodeHelp from "@/components/BBCodeHelp";
 
 // Short text prefix for DOM-based chips (SVG can't be used in textContent)
 const CHIP_PREFIX: Record<string, string> = {
@@ -33,6 +34,8 @@ interface Props {
   required?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  /** Render a collapsible BB-Code formatting hint under the editor. */
+  showFormattingHelp?: boolean;
 }
 
 // ── Chip factory ─────────────────────────────────────────────────────────────
@@ -173,6 +176,7 @@ function insertChipAtCursor(el: HTMLElement, opt: MentionOption): boolean {
 export default function MentionTextarea({
   value, onChange, tagOptions: propOptions,
   rows = 4, placeholder, required, className, style,
+  showFormattingHelp = false,
 }: Props) {
   const editorRef = useRef<HTMLDivElement>(null);
   const lastVal   = useRef<string | null>(null);
@@ -341,6 +345,8 @@ export default function MentionTextarea({
           ))}
         </div>
       )}
+
+      {showFormattingHelp && <BBCodeHelp />}
     </div>
   );
 }

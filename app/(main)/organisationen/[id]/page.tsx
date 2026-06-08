@@ -127,7 +127,7 @@ export default async function OrganisationDetail({ params }: { params: Promise<{
                 <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase" style={{ color: "var(--dnd-heading)" }}>Beschreibung</h2>
               </div>
               <div className="px-4 py-4">
-                <p className="text-base leading-relaxed" style={{ color: "var(--dnd-text)" }}><RenderMentions text={org.beschreibung ?? ""} /></p>
+                <RenderMentions text={org.beschreibung ?? ""} className="text-base leading-relaxed" style={{ color: "var(--dnd-text)" }} />
               </div>
             </div>
           )}

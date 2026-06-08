@@ -423,6 +423,7 @@ export default function LocationForm({
           rows={3} placeholder={t("floraFaunaPlaceholder")}
           className="w-full px-4 py-2.5 text-sm outline-none resize-none"
           style={inputStyle}
+          showFormattingHelp
         />
       </div>
 
@@ -436,6 +437,7 @@ export default function LocationForm({
           rows={6} placeholder={t("wissenswertesPlaceholder")}
           className="w-full px-4 py-2.5 text-sm outline-none resize-none"
           style={inputStyle}
+          showFormattingHelp
         />
       </div>
 
