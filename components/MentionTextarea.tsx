@@ -285,38 +285,41 @@ export default function MentionTextarea({
   }
 
   return (
-    <div className="relative" style={{ zIndex: query !== null && filtered.length > 0 ? 1000 : "auto" }}>
+    <div style={{ zIndex: query !== null && filtered.length > 0 ? 1000 : "auto", position: "relative" }}>
       {showFormattingHelp && <BBCodeToolbar onInsert={insertBBCode} />}
-      {/* Contenteditable editor */}
-      <div
-        ref={editorRef}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        onKeyDown={handleKeyDown}
-        onPaste={handlePaste}
-        onClick={handleClick}
-        className={className}
-        style={{
-          ...style,
-          minHeight: `${rows * 1.65}em`,
-          whiteSpace: "pre-wrap",
-          wordBreak: "break-word",
-        }}
-        role="textbox"
-        aria-multiline="true"
-        aria-required={required}
-      />
-
-      {/* Placeholder overlay */}
-      {!value && placeholder && (
+      {/* Editor wrapper — placeholder is positioned relative to THIS so it
+          can't bleed over the toolbar above. */}
+      <div className="relative">
         <div
-          className="absolute top-0 left-0 pointer-events-none px-4 py-2.5 text-base"
-          style={{ color: "#4A4540", fontFamily: "var(--font-roboto), sans-serif" }}
-        >
-          {placeholder}
-        </div>
-      )}
+          ref={editorRef}
+          contentEditable
+          suppressContentEditableWarning
+          onInput={handleInput}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          onClick={handleClick}
+          className={className}
+          style={{
+            ...style,
+            minHeight: `${rows * 1.65}em`,
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+          }}
+          role="textbox"
+          aria-multiline="true"
+          aria-required={required}
+        />
+
+        {/* Placeholder overlay */}
+        {!value && placeholder && (
+          <div
+            className="absolute top-0 left-0 pointer-events-none px-4 py-2.5 text-base"
+            style={{ color: "#4A4540", fontFamily: "var(--font-roboto), sans-serif" }}
+          >
+            {placeholder}
+          </div>
+        )}
+      </div>
 
       {/* Hidden input for native required validation */}
       {required && (
