@@ -12,7 +12,7 @@ async function requireDmAccess(kampagneId: string) {
   const userId = session.user.id;
   const isAdmin = session.user.role === "ADMIN";
 
-  if (isAdmin) return { userId, isAdmin: true, isDM: true };
+  if (isAdmin) return { userId, isAdmin: true, isDM: true, isOwner: true };
 
   const mitglied = await prisma.kampagneMitglied.findUnique({
     where: { kampagneId_userId: { kampagneId, userId } },
@@ -20,7 +20,7 @@ async function requireDmAccess(kampagneId: string) {
   if (!mitglied) return { error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
   if (!mitglied.isDM) return { error: NextResponse.json({ error: "Keine Berechtigung." }, { status: 403 }) };
 
-  return { userId, isAdmin: false, isDM: true };
+  return { userId, isAdmin: false, isDM: true, isOwner: mitglied.isOwner };
 }
 
 export async function GET(_req: NextRequest, { params }: Params) {
@@ -53,8 +53,11 @@ export async function POST(req: NextRequest, { params }: Params) {
   const inviteRole = body.role === "DUNGEON_MASTER" ? "DUNGEON_MASTER" : "SPIELER";
   const isPermanent = !!body.isPermanent;
 
-  if (inviteRole === "DUNGEON_MASTER" && !ctx.isAdmin)
-    return NextResponse.json({ error: "Nur Admins können DM-Links erstellen." }, { status: 403 });
+  if (inviteRole === "DUNGEON_MASTER" && !(ctx.isOwner || ctx.isAdmin))
+    return NextResponse.json(
+      { error: "Nur der Ersteller der Kampagne oder ein Admin kann DM-Links erstellen." },
+      { status: 403 },
+    );
 
   if (isPermanent) {
     const invite = await prisma.$transaction(async (tx) => {

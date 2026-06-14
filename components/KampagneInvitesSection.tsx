@@ -14,9 +14,10 @@ type Invite = {
   usedBy?: { id: string; name: string } | null;
 };
 
-type Props = { kampagneId: string; isAdmin: boolean };
+type Props = { kampagneId: string; isAdmin: boolean; isOwner?: boolean };
 
-export default function KampagneInvitesSection({ kampagneId, isAdmin }: Props) {
+export default function KampagneInvitesSection({ kampagneId, isAdmin, isOwner = false }: Props) {
+  const canInviteDM = isAdmin || isOwner;
   const t = useTranslations("einladungen");
   const tk = useTranslations("kampagnenVerwalten");
   const tu = useTranslations("userMenu");
@@ -197,7 +198,7 @@ export default function KampagneInvitesSection({ kampagneId, isAdmin }: Props) {
             className="font-cinzel text-xs px-2 py-1.5 flex-1 outline-none"
             style={{ background: "#000", border: "1px solid #1A1A1A", color: "var(--dnd-text)" }}>
             <option value="SPIELER">{tu("roles.SPIELER")}</option>
-            {isAdmin && <option value="DUNGEON_MASTER">{tu("roles.DUNGEON_MASTER")}</option>}
+            {canInviteDM && <option value="DUNGEON_MASTER">{tu("roles.DUNGEON_MASTER")}</option>}
           </select>
           <button onClick={createOneTime} disabled={loading} className="ddb-cta shrink-0"
             style={{ padding: "5px 12px", fontSize: "0.65rem" }}>

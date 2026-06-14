@@ -15,9 +15,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const inviteRole = body.role === "DUNGEON_MASTER" ? "DUNGEON_MASTER" : "SPIELER";
 
-  // Only ADMIN can create DM invites
-  if (inviteRole === "DUNGEON_MASTER" && !ctx.isAdmin)
-    return NextResponse.json({ error: "Nur Admins können DM-Links erstellen." }, { status: 403 });
+  // Only the campaign Owner or a global Admin can create DM invites.
+  if (inviteRole === "DUNGEON_MASTER" && !(ctx.isOwner || ctx.isAdmin))
+    return NextResponse.json(
+      { error: "Nur der Ersteller der Kampagne oder ein Admin kann DM-Links erstellen." },
+      { status: 403 },
+    );
 
   const invite = await prisma.invite.create({
     data: { role: inviteRole, kampagneId: ctx.kampagneId, token: randomBytes(32).toString("base64url") },

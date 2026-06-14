@@ -115,7 +115,7 @@ function PermanentInvitePanel() {
 
 // ── One-time invite panel ─────────────────────────────────────────────────────
 
-export default function EinladungenClient() {
+export default function EinladungenClient({ canInviteDM = false }: { canInviteDM?: boolean }) {
   const t = useTranslations("einladungen");
   const tu = useTranslations("userMenu");
   const ROLE_LABEL: Record<string, string> = {
@@ -190,7 +190,9 @@ export default function EinladungenClient() {
           style={{ background: "#0A0A0A", border: "1px solid #2A2A2A", color: "var(--dnd-text)" }}
         >
           <option value="SPIELER">{tu("roles.SPIELER")}</option>
-          <option value="DUNGEON_MASTER">{tu("roles.DUNGEON_MASTER")}</option>
+          {canInviteDM && (
+            <option value="DUNGEON_MASTER">{tu("roles.DUNGEON_MASTER")}</option>
+          )}
         </select>
         <button onClick={createInvite} disabled={loading} className="ddb-cta shrink-0">
           {loading ? "..." : t("createButton")}

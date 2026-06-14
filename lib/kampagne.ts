@@ -7,6 +7,7 @@ export type KampagneCtx = {
   kampagneId: string;
   userId: string;
   isDM: boolean;
+  isOwner: boolean;
   isAdmin: boolean;
   kampagneName: string;
 };
@@ -32,7 +33,7 @@ export async function requireKampagne(): Promise<KampagneCtx> {
       select: { id: true, name: true },
     });
     if (!kampagne) redirect("/kampagnen");
-    return { kampagneId, userId, isDM: true, isAdmin: true, kampagneName: kampagne.name };
+    return { kampagneId, userId, isDM: true, isOwner: true, isAdmin: true, kampagneName: kampagne.name };
   }
 
   const mitglied = await prisma.kampagneMitglied.findUnique({
@@ -45,6 +46,7 @@ export async function requireKampagne(): Promise<KampagneCtx> {
     kampagneId,
     userId,
     isDM: mitglied.isDM,
+    isOwner: mitglied.isOwner,
     isAdmin: false,
     kampagneName: mitglied.kampagne.name,
   };
@@ -68,7 +70,7 @@ export async function requireKampagneApi(): Promise<KampagneCtx | null> {
       select: { id: true, name: true },
     });
     if (!kampagne) return null;
-    return { kampagneId, userId, isDM: true, isAdmin: true, kampagneName: kampagne.name };
+    return { kampagneId, userId, isDM: true, isOwner: true, isAdmin: true, kampagneName: kampagne.name };
   }
 
   const mitglied = await prisma.kampagneMitglied.findUnique({
@@ -81,6 +83,7 @@ export async function requireKampagneApi(): Promise<KampagneCtx | null> {
     kampagneId,
     userId,
     isDM: mitglied.isDM,
+    isOwner: mitglied.isOwner,
     isAdmin: false,
     kampagneName: mitglied.kampagne.name,
   };

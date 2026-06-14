@@ -271,7 +271,7 @@ export default function KampagnenVerwaltenPage() {
 
                 {/* Invite section — shown to DMs and admins */}
                 {(isSelfDM || isAdmin) && (
-                  <KampagneInvitesSection kampagneId={k.id} isAdmin={isAdmin} />
+                  <KampagneInvitesSection kampagneId={k.id} isAdmin={isAdmin} isOwner={k.isOwner} />
                 )}
 
                 {/* Member list — shown to DMs and admins */}
