@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { BEZIEHUNG_OPTIONS, STATUS_OPTIONS } from "@/lib/constants";
 import { IconPin, IconMap } from "@/components/Icons";
+import ViewToggle from "@/components/ViewToggle";
+import { useViewMode } from "@/lib/useViewMode";
 
 type NPC = {
   id: string;
@@ -76,6 +78,7 @@ export default function NPCGrid({
   const [filterOrg, setFilterOrg] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
   const [filterVisibility, setFilterVisibility] = useState("");
+  const [view, setView] = useViewMode("npc");
 
   const filtered = npcs.filter((n) => {
     const matchSearch = n.name.toLowerCase().includes(search.toLowerCase());
@@ -159,6 +162,7 @@ export default function NPCGrid({
             <option value="privat">{tCommon("private")}</option>
           </select>
         )}
+        <div className="ml-auto"><ViewToggle value={view} onChange={setView} /></div>
       </div>
 
       {/* Count */}
@@ -166,11 +170,44 @@ export default function NPCGrid({
         {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")} {tCommon("found")}
       </p>
 
-      {/* Grid */}
+      {/* Grid / List */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32">
           <div className="mb-4" style={{ opacity: 0.3 }}><IconMap size={56} color="var(--dnd-text-muted)" /></div>
           <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>{t("emptyFiltered")}</p>
+        </div>
+      ) : view === "list" ? (
+        <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+          {filtered.map((npc) => (
+            <Link
+              key={npc.id}
+              href={`/npc/${npc.id}`}
+              className="flex items-center gap-4 px-4 py-2.5 transition-colors hover:bg-white/5"
+              style={{ borderBottom: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}
+            >
+              <div className="relative w-8 h-8 shrink-0 overflow-hidden rounded-sm" style={{ background: "#0A0A0A" }}>
+                {npc.image ? (
+                  <Image src={npc.image} alt="" fill sizes="32px" className="object-cover" />
+                ) : (
+                  <Image src="/lorehub_icon.png" alt="" fill sizes="32px" className="object-contain opacity-30" />
+                )}
+              </div>
+              <span className="font-cinzel font-semibold text-sm truncate" style={{ color: "var(--dnd-heading)" }}>
+                {npc.name}
+              </span>
+              {npc.rasse && (
+                <span className="hidden md:inline font-cinzel text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>
+                  {npc.rasse}
+                </span>
+              )}
+              <div className="ml-auto flex items-center gap-1.5 shrink-0">
+                <Badge label={npc.status} colors={STATUS_COLORS[npc.status] ?? STATUS_COLORS["Unbekannt"]} />
+                <span className="hidden sm:inline">
+                  <Badge label={npc.beziehung} colors={BEZIEHUNG_COLORS[npc.beziehung] ?? BEZIEHUNG_COLORS["Unbekannt"]} />
+                </span>
+              </div>
+            </Link>
+          ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

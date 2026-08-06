@@ -79,6 +79,11 @@
     "back": "← Back",
     "editName": "Edit {name}"
   },
+  "view": {
+    "grid": "Grid",
+    "list": "List",
+    "toggleLabel": "View mode"
+  },
   "loading": {
     "default": "Loading…",
     "generic": "Loading...",

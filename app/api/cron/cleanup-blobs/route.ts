@@ -23,12 +23,15 @@ export async function GET(req: NextRequest) {
       cursor = page.cursor;
     } while (cursor);
 
-    // Collect all referenced image URLs from the DB in one query each
-    const [npcs, charaktere, orgs, locations] = await Promise.all([
+    // Collect all referenced image URLs from the DB in one query each.
+    // IMPORTANT: keep this list in sync with every model that stores a blob URL.
+    // Missing a table here causes valid images to get garbage-collected after 1h.
+    const [npcs, charaktere, orgs, locations, maps] = await Promise.all([
       prisma.nPC.findMany({ where: { image: { not: null } }, select: { image: true } }),
       prisma.charakter.findMany({ where: { image: { not: null } }, select: { image: true } }),
       prisma.organisation.findMany({ where: { image: { not: null } }, select: { image: true } }),
       prisma.location.findMany({ where: { image: { not: null } }, select: { image: true } }),
+      prisma.map.findMany({ select: { imageUrl: true } }),
     ]);
 
     const usedUrls = new Set<string>([
@@ -36,6 +39,7 @@ export async function GET(req: NextRequest) {
       ...charaktere.map((r) => r.image!),
       ...orgs.map((r) => r.image!),
       ...locations.map((r) => r.image!),
+      ...maps.map((r) => r.imageUrl),
     ]);
 
     const cutoff = new Date(Date.now() - ONE_HOUR_MS);

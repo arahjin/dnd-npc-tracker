@@ -79,6 +79,11 @@
     "back": "← Zurück",
     "editName": "{name} bearbeiten"
   },
+  "view": {
+    "grid": "Kacheln",
+    "list": "Liste",
+    "toggleLabel": "Ansicht"
+  },
   "loading": {
     "default": "Lädt…",
     "generic": "Laden...",

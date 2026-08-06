@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { IconOrganisation, IconPin } from "@/components/Icons";
 import { stripMentions } from "@/lib/mentions";
+import ViewToggle from "@/components/ViewToggle";
+import { useViewMode } from "@/lib/useViewMode";
 
 type Org = {
   id: string;
@@ -39,6 +41,7 @@ export default function OrgGrid({ orgs, isDM = false }: { orgs: Org[]; isDM?: bo
   const tCommon = useTranslations("common");
 
   const [filterVisibility, setFilterVisibility] = useState("");
+  const [view, setView] = useViewMode("org");
 
   const filtered = filterVisibility
     ? orgs.filter((o) => o.sichtbarkeit === filterVisibility)
@@ -46,18 +49,21 @@ export default function OrgGrid({ orgs, isDM = false }: { orgs: Org[]; isDM?: bo
 
   return (
     <>
-      {isDM && (
-        <div className="mb-6 flex flex-wrap gap-3 items-center">
-          <select value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)} className={selectClass} style={selectStyle}>
-            <option value="">{tCommon("allVisibilities")}</option>
-            <option value="public">{tCommon("public")}</option>
-            <option value="privat">{tCommon("private")}</option>
-          </select>
-          <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
-            {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")}
-          </p>
-        </div>
-      )}
+      <div className="mb-6 flex flex-wrap gap-3 items-center">
+        {isDM && (
+          <>
+            <select value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)} className={selectClass} style={selectStyle}>
+              <option value="">{tCommon("allVisibilities")}</option>
+              <option value="public">{tCommon("public")}</option>
+              <option value="privat">{tCommon("private")}</option>
+            </select>
+            <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
+              {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")}
+            </p>
+          </>
+        )}
+        <div className="ml-auto"><ViewToggle value={view} onChange={setView} /></div>
+      </div>
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32">
@@ -65,6 +71,37 @@ export default function OrgGrid({ orgs, isDM = false }: { orgs: Org[]; isDM?: bo
           <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>
             {filterVisibility ? t("emptyFiltered") : t("empty")}
           </p>
+        </div>
+      ) : view === "list" ? (
+        <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+          {filtered.map((org) => {
+            const memberCount = org._count.mitglieder + org._count.charakterMitglieder;
+            return (
+              <Link key={org.id} href={`/organisationen/${org.id}`}
+                className="flex items-center gap-4 px-4 py-2.5 transition-colors hover:bg-white/5"
+                style={{ borderBottom: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}>
+                <div className="relative w-8 h-8 shrink-0 overflow-hidden rounded-sm flex items-center justify-center" style={{ background: "#0A0A0A" }}>
+                  {org.image ? (
+                    <Image src={org.image} alt="" fill sizes="32px" className="object-cover" />
+                  ) : (
+                    <IconOrganisation size={16} color="var(--dnd-text-muted)" />
+                  )}
+                </div>
+                <span className="font-cinzel font-semibold text-sm truncate" style={{ color: "var(--dnd-heading)" }}>{org.name}</span>
+                {org.typ && (
+                  <span className="hidden md:inline font-cinzel text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>{org.typ}</span>
+                )}
+                <div className="ml-auto flex items-center gap-2 shrink-0">
+                  {org.sichtbarkeit === "privat" && (
+                    <span className="font-cinzel text-xs px-1.5 py-0.5" style={{ background: "#200D0D", color: "#F87171", border: "1px solid #7F1D1D" }}>{tCommon("private")}</span>
+                  )}
+                  <span className="font-cinzel text-xs" style={{ color: "var(--dnd-red-light)" }}>
+                    {memberCount} {memberCount === 1 ? t("member") : t("members")}
+                  </span>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

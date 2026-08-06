@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { QUEST_STATUS_OPTIONS } from "@/lib/constants";
 import QuestCard from "./QuestCard";
+import ViewToggle from "@/components/ViewToggle";
+import { useViewMode } from "@/lib/useViewMode";
 
 type Objective = { id: string; label: string; done: boolean; order: number };
 type Quest = {
@@ -43,6 +46,7 @@ export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; i
 
   const [filterStatus, setFilterStatus] = useState("");
   const [filterVisibility, setFilterVisibility] = useState("");
+  const [view, setView] = useViewMode("quest");
 
   const filtered = quests.filter((q) => {
     const matchStatus = filterStatus ? q.status === filterStatus : true;
@@ -80,6 +84,7 @@ export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; i
         <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
           {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")} {tCommon("found")}
         </p>
+        <div className="ml-auto"><ViewToggle value={view} onChange={setView} /></div>
       </div>
 
       {filtered.length === 0 ? (
@@ -87,6 +92,41 @@ export default function QuestGrid({ quests, isDM = false }: { quests: Quest[]; i
           <p className="font-cinzel text-sm tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
             {t("emptyFiltered")}
           </p>
+        </div>
+      ) : view === "list" ? (
+        <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+          {filtered.map((quest) => {
+            const statusColor = STATUS_COLORS[quest.status] ?? STATUS_COLORS["Unbekannt"];
+            const prioColor = quest.prioritaet ? (PRIORITAET_COLORS[quest.prioritaet] ?? null) : null;
+            return (
+              <Link key={quest.id} href={`/quests/${quest.id}`}
+                className="flex items-center gap-4 px-4 py-2.5 transition-colors hover:bg-white/5"
+                style={{ borderBottom: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}>
+                <span
+                  className="w-8 h-8 shrink-0 flex items-center justify-center rounded-sm"
+                  style={{ background: statusColor + "1A", border: `1px solid ${statusColor}44` }}
+                >
+                  <span style={{ width: 10, height: 10, borderRadius: "50%", background: statusColor, display: "inline-block" }} />
+                </span>
+                <span className="font-cinzel font-semibold text-sm truncate" style={{ color: "var(--dnd-heading)" }}>{quest.title}</span>
+                <span className="hidden md:inline font-cinzel text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>{quest.typ}</span>
+                <div className="ml-auto flex items-center gap-2 shrink-0">
+                  <span
+                    className="font-cinzel text-xs px-2 py-0.5"
+                    style={{ color: statusColor, background: statusColor + "1A", border: `1px solid ${statusColor}44` }}
+                  >
+                    {quest.status}
+                  </span>
+                  {prioColor && (
+                    <span className="hidden sm:inline-flex items-center gap-1">
+                      <span style={{ width: 6, height: 6, borderRadius: "50%", background: prioColor, display: "inline-block" }} />
+                      <span className="font-cinzel text-xs" style={{ color: "var(--dnd-text-muted)" }}>{quest.prioritaet}</span>
+                    </span>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

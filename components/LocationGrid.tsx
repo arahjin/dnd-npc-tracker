@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { LocationArtIcon, IconPin, IconMap, IconGlobe, IconPeople } from "@/components/Icons";
 import { stripMentions } from "@/lib/mentions";
+import ViewToggle from "@/components/ViewToggle";
+import { useViewMode } from "@/lib/useViewMode";
 
 type Location = {
   id: string;
@@ -28,6 +30,7 @@ export default function LocationGrid({ locations, isDM = false }: { locations: L
   const tCommon = useTranslations("common");
 
   const [filterVisibility, setFilterVisibility] = useState("");
+  const [view, setView] = useViewMode("location");
 
   const filtered = filterVisibility
     ? locations.filter((l) => l.sichtbarkeit === filterVisibility)
@@ -35,18 +38,21 @@ export default function LocationGrid({ locations, isDM = false }: { locations: L
 
   return (
     <>
-      {isDM && (
-        <div className="mb-6 flex flex-wrap gap-3 items-center">
-          <select value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)} className={selectClass} style={selectStyle}>
-            <option value="">{tCommon("allVisibilities")}</option>
-            <option value="public">{tCommon("public")}</option>
-            <option value="privat">{tCommon("private")}</option>
-          </select>
-          <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
-            {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")}
-          </p>
-        </div>
-      )}
+      <div className="mb-6 flex flex-wrap gap-3 items-center">
+        {isDM && (
+          <>
+            <select value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)} className={selectClass} style={selectStyle}>
+              <option value="">{tCommon("allVisibilities")}</option>
+              <option value="public">{tCommon("public")}</option>
+              <option value="privat">{tCommon("private")}</option>
+            </select>
+            <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
+              {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")}
+            </p>
+          </>
+        )}
+        <div className="ml-auto"><ViewToggle value={view} onChange={setView} /></div>
+      </div>
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-32">
@@ -54,6 +60,39 @@ export default function LocationGrid({ locations, isDM = false }: { locations: L
           <p className="font-cinzel text-lg" style={{ color: "var(--dnd-text-muted)" }}>
             {filterVisibility ? t("emptyFiltered") : t("empty")}
           </p>
+        </div>
+      ) : view === "list" ? (
+        <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+          {filtered.map((loc) => (
+            <Link key={loc.id} href={`/locations/${loc.id}`}
+              className="flex items-center gap-4 px-4 py-2.5 transition-colors hover:bg-white/5"
+              style={{ borderBottom: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}>
+              <div className="relative w-8 h-8 shrink-0 overflow-hidden rounded-sm flex items-center justify-center" style={{ background: "#0A0A0A" }}>
+                {loc.image ? (
+                  <Image src={loc.image} alt="" fill sizes="32px" className="object-cover" />
+                ) : (
+                  <LocationArtIcon art={loc.art} size={16} color="var(--dnd-text-muted)" />
+                )}
+              </div>
+              <span className="font-cinzel font-semibold text-sm truncate" style={{ color: "var(--dnd-heading)" }}>{loc.name}</span>
+              {loc.art && (
+                <span className="hidden md:inline font-cinzel text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>{loc.art}</span>
+              )}
+              {loc.region && (
+                <span className="hidden lg:inline font-cinzel text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>
+                  <IconPin size={11} /> {loc.region}
+                </span>
+              )}
+              {loc.land && (
+                <span className="hidden lg:inline font-cinzel text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>
+                  <IconGlobe size={11} /> {loc.land}
+                </span>
+              )}
+              {loc.sichtbarkeit === "privat" && (
+                <span className="ml-auto font-cinzel text-xs px-1.5 py-0.5 shrink-0" style={{ background: "#200D0D", color: "#F87171", border: "1px solid #7F1D1D" }}>{tCommon("private")}</span>
+              )}
+            </Link>
+          ))}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { IconPin } from "@/components/Icons";
+import ViewToggle from "@/components/ViewToggle";
+import { useViewMode } from "@/lib/useViewMode";
 
 type Charakter = {
   id: string;
@@ -24,6 +26,34 @@ const STATUS_COLORS: Record<string, string> = {
 
 const selectClass = "font-cinzel text-sm px-3 py-2 outline-none tracking-wide transition-colors";
 const selectStyle = { background: "var(--dnd-bg-card)", border: "1px solid var(--dnd-border)", color: "var(--dnd-text)" };
+
+function CharRow({ c }: { c: Charakter }) {
+  const tCommon = useTranslations("common");
+  return (
+    <Link href={`/charaktere/${c.id}`}
+      className="flex items-center gap-4 px-4 py-2.5 transition-colors hover:bg-white/5"
+      style={{ borderBottom: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}>
+      <div className="relative w-8 h-8 shrink-0 overflow-hidden rounded-sm" style={{ background: "#0A0A0A" }}>
+        {c.image ? (
+          <Image src={c.image} alt="" fill sizes="32px" className="object-cover" />
+        ) : (
+          <Image src="/lorehub_icon.png" alt="" fill sizes="32px" className="object-contain opacity-30" />
+        )}
+      </div>
+      <span className="font-cinzel font-semibold text-sm truncate" style={{ color: "var(--dnd-heading)" }}>{c.name}</span>
+      {c.rasse && (
+        <span className="hidden md:inline font-cinzel text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>{c.rasse}</span>
+      )}
+      <span className="hidden sm:inline font-cinzel text-xs truncate" style={{ color: "var(--dnd-text-muted)" }}>{c.user.name}</span>
+      <div className="ml-auto flex items-center gap-2 shrink-0">
+        <span className="font-cinzel text-xs" style={{ color: STATUS_COLORS[c.status] ?? "#9CA3AF" }}>{c.status}</span>
+        {c.sichtbarkeit === "privat" && (
+          <span className="font-cinzel text-xs px-1.5 py-0.5" style={{ background: "#200D0D", color: "#F87171", border: "1px solid #7F1D1D" }}>{tCommon("private")}</span>
+        )}
+      </div>
+    </Link>
+  );
+}
 
 function CharCard({ c }: { c: Charakter }) {
   const tCommon = useTranslations("common");
@@ -69,6 +99,7 @@ export default function CharaktereGrid({
   const tCommon = useTranslations("common");
 
   const [filterVisibility, setFilterVisibility] = useState("");
+  const [view, setView] = useViewMode("charakter");
 
   const filtered = filterVisibility
     ? charaktere.filter((c) => c.sichtbarkeit === filterVisibility)
@@ -77,20 +108,25 @@ export default function CharaktereGrid({
   const own = filtered.filter((c) => c.userId === currentUserId);
   const others = filtered.filter((c) => c.userId !== currentUserId);
 
+  const listContainerStyle = { border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" };
+
   return (
     <>
-      {isDM && (
-        <div className="mb-6 flex flex-wrap gap-3 items-center">
-          <select value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)} className={selectClass} style={selectStyle}>
-            <option value="">{tCommon("allVisibilities")}</option>
-            <option value="public">{tCommon("public")}</option>
-            <option value="privat">{tCommon("private")}</option>
-          </select>
-          <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
-            {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")}
-          </p>
-        </div>
-      )}
+      <div className="mb-6 flex flex-wrap gap-3 items-center">
+        {isDM && (
+          <>
+            <select value={filterVisibility} onChange={(e) => setFilterVisibility(e.target.value)} className={selectClass} style={selectStyle}>
+              <option value="">{tCommon("allVisibilities")}</option>
+              <option value="public">{tCommon("public")}</option>
+              <option value="privat">{tCommon("private")}</option>
+            </select>
+            <p className="font-cinzel text-xs tracking-widest" style={{ color: "var(--dnd-text-muted)" }}>
+              {filtered.length} {filtered.length === 1 ? t("countSingle") : t("countPlural")}
+            </p>
+          </>
+        )}
+        <div className="ml-auto"><ViewToggle value={view} onChange={setView} /></div>
+      </div>
 
       <section className="mb-10">
         <h2 className="font-cinzel text-xs tracking-[0.2em] uppercase mb-5 pb-2"
@@ -101,6 +137,10 @@ export default function CharaktereGrid({
           <p className="font-cinzel text-sm" style={{ color: "var(--dnd-text-muted)" }}>
             {filterVisibility ? t("emptyOwnFiltered") : t("emptyOwn")}
           </p>
+        ) : view === "list" ? (
+          <div style={listContainerStyle}>
+            {own.map((c) => <CharRow key={c.id} c={c} />)}
+          </div>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {own.map((c) => <CharCard key={c.id} c={c} />)}
@@ -114,9 +154,15 @@ export default function CharaktereGrid({
             style={{ color: "var(--dnd-label)", borderBottom: "1px solid var(--dnd-border)" }}>
             {t("otherChars")}
           </h2>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {others.map((c) => <CharCard key={c.id} c={c} />)}
-          </div>
+          {view === "list" ? (
+            <div style={listContainerStyle}>
+              {others.map((c) => <CharRow key={c.id} c={c} />)}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {others.map((c) => <CharCard key={c.id} c={c} />)}
+            </div>
+          )}
         </section>
       )}
     </>

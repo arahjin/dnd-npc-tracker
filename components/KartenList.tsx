@@ -4,6 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import ViewToggle from "@/components/ViewToggle";
+import { useViewMode } from "@/lib/useViewMode";
 
 export type KartenListItem = {
   id: string;
@@ -16,6 +18,7 @@ export type KartenListItem = {
 export default function KartenList({ maps }: { maps: KartenListItem[] }) {
   const t = useTranslations("karten");
   const [search, setSearch] = useState("");
+  const [view, setView] = useViewMode("karten");
   const filtered = search.trim()
     ? maps.filter((m) => m.name.toLowerCase().includes(search.trim().toLowerCase()))
     : maps;
@@ -43,6 +46,7 @@ export default function KartenList({ maps }: { maps: KartenListItem[] }) {
         >
           {filtered.length} {filtered.length === 1 ? t("countSingleMap") : t("countPluralMaps")}
         </p>
+        <div className="ml-auto"><ViewToggle value={view} onChange={setView} /></div>
       </div>
 
       {filtered.length === 0 ? (
@@ -52,6 +56,22 @@ export default function KartenList({ maps }: { maps: KartenListItem[] }) {
         >
           {t("noSearchResults")}
         </p>
+      ) : view === "list" ? (
+        <div style={{ border: "1px solid var(--dnd-border)", background: "var(--dnd-bg-card)" }}>
+          {filtered.map((m) => (
+            <Link key={m.id} href={`/karten/${m.id}`}
+              className="flex items-center gap-4 px-4 py-2.5 transition-colors hover:bg-white/5"
+              style={{ borderBottom: "1px solid var(--dnd-border)", color: "var(--dnd-text)" }}>
+              <div className="relative w-8 h-8 shrink-0 overflow-hidden rounded-sm" style={{ background: "#0A0A0A" }}>
+                <Image src={m.imageUrl} alt="" fill sizes="32px" className="object-cover" />
+              </div>
+              <span className="font-cinzel font-semibold text-sm truncate" style={{ color: "var(--dnd-heading)" }}>{m.name}</span>
+              <span className="ml-auto font-cinzel text-xs shrink-0" style={{ color: "var(--dnd-red-light)" }}>
+                {m.placementCount} {m.placementCount === 1 ? t("countSingle") : t("countPlural")}
+              </span>
+            </Link>
+          ))}
+        </div>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((m) => (
